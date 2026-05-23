@@ -1,0 +1,17 @@
+# Virtual environment
+.venv
+
+# Environment variable files
+.env
+.env.*
+
+# Git
+.gitignore
+.git
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Docker Compose
+docker-compose.yml
