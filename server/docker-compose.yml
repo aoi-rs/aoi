@@ -1,5 +1,5 @@
 services:
-  database:
+  postgres:
     image: postgres:18.3-trixie
     environment:
       - POSTGRES_USER=${RINKU_POSTGRES_USER}
@@ -34,6 +34,11 @@ services:
       interval: 2s
       timeout: 10s
       retries: 10
+
+  dynamodb:
+    image: amazon/dynamodb-local:3.3.0
+    ports:
+      - "${RINKU_DYNAMODB_PORT:-8080}:8000"
 
 volumes:
   database:
