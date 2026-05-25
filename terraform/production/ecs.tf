@@ -50,7 +50,7 @@ resource "aws_ecs_task_definition" "rinku" {
         },
         {
           name  = "RINKU_REDIS_HOST"
-          value = aws_elasticache_cluster.redis.cluster_address
+          value = aws_elasticache_cluster.redis.cache_nodes[0].address
         },
         {
           name  = "RINKU_REDIS_PORT"
