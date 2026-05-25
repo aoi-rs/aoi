@@ -1,0 +1,30 @@
+resource "aws_ecr_repository" "rinku" {
+  name = "rinku"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_lifecycle_policy" "rinku" {
+  repository = aws_ecr_repository.rinku.name
+
+  policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1
+        description  = "Keep last 10 images"
+
+        selection = {
+          tagStatus   = "any"
+          countType   = "ImageCountMoreThan"
+          countNumber = 10
+        }
+
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+}
