@@ -18,8 +18,8 @@ resource "aws_ecs_task_definition" "rinku" {
 
       portMappings = [
         {
-          containerPort = 8000
-          hostPort      = 8000
+          containerPort = 10000
+          hostPort      = 10000
         }
       ]
 
@@ -84,6 +84,6 @@ resource "aws_ecs_service" "rinku" {
   load_balancer {
     target_group_arn = aws_alb_target_group.service.arn
     container_name   = "rinku"
-    container_port   = 8000
+    container_port   = 10000
   }
 }

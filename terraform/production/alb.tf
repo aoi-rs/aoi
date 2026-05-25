@@ -16,7 +16,7 @@ resource "aws_alb" "main" {
 resource "aws_alb_target_group" "service" {
   vpc_id      = aws_vpc.main.id
   name        = "rinku"
-  port        = 8000
+  port        = 10000
   protocol    = "HTTP"
   target_type = "ip"
 
