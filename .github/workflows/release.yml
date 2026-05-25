@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  workflow_call: 
+    inputs:
+      rinku-image:
+        description: "The URI of the Rinku Docker image"
+        required: true
+        type: string
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Render ECS Task Definition
+        id: render
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition-arn: arn:aws:ecs:us-east-1:891924440815:task-definition/rinku
+          container-name: rinku
+          image: ${{ inputs.rinku-image }}
+      
+      - name: Deploy ECS Task Definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.render.outputs.task-definition }}
+          cluster: rinku
+          service: rinku
+          wait-for-service-stability: true
+
+          
+        
