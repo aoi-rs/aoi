@@ -7,8 +7,13 @@ resource "aws_db_subnet_group" "main" {
   ]
 }
 
+resource "random_password" "postgres" {
+  length           = 32
+  override_special = "-_"
+}
+
 resource "aws_db_instance" "postgres" {
-  identifier = "rinku-postgres"
+  identifier     = "rinku-postgres"
   engine         = "postgres"
   engine_version = "18"
 
@@ -16,6 +21,7 @@ resource "aws_db_instance" "postgres" {
   allocated_storage = 20
 
   username            = "rinku_db_user"
+  password            = random_password.postgres.result
   db_name             = "rinku_db"
   publicly_accessible = false
 
