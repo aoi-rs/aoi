@@ -17,7 +17,7 @@ resource "aws_ecr_lifecycle_policy" "rinku" {
 
         selection = {
           tagStatus   = "any"
-          countType   = "ImageCountMoreThan"
+          countType   = "imageCountMoreThan"
           countNumber = 10
         }
 
