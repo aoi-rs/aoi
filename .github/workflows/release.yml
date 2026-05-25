@@ -16,6 +16,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::891924440815:role/github-actions
+          aws-region: us-east-1
+
       - name: Render ECS Task Definition
         id: render
         uses: aws-actions/amazon-ecs-render-task-definition@v1
