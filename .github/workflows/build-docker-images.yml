@@ -83,6 +83,7 @@ jobs:
     if: always() && (needs.build.result == 'success' || needs.build.result == 'skipped') && (needs.changes.outputs.server == 'true' || github.event_name == 'workflow_dispatch')
     permissions:
       id-token: write
+      contents: read
     uses: ./.github/workflows/release.yml
     with:
       rinku-image: ${{ needs.build.outputs.image }}
