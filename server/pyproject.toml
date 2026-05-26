@@ -17,12 +17,9 @@ dependencies = [
     "safe-redirect-url>=0.1.1",
     "sqlalchemy[asyncio]>=2.0.49",
     "uvicorn[standard]>=0.46.0",
-]
-
-[dependency-groups]
-dev = [
     "taskipy>=1.14.1",
 ]
 
 [tool.taskipy.tasks]
-serve = { cmd = "uvicorn rinku.app:rinku --reload --host 127.0.0.1 --port 8000", help = "start REST API" }
+service = { cmd = "uvicorn rinku.app:rinku --reload --host 127.0.0.1 --port 8000", help = "run service" }
+db_migrate = { cmd = "alembic upgrade head", help = "run alembic upgrade" }

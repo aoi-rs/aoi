@@ -32,6 +32,22 @@ jobs:
           task-definition-arn: arn:aws:ecs:us-east-1:891924440815:task-definition/rinku
           container-name: rinku
           image: ${{ inputs.rinku-image }}
+
+      - name: Run Database Migrations
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.render.outputs.task-definition }}
+          cluster: rinku
+          run-task: true
+          run-task-launch-type: FARGATE
+          wait-for-task-stopped: true
+          run-task-container-overrides: |
+            [
+              {
+                "name": "rinku",
+                "command": ["uv", "run", "task", "db_migrate"]
+              }
+            ]
       
       - name: Deploy ECS Task Definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
