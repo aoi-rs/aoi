@@ -41,6 +41,8 @@ jobs:
           run-task: true
           run-task-launch-type: FARGATE
           wait-for-task-stopped: true
+          run-task-subnets: ${{ vars.ECS_PRIVATE_SUBNETS }}
+          run-task-security-groups: ${{ vars.ECS_SECURITY_GROUP }}
           run-task-container-overrides: |
             [
               {
