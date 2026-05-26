@@ -43,7 +43,7 @@ jobs:
           wait-for-task-stopped: true
           run-task-subnets: ${{ vars.ECS_PRIVATE_SUBNETS }}
           run-task-security-groups: ${{ vars.ECS_SECURITY_GROUP }}
-          run-task-assign-public-IP: true
+          run-task-assign-public-IP: ENABLED
           run-task-container-overrides: |
             [
               {
