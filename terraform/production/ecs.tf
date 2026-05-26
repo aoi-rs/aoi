@@ -2,8 +2,27 @@ resource "aws_ecs_cluster" "main" {
   name = "rinku"
 }
 
-resource "aws_ecs_task_definition" "rinku" {
-  family                   = "rinku"
+# =============================================================================
+# ECS task definition data source
+#
+# We read the latest active revision from AWS to avoid stale state in
+# Terraform causing unwanted rollbacks.
+#
+# First-time setup: create the service first without the data source — use 
+# "${aws_ecr_repository.rinku.repository_url}:latest" as the image URL — 
+# then add the data source.
+# =============================================================================
+
+locals {
+  service_task_definition_family = "rinku"
+}
+
+data "aws_ecs_task_definition" "service" {
+  task_definition = local.service_task_definition_family
+}
+
+resource "aws_ecs_task_definition" "service" {
+  family                   = local.service_task_definition_family
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 512
@@ -13,7 +32,7 @@ resource "aws_ecs_task_definition" "rinku" {
   container_definitions = jsonencode([
     {
       name      = "rinku"
-      image     = "${aws_ecr_repository.rinku.repository_url}:latest"
+      image     = jsondecode(data.aws_ecs_task_definition.service.container_definitions)[0].image
       essential = true
 
       portMappings = [
@@ -61,26 +80,10 @@ resource "aws_ecs_task_definition" "rinku" {
   ])
 }
 
-# =============================================================================
-# ECS service data source
-#
-# We read the current task definition ARN from AWS to avoid stale state in
-# Terraform causing unwanted rollbacks.
-#
-# First-time setup: create the service first without the data source — use 
-# `aws_ecs_task_definition.rinku.arn` as the task definition — then add the 
-# data source.
-# =============================================================================
-
-data "aws_ecs_service" "rinku" {
-  cluster_arn = aws_ecs_cluster.main.arn
-  service_name = "rinku"
-}
-
-resource "aws_ecs_service" "rinku" {
+resource "aws_ecs_service" "service" {
   name            = "rinku"
   cluster         = aws_ecs_cluster.main.id
-  task_definition = data.aws_ecs_service.rinku.task_definition
+  task_definition = aws_ecs_task_definition.service.arn
   desired_count   = 1
   launch_type     = "FARGATE"
 
