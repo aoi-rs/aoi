@@ -62,6 +62,31 @@ resource "aws_iam_role_policy" "github_actions_ecr" {
   })
 }
 
+resource "aws_iam_role_policy" "github_actions_ecs" {
+  role = aws_iam_role.github_actions.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Effect = "Allow"
+
+        Action = [
+          "ecs:RegisterTaskDefinition",
+          "ecs:UpdateService",
+          "ecs:DescribeServices",
+          "ecs:DescribeTaskDefinition",
+          "ecs:DescribeTasks",
+          "ecs:ListTasks"
+        ]
+
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_role" "ecs_execution" {
   name = "ecs-execution"
 
