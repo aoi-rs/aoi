@@ -3,10 +3,10 @@ resource "aws_ecs_cluster" "main" {
 }
 
 # =============================================================================
-# ECS task definition data source
+# ECS container definition data source
 #
-# We read the latest active revision from AWS to avoid stale state in
-# Terraform causing unwanted rollbacks.
+# We read the container definition from AWS to avoid stale state in Terraform 
+# causing unwanted rollbacks.
 #
 # First-time setup: create the service first without the data source — use 
 # "${aws_ecr_repository.rinku.repository_url}:latest" as the image URL — 
@@ -28,8 +28,8 @@ resource "aws_ecs_task_definition" "service" {
   family                   = "rinku"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 512
-  memory                   = 1024
+  cpu                      = 256
+  memory                   = 512
   execution_role_arn       = aws_iam_role.ecs_execution.arn
   track_latest             = true
 
