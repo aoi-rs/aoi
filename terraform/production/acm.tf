@@ -17,7 +17,7 @@ resource "vercel_dns_record" "acm_validation" {
   }
 
   domain = "rinku.sh"
-  name   = replace(each.value.name, ".rinku.sh.", "")
+  name   = trimsuffix(each.value.name, ".rinku.sh.", "")
   type   = each.value.type
   value  = trimsuffix(each.value.value, ".")
 }
@@ -26,6 +26,6 @@ resource "aws_acm_certificate_validation" "srv" {
   certificate_arn = aws_acm_certificate.srv.arn
 
   validation_record_fqdns = [
-    for record in vercel_dns_record.acm_validation : record.name
+    for record in vercel_dns_record.acm_validation : "${record.name}.rinku.sh."
   ]
 }
