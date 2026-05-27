@@ -17,7 +17,7 @@ resource "vercel_dns_record" "acm_validation" {
   }
 
   domain = "rinku.sh"
-  name   = trimsuffix(each.value.name, ".rinku.sh.", "")
+  name   = trimsuffix(each.value.name, ".rinku.sh.")
   type   = each.value.type
   value  = trimsuffix(each.value.value, ".")
 }
