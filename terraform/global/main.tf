@@ -22,3 +22,11 @@ resource "tfe_variable" "tfc_aws_run_role_arn" {
   variable_set_id = tfe_variable_set.global.id
   description     = "The AWS role arn runs will use to authenticate"
 }
+
+resource "tfe_variable" "vercel_api_token" {
+  key             = "VERCEL_API_TOKEN"
+  category        = "env"
+  sensitive       = true
+  variable_set_id = tfe_variable_set.global.id
+  description     = "Vercel API token for handling domain configuration"
+}
