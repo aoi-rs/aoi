@@ -14,25 +14,28 @@ resource "aws_ecs_cluster" "main" {
 # =============================================================================
 
 locals {
-  service_task_definition_family = "rinku"
+  service_task_definition_id             = "rinku"
+  service_task_definition_container_name = "rinku"
 }
 
-data "aws_ecs_task_definition" "service" {
-  task_definition = local.service_task_definition_family
+data "aws_ecs_container_definition" "service" {
+  task_definition = local.service_task_definition_id
+  container_name  = local.service_task_definition_container_name
 }
 
 resource "aws_ecs_task_definition" "service" {
-  family                   = local.service_task_definition_family
+  family                   = "rinku"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 512
   memory                   = 1024
   execution_role_arn       = aws_iam_role.ecs_execution.arn
+  track_latest             = true
 
   container_definitions = jsonencode([
     {
       name      = "rinku"
-      image     = jsondecode(data.aws_ecs_task_definition.service.container_definitions)[0].image
+      image     = data.aws_ecs_container_definition.service.image
       essential = true
 
       portMappings = [
