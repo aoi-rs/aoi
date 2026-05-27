@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       server: ${{ steps.filter.outputs.server }}
+      migrations: ${{ steps.filter.outputs.migrations }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -27,6 +28,8 @@ jobs:
             server:
               - 'server/**'
               - '.github/workflows/build-docker-images.yml'
+            migrations:
+              - 'server/migrations/**'
 
   build:
     name: Build Docker Images
@@ -87,3 +90,4 @@ jobs:
     uses: ./.github/workflows/release.yml
     with:
       rinku-image: ${{ needs.build.outputs.image }}
+      has-migrations: ${{ needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch' }}

@@ -7,6 +7,10 @@ on:
         description: "The URI of the Rinku Docker image"
         required: true
         type: string
+      has-migrations:
+        description: "Whether this release includes database migrations"
+        required: true
+        type: boolean
 
 jobs:
   release:
@@ -34,6 +38,7 @@ jobs:
           image: ${{ inputs.rinku-image }}
 
       - name: Run Database Migrations
+        if: inputs.has-migrations
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.render.outputs.task-definition }}
