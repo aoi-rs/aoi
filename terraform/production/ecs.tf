@@ -52,6 +52,10 @@ resource "aws_ecs_task_definition" "service" {
           value = "production"
         },
         {
+          name  = "RINKU_SECRET"
+          value = var.service_secret_production
+        },
+        {
           name  = "RINKU_POSTGRES_USER"
           value = aws_db_instance.postgres.username
         },
