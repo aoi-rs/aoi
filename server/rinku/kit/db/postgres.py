@@ -3,7 +3,6 @@ from decimal import Decimal
 from typing import Any, NewType
 
 from sqlalchemy import Engine
-from sqlalchemy import create_engine as _create_engine
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 from sqlalchemy.ext.asyncio import AsyncSession as _AsyncSession
 from sqlalchemy.ext.asyncio import (
@@ -36,6 +35,7 @@ access and helps prevent accidental reads in write-only contexts.
 def _json_obj_serializer(obj: Any) -> Any:
     if isinstance(obj, Decimal):
         return float(obj)
+
     raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
 
@@ -71,31 +71,6 @@ def create_async_engine(
     )
 
 
-def create_sync_engine(
-    *,
-    dsn: str,
-    application_name: str | None = None,
-    pool_logging_name: str | None = None,
-    pool_size: int | None = None,
-    pool_recycle: int | None = None,
-    command_timeout: float | None = None,
-    debug: bool = False,
-) -> Engine:
-    connect_args: dict[str, Any] = {}
-    if application_name is not None:
-        connect_args["application_name"] = application_name
-    if command_timeout is not None:
-        connect_args["options"] = f"-c statement_timeout={int(command_timeout * 1000)}"
-    return _create_engine(
-        dsn,
-        echo=debug,
-        connect_args=connect_args,
-        pool_size=pool_size,
-        pool_recycle=pool_recycle,
-        pool_logging_name=pool_logging_name,
-    )
-
-
 type AsyncSessionMaker = async_sessionmaker[AsyncSession]
 type AsyncReadSessionMaker = async_sessionmaker[AsyncReadSession]
 
@@ -122,7 +97,6 @@ __all__ = [
     "SyncSessionMaker",
     "create_async_engine",
     "create_async_sessionmaker",
-    "create_sync_engine",
     "create_sync_sessionmaker",
-    "sql"
+    "sql",
 ]

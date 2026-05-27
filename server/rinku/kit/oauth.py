@@ -3,7 +3,7 @@ import secrets
 
 from typing import Any, Literal
 from fastapi import Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 from httpx_oauth.oauth2 import OAuth2Token
 
 from rinku.config import settings
@@ -11,8 +11,7 @@ from rinku.exceptions import RinkuRedirectionError
 from rinku.redis import Redis
 
 
-class OAuthCallbackError(RinkuRedirectionError):
-    ...
+class OAuthCallbackError(RinkuRedirectionError): ...
 
 
 OAuthStateType = Literal["google"]
@@ -27,7 +26,7 @@ async def store_oauth_state(
 ) -> None:
     """Store OAuth state in Redis using nonce as key"""
     key = get_oauth_state_key(nonce, type)
-    
+
     await redis.setex(
         key, int(settings.OAUTH_STATE_TTL.total_seconds()), json.dumps(state_data)
     )
@@ -38,10 +37,12 @@ async def retrieve_oauth_state(
 ) -> dict[str, Any]:
     """Retrieve OAuth state from Redis using nonce as key"""
     key = get_oauth_state_key(nonce, type)
-    state_json = await redis.get(key)
-    if not state_json:
+    state = await redis.get(key)
+
+    if not state:
         raise OAuthCallbackError("Invalid state")
-    return json.loads(state_json)
+
+    return json.loads(state)
 
 
 async def delete_oauth_state(redis: Redis, nonce: str, type: OAuthStateType) -> None:
@@ -59,6 +60,7 @@ def set_login_cookie(
 ) -> None:
     is_localhost = request.url.hostname in {"127.0.0.1", "localhost"}
     secure = False if is_localhost else True
+
     response.set_cookie(
         settings.OAUTH_STATE_COOKIE_KEY,
         value=nonce,
@@ -72,12 +74,13 @@ def set_login_cookie(
 
 def clear_login_cookie(
     request: Request,
-    response: RedirectResponse,
+    response: Response,
     *,
     cross_site: bool = False,
 ) -> None:
     is_localhost = request.url.hostname in {"127.0.0.1", "localhost"}
     secure = False if is_localhost else True
+
     response.set_cookie(
         settings.OAUTH_STATE_COOKIE_KEY,
         value="",
@@ -102,17 +105,20 @@ async def create_authorization_response(
     """Create OAuth authorization response with Redis-backed state storage"""
     # Generate nonce and store state in Redis
     nonce = secrets.token_urlsafe()
-    state_with_nonce = {**state, "nonce": nonce}
+    state_with_nonce: dict[str, Any] = {**state, "nonce": nonce}
     await store_oauth_state(redis, nonce, state_with_nonce, type=type)
 
     redirect_uri = str(request.url_for(callback_route))
+
     authorization_url = await oauth_client.get_authorization_url(
         redirect_uri=redirect_uri,
         state=nonce,  # Use nonce as state parameter
         scope=scopes,
     )
+
     response = RedirectResponse(authorization_url, 303)
     set_login_cookie(request, response, nonce)
+
     return response
 
 

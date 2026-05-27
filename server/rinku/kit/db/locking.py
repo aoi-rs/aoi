@@ -23,7 +23,7 @@ def is_lock_not_available_error(e: DBAPIError) -> bool:
 
     # asyncpg stores the actual exception in __cause__
     cause = getattr(orig, "__cause__", None)
-    
+
     if cause is not None and hasattr(cause, "sqlstate"):
         return cause.sqlstate == "55P03"
 

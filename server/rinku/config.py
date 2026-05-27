@@ -13,6 +13,7 @@ class Environment(StrEnum):
     production = "production"
     test = "test"
 
+
 env = Environment(os.getenv("RINKU_ENV", Environment.development))
 
 if env == Environment.test:
@@ -21,6 +22,7 @@ else:
     env_file = ".env"
 
 file_extension = ".exe" if os.name == "nt" else ""
+
 
 class Settings(BaseSettings):
     ENV: Environment = Environment.development
@@ -38,6 +40,12 @@ class Settings(BaseSettings):
     DATABASE_COMMAND_TIMEOUT_SECONDS: float = 30.0
     DATABASE_STREAM_YIELD_PER: int = 100
 
+    POSTGRES_READ_USER: str | None = None
+    POSTGRES_READ_PWD: str | None = None
+    POSTGRES_READ_HOST: str | None = None
+    POSTGRES_READ_PORT: int | None = None
+    POSTGRES_READ_DATABASE: str | None = None
+
     # Redis
     REDIS_HOST: str = "127.0.0.1"
     REDIS_PORT: int = 6379
@@ -45,7 +53,7 @@ class Settings(BaseSettings):
 
     # Login tokens
     LOGIN_TOKEN_LENGTH: int = 6
-    LOGIN_TOKEN_TTL_SECONDS: int = 600 # 10 minutes
+    LOGIN_TOKEN_TTL_SECONDS: int = 600  # 10 minutes
 
     # OAuth state
     OAUTH_STATE_TTL: timedelta = timedelta(minutes=10)
@@ -95,7 +103,35 @@ class Settings(BaseSettings):
                 path=self.POSTGRES_DATABASE,
             )
         )
-    
+
+    def is_read_replica_configured(self) -> bool:
+        return all(
+            [
+                self.POSTGRES_READ_USER,
+                self.POSTGRES_READ_PWD,
+                self.POSTGRES_READ_HOST,
+                self.POSTGRES_READ_PORT,
+                self.POSTGRES_READ_DATABASE,
+            ]
+        )
+
+    def get_postgres_read_dsn(
+        self, driver: Literal["asyncpg", "psycopg2"]
+    ) -> str | None:
+        if not self.is_read_replica_configured():
+            return None
+
+        return str(
+            PostgresDsn.build(
+                scheme=f"postgresql+{driver}",
+                username=self.POSTGRES_READ_USER,
+                password=self.POSTGRES_READ_PWD,
+                host=self.POSTGRES_READ_HOST,
+                port=self.POSTGRES_READ_PORT,
+                path=self.POSTGRES_READ_DATABASE,
+            )
+        )
+
     def generate_frontend_url(self, path: str) -> str:
         return f"{self.FRONTEND_BASE_URL}{path}"
 
@@ -110,5 +146,6 @@ class Settings(BaseSettings):
 
     def is_test(self) -> bool:
         return self.is_environment({Environment.test})
+
 
 settings = Settings()

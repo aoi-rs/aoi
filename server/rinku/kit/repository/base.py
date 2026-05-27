@@ -7,10 +7,13 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy.sql.base import ExecutableOption
 
+
 class ModelIDProtocol[ID_TYPE](Protocol):
     id: Mapped[ID_TYPE]
 
+
 type Options = Sequence[ExecutableOption]
+
 
 class RepositoryProtocol[M](Protocol):
     model: type[M]
@@ -33,25 +36,28 @@ class RepositoryProtocol[M](Protocol):
         flush: bool = False,
     ) -> M: ...
 
-class RepositoryBase[M]:
-  model: type[M]
-  
-  def __init__(self, session: AsyncSession) -> None:
-    self.session = session
-    
-  async def get_one(self, statement: Select[tuple[M]]) -> M:
-    result = await self.session.execute(statement)
-    return result.unique().scalar_one()
-    
-  async def get_one_or_none(self, statement: Select[tuple[M]]) -> M | None:
-    result = await self.session.execute(statement)
-    return result.unique().scalar_one_or_none()
-    
-  async def get_all(self, statement: Select[tuple[M]]) -> Sequence[M]:
-    result = await self.session.execute(statement)
-    return result.scalars().unique().all()
-  
-  async def paginate(self, statement: Select[tuple[M]], *, limit: int) -> tuple[list[M], int]:
+
+class RepositoryBase[M: ModelIDProtocol[Any]]:
+    model: type[M]
+
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
+
+    async def get_one(self, statement: Select[tuple[M]]) -> M:
+        result = await self.session.execute(statement)
+        return result.unique().scalar_one()
+
+    async def get_one_or_none(self, statement: Select[tuple[M]]) -> M | None:
+        result = await self.session.execute(statement)
+        return result.unique().scalar_one_or_none()
+
+    async def get_all(self, statement: Select[tuple[M]]) -> Sequence[M]:
+        result = await self.session.execute(statement)
+        return result.scalars().unique().all()
+
+    async def paginate(
+        self, statement: Select[tuple[M]], *, limit: int
+    ) -> tuple[list[M], int]:
         count_statement = select(func.count()).select_from(statement.subquery())
 
         count_result = await self.session.execute(count_statement)
@@ -65,35 +71,41 @@ class RepositoryBase[M]:
         items = list(results.unique().scalars().all())
 
         return items, count
-    
-  def get_base_statement(self) -> Select[tuple[M]]:
-    return select(self.model)
-    
-  async def create(self, object: M, *, flush: bool = False) -> M:
-    self.session.add(object)
-  
-    if flush:
-      await self.session.flush()
-      
-    return object
-    
-  async def update(self, object: M, *, update_dict: dict[str, Any] | None = None, flush: bool = False) -> M:
-    if update_dict is not None:
-      for attr, value in update_dict.items():
-        setattr(object, attr, value)
-        
-        try:
-          flag_modified(object, attr)
-        except KeyError:
-          pass
-          
-    self.session.add(object)
-        
-    if flush:
-      await self.session.flush()
-        
-    return object
-  
-  @classmethod
-  def from_session(cls, session: AsyncSession) -> Self:
-    return cls(session)
+
+    def get_base_statement(self) -> Select[tuple[M]]:
+        return select(self.model)
+
+    async def create(self, object: M, *, flush: bool = False) -> M:
+        self.session.add(object)
+
+        if flush:
+            await self.session.flush()
+
+        return object
+
+    async def update(
+        self,
+        object: M,
+        *,
+        update_dict: dict[str, Any] | None = None,
+        flush: bool = False,
+    ) -> M:
+        if update_dict is not None:
+            for attr, value in update_dict.items():
+                setattr(object, attr, value)
+
+                try:
+                    flag_modified(object, attr)
+                except KeyError:
+                    pass
+
+        self.session.add(object)
+
+        if flush:
+            await self.session.flush()
+
+        return object
+
+    @classmethod
+    def from_session(cls, session: AsyncSession) -> Self:
+        return cls(session)

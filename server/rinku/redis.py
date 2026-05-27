@@ -20,6 +20,7 @@ REDIS_RETRY = Retry(default_backoff(), retries=50)
 
 type ProcessName = Literal["app", "rate-limit", "worker", "script"]
 
+
 def create_redis(process_name: ProcessName) -> Redis:
     return _async_redis.Redis.from_url(
         settings.redis_url,

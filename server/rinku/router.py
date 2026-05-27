@@ -18,4 +18,3 @@ router.include_router(user_router)
 
 # /sessions
 router.include_router(session_router)
-

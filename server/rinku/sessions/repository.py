@@ -5,20 +5,17 @@ from rinku.kit.repository import RepositoryBase, Options
 from rinku.auth.models import RequestContext
 from rinku.models import Session
 
-class SessionRepository(RepositoryBase[Session]):
-  model = Session
 
-  def get_readable_statement(self, context: RequestContext) -> Select[tuple[Session]]:
-      statement = self.get_base_statement().where(Session.user_id == context.user.id)
-      return statement
-  
-  async def get_by_id_for_update(
-    self, 
-    session_id: UUID, 
-    *, 
-    nowait: bool = True, 
-    options: Options = ()
-  ) -> Session:
+class SessionRepository(RepositoryBase[Session]):
+    model = Session
+
+    def get_readable_statement(self, context: RequestContext) -> Select[tuple[Session]]:
+        statement = self.get_base_statement().where(Session.user_id == context.user.id)
+        return statement
+
+    async def get_by_id_for_update(
+        self, session_id: UUID, *, nowait: bool = True, options: Options = ()
+    ) -> Session:
         """
         Get session by ID with FOR UPDATE lock.
 

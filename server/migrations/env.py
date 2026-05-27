@@ -1,3 +1,5 @@
+# type: ignore
+
 import asyncio
 from logging.config import fileConfig
 
@@ -7,6 +9,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from rinku.config import settings
 from rinku.models import Model
+
 
 def include_object(object, name, type_, reflected, compare_to):
     # Exclude tables/indexes marked with skip_autogenerate

@@ -5,17 +5,15 @@ from fastapi import Request
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from rinku.config import settings
+from rinku.kit.db.postgres import create_async_engine as _create_async_engine
 from rinku.kit.db.postgres import (
     AsyncEngine,
     AsyncReadSession,
     AsyncReadSessionMaker,
     AsyncSession,
     AsyncSessionMaker,
-    Engine,
     sql,
 )
-from rinku.kit.db.postgres import create_async_engine as _create_async_engine
-from rinku.kit.db.postgres import create_sync_engine as _create_sync_engine
 
 type ProcessName = Literal["app", "worker", "scheduler", "script"]
 
@@ -46,18 +44,6 @@ def create_async_read_engine(process_name: ProcessName) -> AsyncEngine:
     )
 
 
-def create_sync_engine(process_name: ProcessName) -> Engine:
-    return _create_sync_engine(
-        dsn=str(settings.get_postgres_dsn("psycopg2")),
-        application_name=f"{settings.ENV.value}.{process_name}",
-        pool_logging_name=f"{process_name}_sync",
-        debug=settings.SQLALCHEMY_DEBUG,
-        pool_size=settings.DATABASE_SYNC_POOL_SIZE,
-        pool_recycle=settings.DATABASE_POOL_RECYCLE_SECONDS,
-        command_timeout=settings.DATABASE_COMMAND_TIMEOUT_SECONDS,
-    )
-
-
 class AsyncSessionMiddleware:
     def __init__(self, app: ASGIApp) -> None:
         self.app = app
@@ -67,7 +53,7 @@ class AsyncSessionMiddleware:
             return await self.app(scope, receive, send)
 
         sessionmaker: AsyncSessionMaker = scope["state"]["async_sessionmaker"]
-        
+
         async with sessionmaker() as session:
             scope["state"]["async_session"] = session
             await self.app(scope, receive, send)
@@ -97,6 +83,7 @@ async def get_db_session(request: Request) -> AsyncGenerator[AsyncSession]:
 
 async def get_db_read_session(request: Request) -> AsyncGenerator[AsyncReadSession]:
     sessionmaker: AsyncReadSessionMaker = request.state.async_read_sessionmaker
+
     async with sessionmaker() as session:
         yield session
 
@@ -107,7 +94,6 @@ __all__ = [
     "AsyncSession",
     "create_async_engine",
     "create_async_read_engine",
-    "create_sync_engine",
     "get_db_read_session",
     "get_db_session",
     "get_db_sessionmaker",

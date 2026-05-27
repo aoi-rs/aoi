@@ -10,20 +10,20 @@ from rinku.redis import Redis, get_redis
 
 router = APIRouter(tags=["health"], include_in_schema=False)
 
+
 @router.get("/healthz")
 async def healthz(
-  session: AsyncSession = Depends(get_db_session), 
-  redis: Redis = Depends(get_redis),
+    session: AsyncSession = Depends(get_db_session),
+    redis: Redis = Depends(get_redis),
 ):
-  try:
-    await session.execute(select(1))
-  except SQLAlchemyError as e:
-    raise HTTPException(status_code=503, detail="Postgres is not available") from e
-  
-  try:
-    await redis.ping()
-  except RedisError as e:
-    raise HTTPException(status_code=503, detail="Redis is not available") from e
-  
-  return {"status": "ok"}
+    try:
+        await session.execute(select(1))
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=503, detail="Postgres is not available") from e
 
+    try:
+        await redis.ping()
+    except RedisError as e:
+        raise HTTPException(status_code=503, detail="Redis is not available") from e
+
+    return {"status": "ok"}

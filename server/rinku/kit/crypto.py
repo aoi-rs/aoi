@@ -6,63 +6,66 @@ import secrets
 from uuid import UUID
 from dataclasses import dataclass
 
+
 def generate_refresh_token_hmac_key() -> bytes:
-  return secrets.token_bytes(32)
+    return secrets.token_bytes(32)
 
 
 REFRESH_TOKEN_CHECKSUM_LENGTH = 4
 REFRESH_TOKEN_SIGNATURE_LENGTH = 16
 
 MIN_REFRESH_TOKEN_LENGTH = (
-  1 +                      # version byte
-  16 +                     # UUID bytes
-  1 +                      # minimum variant size
-  REFRESH_TOKEN_SIGNATURE_LENGTH +
-  REFRESH_TOKEN_CHECKSUM_LENGTH
+    1  # version byte
+    + 16  # UUID bytes
+    + 1  # minimum variant size
+    + REFRESH_TOKEN_SIGNATURE_LENGTH
+    + REFRESH_TOKEN_CHECKSUM_LENGTH
 )
 
 MAX_REFRESH_TOKEN_LENGTH = MIN_REFRESH_TOKEN_LENGTH + 8
 
+
 class RefreshTokenParseError(Exception): ...
 
+
 class RefreshTokenLengthError(RefreshTokenParseError):
-  def __init__(self):
-    super().__init__("crypto: refresh token length is not valid")
+    def __init__(self):
+        super().__init__("crypto: refresh token length is not valid")
 
 
 class RefreshTokenUnknownVersionError(RefreshTokenParseError):
-  def __init__(self):
-    super().__init__("crypto: refresh token version is not 0")
+    def __init__(self):
+        super().__init__("crypto: refresh token version is not 0")
 
 
 class RefreshTokenInvalidChecksumError(RefreshTokenParseError):
-  def __init__(self):
-    super().__init__("crypto: refresh token checksum is not valid")
+    def __init__(self):
+        super().__init__("crypto: refresh token checksum is not valid")
 
 
 class RefreshTokenInvalidCounterError(RefreshTokenParseError):
-   def __init__(self):
-      super().__init__("crypto: refresh token's counter is not valid")
-   
+    def __init__(self):
+        super().__init__("crypto: refresh token's counter is not valid")
+
 
 def _append_uvarint(buf: bytearray, value: int) -> bytearray:
-  """
-  Encodes an unsigned integer using variable-length integer
-  encoding (u64-style varint) and appends it to a byte buffer.
-  """
+    """
+    Encodes an unsigned integer using variable-length integer
+    encoding (u64-style varint) and appends it to a byte buffer.
+    """
 
-  while value >= 0x80:
-    # Write lower 7 bits and set continuation bit
-    buf.append((value & 0x7F) | 0x80)
+    while value >= 0x80:
+        # Write lower 7 bits and set continuation bit
+        buf.append((value & 0x7F) | 0x80)
 
-    # Shift away consumed bits
-    value >>= 7
+        # Shift away consumed bits
+        value >>= 7
 
+    # Final byte without continuation bit
+    buf.append(value)
 
-  # Final byte without continuation bit
-  buf.append(value)
+    return buf
 
-  return buf
 
 def _decode_uvarint(buf: bytes) -> tuple[int, int]:
     """
@@ -119,113 +122,116 @@ def _decode_uvarint(buf: bytes) -> tuple[int, int]:
 
 MAX_INT64 = 2**63 - 1
 
+
 def _safe_int64(value: int) -> int:
-   if value > MAX_INT64:
-      return MAX_INT64
-   
-   return value
+    if value > MAX_INT64:
+        return MAX_INT64
+
+    return value
 
 
 MAX_UINT64 = (1 << 64) - 1
 
+
 def _safe_uint64(value: int) -> int:
-  if value < 0:
-    return 0
-   
-  if value > MAX_UINT64:
-    return MAX_UINT64
-  
-  return value
+    if value < 0:
+        return 0
+
+    if value > MAX_UINT64:
+        return MAX_UINT64
+
+    return value
 
 
 @dataclass
 class RefreshToken:
-  version: int
-  session_id: UUID
-  counter: int
-  signature: bytes = b""
-  raw: bytes = b""
+    version: int
+    session_id: UUID
+    counter: int
+    signature: bytes = b""
+    raw: bytes = b""
 
-  def check_signature(self, hmac_sha256_key: bytes) -> bool:
-    bytes_ = self.raw[:-REFRESH_TOKEN_SIGNATURE_LENGTH-REFRESH_TOKEN_CHECKSUM_LENGTH]
+    def check_signature(self, hmac_sha256_key: bytes) -> bool:
+        bytes_ = self.raw[
+            : -REFRESH_TOKEN_SIGNATURE_LENGTH - REFRESH_TOKEN_CHECKSUM_LENGTH
+        ]
 
-    print(f"{hmac_sha256_key} used to check signature")
+        print(f"{hmac_sha256_key} used to check signature")
 
-    signature = hmac.new(
-      hmac_sha256_key, 
-      bytes_, 
-      hashlib.sha256
-    ).digest()[:REFRESH_TOKEN_SIGNATURE_LENGTH]
+        signature = hmac.new(hmac_sha256_key, bytes_, hashlib.sha256).digest()[
+            :REFRESH_TOKEN_SIGNATURE_LENGTH
+        ]
 
-    return hmac.compare_digest(signature, self.signature)
-  
-  def encode(self, hmac_sha256_key: bytes) -> str:
-    result = bytearray()
+        return hmac.compare_digest(signature, self.signature)
 
-    result.append(0)
-    result.extend(self.session_id.bytes)
-    result = _append_uvarint(result, _safe_uint64(self.counter))
+    def encode(self, hmac_sha256_key: bytes) -> str:
+        result = bytearray()
 
-    # Quick note on truncating the HMAC-SHA-256 output:
-    # This does not impact security as the brute force space is 2^128 and
-    # the collision space is 2^64, both unattainable in practice
+        result.append(0)
+        result.extend(self.session_id.bytes)
+        result = _append_uvarint(result, _safe_uint64(self.counter))
 
-    signature = hmac.new(
-      hmac_sha256_key, 
-      result, 
-      hashlib.sha256
-    ).digest()[:REFRESH_TOKEN_SIGNATURE_LENGTH]
+        # Quick note on truncating the HMAC-SHA-256 output:
+        # This does not impact security as the brute force space is 2^128 and
+        # the collision space is 2^64, both unattainable in practice
 
-    print(f"{hmac_sha256_key} used to encode")
+        signature = hmac.new(hmac_sha256_key, result, hashlib.sha256).digest()[
+            :REFRESH_TOKEN_SIGNATURE_LENGTH
+        ]
 
-    result.extend(signature)
+        print(f"{hmac_sha256_key} used to encode")
 
-    checksum = hashlib.sha256(result).digest()[:REFRESH_TOKEN_CHECKSUM_LENGTH]
+        result.extend(signature)
 
-    result.extend(checksum)
+        checksum = hashlib.sha256(result).digest()[:REFRESH_TOKEN_CHECKSUM_LENGTH]
 
-    self.version = 0
-    self.raw = bytes(result)
-    self.signature = signature
+        result.extend(checksum)
 
-    return base64.urlsafe_b64encode(result).decode()
+        self.version = 0
+        self.raw = bytes(result)
+        self.signature = signature
+
+        return base64.urlsafe_b64encode(result).decode()
 
 
 def parse_refresh_token(refresh_token: str) -> RefreshToken:
-  bytes_ = base64.urlsafe_b64decode(refresh_token)
+    bytes_ = base64.urlsafe_b64decode(refresh_token)
 
-  if len(bytes_) < MIN_REFRESH_TOKEN_LENGTH: 
-    raise RefreshTokenLengthError()
-  
-  if bytes_[0] != 0:
-    raise RefreshTokenUnknownVersionError()
+    if len(bytes_) < MIN_REFRESH_TOKEN_LENGTH:
+        raise RefreshTokenLengthError()
 
-  checksum256 = hashlib.sha256(bytes_[:-REFRESH_TOKEN_CHECKSUM_LENGTH]).digest()
+    if bytes_[0] != 0:
+        raise RefreshTokenUnknownVersionError()
 
-  if not hmac.compare_digest(checksum256[:REFRESH_TOKEN_CHECKSUM_LENGTH], bytes_[-REFRESH_TOKEN_CHECKSUM_LENGTH:]):
-    raise RefreshTokenInvalidChecksumError()
-  
-  parse_from = bytes_[1:-REFRESH_TOKEN_CHECKSUM_LENGTH]
+    checksum256 = hashlib.sha256(bytes_[:-REFRESH_TOKEN_CHECKSUM_LENGTH]).digest()
 
-  session_id = UUID(bytes=parse_from[:16])
-  parse_from = parse_from[16:]
+    if not hmac.compare_digest(
+        checksum256[:REFRESH_TOKEN_CHECKSUM_LENGTH],
+        bytes_[-REFRESH_TOKEN_CHECKSUM_LENGTH:],
+    ):
+        raise RefreshTokenInvalidChecksumError()
 
-  counter, counter_bytes = _decode_uvarint(parse_from)
+    parse_from = bytes_[1:-REFRESH_TOKEN_CHECKSUM_LENGTH]
 
-  if counter_bytes <= 0:
-    raise RefreshTokenInvalidCounterError()
-  
-  parse_from = parse_from[counter_bytes:]
+    session_id = UUID(bytes=parse_from[:16])
+    parse_from = parse_from[16:]
 
-  if len(parse_from) != 16:
-     raise RefreshTokenLengthError()
-  
-  signature = parse_from
+    counter, counter_bytes = _decode_uvarint(parse_from)
 
-  return RefreshToken(
-    raw=bytes_,
-    version=0,
-    session_id=session_id,
-    counter=_safe_int64(counter),
-    signature=signature
-  )
+    if counter_bytes <= 0:
+        raise RefreshTokenInvalidCounterError()
+
+    parse_from = parse_from[counter_bytes:]
+
+    if len(parse_from) != 16:
+        raise RefreshTokenLengthError()
+
+    signature = parse_from
+
+    return RefreshToken(
+        raw=bytes_,
+        version=0,
+        session_id=session_id,
+        counter=_safe_int64(counter),
+        signature=signature,
+    )

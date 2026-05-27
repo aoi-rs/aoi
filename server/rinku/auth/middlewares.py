@@ -6,34 +6,36 @@ from rinku.sessions.service import sessions
 from rinku.exceptions import Unauthorized
 from rinku.auth.models import RequestContext
 
+
 class RequestContextMiddleware:
-  def __init__(self, app: ASGIApp) -> None:
-    self.app = app
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
 
-  async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-    if scope["type"] != "http":
-      await self.app(scope, receive, send)
-      return
-    
-    session: AsyncSession = scope["state"]["async_session"]
-    request: Request = Request(scope)
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
 
-    user_session = await sessions.resolve_from_request(request, session)
+        session: AsyncSession = scope["state"]["async_session"]
+        request: Request = Request(scope)
 
-    request_context = (
-      RequestContext(user_session.user, user_session) 
-      if user_session is not None 
-      else None
-    )
+        user_session = await sessions.resolve_from_request(request, session)
 
-    scope["state"]["request_context"] = request_context
+        request_context = (
+            RequestContext(user_session.user, user_session)
+            if user_session is not None
+            else None
+        )
 
-    await self.app(scope, receive, send)
+        scope["state"]["request_context"] = request_context
+
+        await self.app(scope, receive, send)
+
 
 async def authenticate_request(request: Request) -> RequestContext:
-  context = getattr(request.state, "request_context", None)
+    context = getattr(request.state, "request_context", None)
 
-  if context is None:
-    raise Unauthorized()
-  
-  return context
+    if context is None:
+        raise Unauthorized()
+
+    return context
