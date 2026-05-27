@@ -1,4 +1,7 @@
 # environment variable files
 .env
+temp_auto_push.bat
 .env.*
 !.env.template
+.gitignore
+branch_structure.json
