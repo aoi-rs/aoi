@@ -10,7 +10,8 @@ resource "aws_ecs_cluster" "main" {
 #
 # First-time setup: create the service first without the data source — use 
 # "${aws_ecr_repository.rinku.repository_url}:latest" as the image URL — 
-# then add the data source.
+# then add the data source with the task definition ID from 
+# `terraform state show aws_ecs_task_definition.service`
 # =============================================================================
 
 locals {
