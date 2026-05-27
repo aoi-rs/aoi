@@ -22,7 +22,15 @@ resource "vercel_dns_record" "acm_validation" {
   value  = trimsuffix(each.value.value, ".")
 }
 
+resource "vercel_dns_record" "caa_amazon" {
+  domain = "rinku.sh"
+  type   = "CAA"
+  name   = ""
+  value  = "0 issue \"amazon.com\""
+}
+
 resource "aws_acm_certificate_validation" "srv" {
+  depends_on      = [vercel_dns_record.caa_amazon]
   certificate_arn = aws_acm_certificate.srv.arn
 
   validation_record_fqdns = [
