@@ -28,5 +28,5 @@ resource "tfe_variable" "vercel_api_token" {
   category        = "env"
   sensitive       = true
   variable_set_id = tfe_variable_set.global.id
-  description     = "Vercel API token for handling domain configuration"
+  description     = "Vercel API token for configuring DNS records"
 }
