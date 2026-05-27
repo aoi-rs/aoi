@@ -37,3 +37,10 @@ resource "aws_acm_certificate_validation" "srv" {
     for record in vercel_dns_record.acm_validation : "${record.name}.rinku.sh."
   ]
 }
+
+resource "vercel_dns_record" "srv" {
+  domain = "rinku.sh"
+  type   = "CNAME"
+  name   = "srv"
+  value  = aws_alb.main.dns_name
+}
