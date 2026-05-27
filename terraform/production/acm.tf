@@ -17,9 +17,9 @@ resource "vercel_dns_record" "acm_validation" {
   }
 
   domain = "rinku.sh"
-  name   = each.value.name
+  name   = replace(each.value.name, ".rinku.sh.", "")
   type   = each.value.type
-  value  = each.value.value
+  value  = trimsuffix(each.value.value, ".")
 }
 
 resource "aws_acm_certificate_validation" "srv" {
