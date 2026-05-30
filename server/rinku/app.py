@@ -13,6 +13,7 @@ from rinku.postgres import AsyncSessionMiddleware, create_async_engine
 from rinku.redis import Redis, create_redis
 from rinku.router import router
 from rinku.health.endpoints import router as health_router
+from rinku.links.router import redirect_router
 from rinku.exception_handlers import add_exception_handlers
 from rinku.auth.middlewares import RequestContextMiddleware
 
@@ -60,6 +61,10 @@ add_exception_handlers(rinku)
 
 # /healthz
 rinku.include_router(health_router)
+
+# /_
+# Used temporarily for redirects. The ideal is a dedicated domain later.
+rinku.include_router(redirect_router)
 
 # /v1
 rinku.include_router(router)

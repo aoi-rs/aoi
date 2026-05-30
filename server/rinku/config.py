@@ -55,6 +55,11 @@ class Settings(BaseSettings):
     LOGIN_TOKEN_LENGTH: int = 6
     LOGIN_TOKEN_TTL_SECONDS: int = 600  # 10 minutes
 
+    # Links
+    SLUG_ALPHABET: str = (
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    )
+
     # OAuth state
     OAUTH_STATE_TTL: timedelta = timedelta(minutes=10)
     OAUTH_STATE_COOKIE_KEY: str = "rinku_oauth_state"
@@ -69,6 +74,15 @@ class Settings(BaseSettings):
     # Google
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
+
+    # AWS (DynamoDB)
+    AWS_ACCESS_KEY_ID: str = "rinku"
+    AWS_SECRET_ACCESS_KEY: str = "secret"
+    AWS_REGION: str = "us-east-1"
+
+    # DynamoDB
+    # Remember to set to http://127.0.0.1:8080 during development
+    DYNAMODB_ENDPOINT_URL: str | None = None
 
     # JWTs
     JWT_PRIVATE_KEY: str = "secret"
