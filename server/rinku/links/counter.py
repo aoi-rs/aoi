@@ -5,7 +5,8 @@ from rinku.integrations.aws.dynamodb.client import dynamodb
 COUNTER_ITEM_KEY = "global"
 COUNTER_ALLOCATION_SIZE = 100
 
-counter_table = dynamodb.Table("counter")
+counter_table = dynamodb.Table("counters")
+
 
 class MonotonicCounter:
     def __init__(self):
@@ -36,7 +37,7 @@ class MonotonicCounter:
         assert isinstance(attributes["v"], Decimal)
 
         value = int(attributes["v"])
-        
+
         self.next_value = value - COUNTER_ALLOCATION_SIZE
         self.allocation_end = value - 1
 
