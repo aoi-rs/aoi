@@ -27,7 +27,7 @@ resource "tfe_variable" "aws_access_key_id_production" {
 }
 
 resource "tfe_variable" "aws_secret_access_key_production" {
-  variable_set_id = tfe_variable_set.production
+  variable_set_id = tfe_variable_set.production.id
   key             = "aws_secret_access_key_production"
   category        = "terraform"
   description     = "AWS Secret Access Key for production"
