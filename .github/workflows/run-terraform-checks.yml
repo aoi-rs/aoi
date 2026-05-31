@@ -1,0 +1,53 @@
+name: Run Terraform Checks
+
+on:
+  push:
+    branches: [main]
+    paths: 
+      - terraform/**
+      - .github/workflows/run-terraform-checks.yml
+  
+  pull_request:
+    types: [opened, synchronize]
+    paths: 
+      - terraform/**
+      - .github/workflows/run-terraform-checks.yml
+
+permissions:
+  contents: read
+
+jobs:
+  linters:
+    name: Run Linters
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v4
+
+      - name: Run Formatter
+        working-directory: terraform
+        run: terraform fmt -check -recursive -diff
+
+      - name: Install TFLint
+        uses: terraform-linters/setup-tflint@v6
+        with:
+          tflint_version: latest
+          cache: true
+
+      - name: Cache TFLint Plugins
+        uses: actions/cache@v5
+        with:
+          path: ~/.tflint/plugins
+          key: tflint-plugins-${{ hashFiles('terraform/.tflint.hcl') }}
+        
+      - name: Init TFLint
+        working-directory: terraform
+        run: tflint -lint
+      
+      - name: Run TFLint
+        working-directory: terraform
+        run: tflint --recursive --format compact
