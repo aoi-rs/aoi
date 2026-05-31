@@ -82,6 +82,14 @@ resource "aws_ecs_task_definition" "service" {
         {
           name  = "RINKU_REDIS_PORT"
           value = tostring(aws_elasticache_cluster.redis.port)
+        },
+        {
+          name = "RINKU_AWS_ACCESS_KEY_ID"
+          value = var.aws_access_key_id_production
+        },
+        {
+          name = "RINKU_AWS_SECRET_ACCESS_KEY"
+          value = var.aws_secret_access_key_production
         }
       ]
     }
