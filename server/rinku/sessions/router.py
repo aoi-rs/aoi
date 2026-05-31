@@ -24,7 +24,7 @@ async def list(
 
     items, count = await sessions.list(session, context, pagination=pagination)
 
-    return ListResource.from_paginated_results(
+    return ListResource[SessionSchema].from_paginated_results(
         [
             SessionSchema(
                 id=item.id,

@@ -62,7 +62,7 @@ add_exception_handlers(rinku)
 # /healthz
 rinku.include_router(health_router)
 
-# /_
+# /redirect
 # Used temporarily for redirects. The ideal is a dedicated domain later.
 rinku.include_router(redirect_router)
 

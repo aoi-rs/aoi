@@ -1,5 +1,6 @@
-from rinku.kit.schemas import Schema
+from rinku.kit.schemas import Schema, IDSchema
 from typing import Annotated
+from datetime import datetime
 from pydantic import UUID7, AnyUrl, UrlConstraints
 
 DestinationURL = Annotated[
@@ -10,10 +11,11 @@ DestinationURL = Annotated[
 ]
 
 
-class Link(Schema):
+class LinkSchema(IDSchema):
     user_id: UUID7
     slug: str
     destination_url: str
+    created_at: datetime
 
 
 class LinkCreate(Schema):

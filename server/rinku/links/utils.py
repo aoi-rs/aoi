@@ -1,4 +1,6 @@
 from rinku.config import settings
+from uuid import UUID
+from datetime import datetime, UTC
 
 
 def generate_slug(number: int) -> str:
@@ -13,3 +15,7 @@ def generate_slug(number: int) -> str:
         encoded = settings.SLUG_ALPHABET[remainder] + encoded
 
     return encoded
+
+
+def extract_uuid_timestamp(id: UUID) -> datetime:
+    return datetime.fromtimestamp(id.time / 1000, UTC)

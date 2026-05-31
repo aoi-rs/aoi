@@ -1,13 +1,14 @@
+from collections.abc import Sequence
 from fastapi.responses import Response, RedirectResponse
 
-from rinku.links.schemas import Link, DestinationURL
+from rinku.links.schemas import LinkSchema, DestinationURL
+from rinku.links.repository import link_repository
 from rinku.auth.models import RequestContext
 from rinku.links.counter import monotonic_counter
-from rinku.links.utils import generate_slug
-from rinku.integrations.aws.dynamodb.client import dynamodb
+from rinku.links.utils import generate_slug, extract_uuid_timestamp
 from rinku.exceptions import ResourceMissing
-
-link_table = dynamodb.Table("links")
+from rinku.kit.pagination import PaginationParams
+from rinku.kit.utils import generate_uuid
 
 
 class LinkMissing(ResourceMissing):
@@ -16,30 +17,38 @@ class LinkMissing(ResourceMissing):
 
 
 class LinkService:
-    def create(self, context: RequestContext, destination_url: DestinationURL) -> Link:
+    def create(
+        self, context: RequestContext, destination_url: DestinationURL
+    ) -> LinkSchema:
         number = monotonic_counter.increment()
         slug = generate_slug(number)
+        id = generate_uuid()
+        created_at = extract_uuid_timestamp(id)
 
-        link = Link(
-            user_id=context.user.id, slug=slug, destination_url=str(destination_url)
+        link = LinkSchema(
+            id=id,
+            user_id=context.user.id,
+            slug=slug,
+            destination_url=str(destination_url),
+            created_at=created_at,
         )
 
-        link_table.put_item(Item={"s": link.slug, "d": link.destination_url})
+        link_repository.create(link)
 
         return link
 
     def redirect(self, slug: str) -> Response:
-        response = link_table.get_item(Key={"s": slug}, AttributesToGet=["d"])
+        destination_url = link_repository.get_destination_url_by_slug(slug)
 
-        print(response)
-
-        if "Item" not in response:
+        if destination_url is None:
             raise LinkMissing(slug)
 
-        destination_url = str(response["Item"]["d"])
-        redirect_response = RedirectResponse(destination_url, status_code=301)
+        return RedirectResponse(destination_url, status_code=301)
 
-        return redirect_response
+    def list(
+        self, context: RequestContext, pagination: PaginationParams
+    ) -> Sequence[LinkSchema]:
+        return link_repository.paginate(context, limit=pagination.limit)
 
 
 links = LinkService()
