@@ -108,7 +108,7 @@ data "aws_iam_policy_document" "ecs_execution_cloudwatch" {
   }
 }
 
-resource "aws_iam_role_policy" "name" {
+resource "aws_iam_role_policy" "ecs_execution_cloudwatch" {
   role   = aws_iam_role.ecs_execution.id
   policy = data.aws_iam_policy_document.ecs_execution_cloudwatch.json
 }
