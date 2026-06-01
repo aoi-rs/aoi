@@ -136,7 +136,7 @@ resource "aws_iam_role" "ecs_task" {
   assume_role_policy = data.aws_iam_policy_document.ecs_task_assume_role.json
 }
 
-data "aws_iam_policy_document" "dynamodb" {
+data "aws_iam_policy_document" "ecs_task_dynamodb" {
   statement {
     effect = "Allow"
 
@@ -160,7 +160,7 @@ data "aws_iam_policy_document" "dynamodb" {
   }
 }
 
-resource "aws_iam_role_policy" "dynamodb" {
+resource "aws_iam_role_policy" "ecs_task_dynamodb" {
   role   = aws_iam_role.ecs_task.id
-  policy = data.aws_iam_policy_document.dynamodb.json
+  policy = data.aws_iam_policy_document.ecs_task_dynamodb.json
 }
