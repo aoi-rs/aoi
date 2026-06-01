@@ -29,6 +29,7 @@ dev = [
     "ruff>=0.15.14",
     "types-redis>=4.6.0.20241004",
     "boto3-stubs[essential,dynamodb]>=1.43.17",
+    "locust>=2.44.0",
 ]
 
 [tool.taskipy.tasks]
@@ -37,3 +38,4 @@ db_migrate = { cmd = "alembic upgrade head", help = "run alembic upgrade" }
 lint = { cmd = "ruff format --check . && ruff check .", help = "run ruff linter" }
 lint_fix = { cmd = "ruff format . && ruff check --fix .", help = "run ruff linter with autofix" }
 type_check = { cmd = "pyright rinku", help = "run pyright type checker" }
+loadtest = { cmd = "locust -f load_tests/locustfile.py --host=http://127.0.0.1:8000", help = "run load tests" }
