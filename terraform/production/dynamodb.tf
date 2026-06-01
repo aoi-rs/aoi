@@ -44,18 +44,13 @@ resource "aws_dynamodb_table" "links" {
     type = "S"
   }
 
-  attribute {
-    name = "d"
-    type = "S"
-  }
-
   global_secondary_index {
     name               = "user_links"
     projection_type    = "INCLUDE"
     non_key_attributes = ["d"]
 
     key_schema {
-      attribute_name = "s"
+      attribute_name = "u"
       key_type       = "HASH"
     }
 
