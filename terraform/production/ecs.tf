@@ -47,6 +47,15 @@ resource "aws_ecs_task_definition" "service" {
         }
       ]
 
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.service.name
+          awslogs-region        = aws_cloudwatch_log_group.service.region
+          awslogs-stream-prefix = "service"
+        }
+      }
+
       environment = [
         {
           name  = "RINKU_ENV"

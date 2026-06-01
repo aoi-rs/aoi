@@ -100,6 +100,19 @@ resource "aws_iam_role_policy_attachment" "ecs_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+data "aws_iam_policy_document" "ecs_execution_cloudwatch" {
+  statement {
+    effect    = "Allow"
+    actions   = ["logs:CreateLogStream", "logs:PutLogEvents"]
+    resources = ["${aws_cloudwatch_log_group.service.arn}:*"]
+  }
+}
+
+resource "aws_iam_role_policy" "name" {
+  role   = aws_iam_role.ecs_execution.id
+  policy = data.aws_iam_policy_document.ecs_execution_cloudwatch.json
+}
+
 data "aws_iam_policy_document" "github_actions_iam" {
   statement {
     effect    = "Allow"
