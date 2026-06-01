@@ -124,7 +124,7 @@ resource "aws_iam_role_policy" "github_actions_passrole_ecs" {
 data "aws_iam_policy_document" "ecs_task_assume_role" {
   statement {
     effect  = "Allow"
-    actions = "sts:AssumeRole"
+    actions = ["sts:AssumeRole"]
 
     principals {
       type        = "Service"
@@ -135,7 +135,7 @@ data "aws_iam_policy_document" "ecs_task_assume_role" {
 
 resource "aws_iam_role" "ecs_task" {
   name               = "ecs-task"
-  assume_role_policy = data.aws_iam_policy_document.ecs_task_assume_role
+  assume_role_policy = data.aws_iam_policy_document.ecs_task_assume_role.json
 }
 
 data "aws_iam_policy_document" "dynamodb" {
