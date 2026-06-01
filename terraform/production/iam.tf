@@ -1,110 +1,98 @@
 resource "aws_iam_openid_connect_provider" "github" {
-  url = "https://token.actions.githubusercontent.com"
+  url            = "https://token.actions.githubusercontent.com"
+  client_id_list = ["sts.amazonaws.com"]
+}
 
-  client_id_list = [
-    "sts.amazonaws.com"
-  ]
+data "aws_iam_policy_document" "github_actions_assume_role" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
+    principals {
+      type        = "Federated"
+      identifiers = [aws_iam_openid_connect_provider.github.arn]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "token.actions.githubusercontent.com:aud"
+      values   = ["sts.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringLike"
+      variable = "token.actions.githubusercontent.com:sub"
+      values   = ["repo:rinku-sh/rinku:*"]
+    }
+  }
 }
 
 resource "aws_iam_role" "github_actions" {
-  name = "github-actions"
+  name               = "github-actions"
+  assume_role_policy = data.aws_iam_policy_document.github_actions_assume_role.json
+}
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
+data "aws_iam_policy_document" "github_actions_ecr" {
+  statement {
+    effect = "Allow"
 
-    Statement = [
-      {
-        Effect = "Allow"
-
-        Principal = {
-          Federated = aws_iam_openid_connect_provider.github.arn
-        }
-
-        Action = "sts:AssumeRoleWithWebIdentity"
-
-        Condition = {
-          StringEquals = {
-            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          }
-
-          StringLike = {
-            "token.actions.githubusercontent.com:sub" = "repo:rinku-sh/rinku:*"
-          }
-        }
-      }
+    actions = [
+      "ecr:GetAuthorizationToken",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:CompleteLayerUpload",
+      "ecr:InitiateLayerUpload",
+      "ecr:PutImage",
+      "ecr:UploadLayerPart",
+      "ecr:BatchGetImage"
     ]
-  })
+
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "github_actions_ecr" {
-  role = aws_iam_role.github_actions.id
+  role   = aws_iam_role.github_actions.id
+  policy = data.aws_iam_policy_document.github_actions_ecr.json
+}
 
-  policy = jsonencode({
-    Version = "2012-10-17"
+data "aws_iam_policy_document" "github_actions_ecs" {
+  statement {
+    effect = "Allow"
 
-    Statement = [
-      {
-        Effect = "Allow"
-
-        Action = [
-          "ecr:GetAuthorizationToken",
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:CompleteLayerUpload",
-          "ecr:InitiateLayerUpload",
-          "ecr:PutImage",
-          "ecr:UploadLayerPart",
-          "ecr:BatchGetImage"
-        ]
-
-        Resource = "*"
-      }
+    actions = [
+      "ecs:RunTask",
+      "ecs:RegisterTaskDefinition",
+      "ecs:UpdateService",
+      "ecs:DescribeServices",
+      "ecs:DescribeTaskDefinition",
+      "ecs:DescribeTasks",
+      "ecs:ListTasks"
     ]
-  })
+
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "github_actions_ecs" {
-  role = aws_iam_role.github_actions.id
+  role   = aws_iam_role.github_actions.id
+  policy = data.aws_iam_policy_document.github_actions_ecs.json
+}
 
-  policy = jsonencode({
-    Version = "2012-10-17"
+data "aws_iam_policy_document" "ecs_execution_assume_role" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
 
-    Statement = [
-      {
-        Effect = "Allow"
-
-        Action = [
-          "ecs:RunTask",
-          "ecs:RegisterTaskDefinition",
-          "ecs:UpdateService",
-          "ecs:DescribeServices",
-          "ecs:DescribeTaskDefinition",
-          "ecs:DescribeTasks",
-          "ecs:ListTasks"
-        ]
-
-        Resource = "*"
-      }
-    ]
-  })
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
 }
 
 resource "aws_iam_role" "ecs_execution" {
-  name = "ecs-execution"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-
-        Principal = {
-          Service = "ecs-tasks.amazonaws.com"
-        }
-      }
-    ]
-  })
+  name               = "ecs-execution"
+  assume_role_policy = data.aws_iam_policy_document.ecs_execution_assume_role.json
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_execution" {
@@ -131,4 +119,50 @@ resource "aws_iam_role_policy" "github_actions_passrole_ecs" {
       }
     ]
   })
+}
+
+data "aws_iam_policy_document" "ecs_task_assume_role" {
+  statement {
+    effect  = "Allow"
+    actions = "sts:AssumeRole"
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.ecs"]
+    }
+  }
+}
+
+resource "aws_iam_role" "ecs_task" {
+  name               = "ecs-task"
+  assume_role_policy = data.aws_iam_policy_document.ecs_task_assume_role
+}
+
+data "aws_iam_policy_document" "dynamodb" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
+      "dynamodb:GetItem",
+      "dynamodb:Query"
+    ]
+
+    resources = [
+      aws_dynamodb_table.links.arn,
+      "${aws_dynamodb_table.links.arn}/index/*"
+    ]
+  }
+
+  statement {
+    effect    = "Allow"
+    actions   = ["dynamodb:UpdateItem"]
+    resources = [aws_dynamodb_table.counters.arn]
+  }
+}
+
+resource "aws_iam_role_policy" "dynamodb" {
+  role   = aws_iam_role.ecs_task.id
+  policy = data.aws_iam_policy_document.dynamodb.json
 }
