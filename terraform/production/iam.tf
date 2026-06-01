@@ -100,25 +100,23 @@ resource "aws_iam_role_policy_attachment" "ecs_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-resource "aws_iam_role_policy" "github_actions_passrole_ecs" {
-  role = aws_iam_role.github_actions.id
+data "aws_iam_policy_document" "github_actions_iam" {
+  statement {
+    effect    = "Allow"
+    actions   = ["iam:PassRole"]
+    resources = [aws_iam_role.ecs_execution.arn]
 
-  policy = jsonencode({
-    Version = "2012-10-17"
+    condition {
+      test     = "StringEquals"
+      variable = "iam:PassedToService"
+      values   = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
 
-    Statement = [
-      {
-        Effect   = "Allow"
-        Action   = "iam:PassRole"
-        Resource = aws_iam_role.ecs_execution.arn
-        Condition = {
-          StringEquals = {
-            "iam:PassedToService" = "ecs-tasks.amazonaws.com"
-          }
-        }
-      }
-    ]
-  })
+resource "aws_iam_role_policy" "github_actions_iam" {
+  role   = aws_iam_role.github_actions.id
+  policy = data.aws_iam_policy_document.github_actions_iam.json
 }
 
 data "aws_iam_policy_document" "ecs_task_assume_role" {
