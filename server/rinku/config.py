@@ -7,6 +7,8 @@ from typing import Literal
 from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from rinku.enums import EmailSender
+
 
 class Environment(StrEnum):
     development = "development"
@@ -50,6 +52,18 @@ class Settings(BaseSettings):
     REDIS_HOST: str = "127.0.0.1"
     REDIS_PORT: int = 6379
     REDIS_DB: int = 0
+
+    # Emails
+    EMAIL_SENDER: EmailSender = EmailSender.logger
+    EMAIL_FROM_NAME: str = "Rinku"
+    EMAIL_FROM_DOMAIN: str = "notifications.rinku.sh"
+    EMAIL_FROM_LOCAL: str = "mail"
+    EMAIL_DEFAULT_REPLY_TO_NAME: str = "Rinku Support"
+    EMAIL_DEFAULT_REPLY_TO_EMAIL_ADDRESS: str = "support@rinku.sh"
+
+    # Resend
+    RESEND_API_KEY: str = ""
+    RESEND_API_BASE_URL: str = "https://api.resend.com"
 
     # Login tokens
     LOGIN_TOKEN_LENGTH: int = 6

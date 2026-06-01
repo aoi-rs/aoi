@@ -16,6 +16,7 @@ from rinku.exceptions import RinkuError
 from rinku.users.service import users
 from rinku.sessions.service import sessions
 from rinku.kit.crypto import RefreshToken
+from rinku.email.sender import email_sender
 from rinku.auth.service import auth
 
 
@@ -32,9 +33,13 @@ class LoginTokenService:
         session.add(login_token)
         await session.flush()
 
-        print(login_token, token)
-
-        # TODO: send email
+        # TODO: delegate it to a message queue instead of sending emails
+        # during HTTP requests.
+        await email_sender.send(
+            to_email_addr=login_token.email,
+            subject="Login to Rinku",
+            html_content=f"Your one-time code is {token}",
+        )
 
     async def check(
         self,
