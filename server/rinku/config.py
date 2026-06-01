@@ -76,8 +76,8 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str = ""
 
     # AWS (DynamoDB)
-    AWS_ACCESS_KEY_ID: str = "rinku"
-    AWS_SECRET_ACCESS_KEY: str = "secret"
+    AWS_ACCESS_KEY_ID: str | None = None
+    AWS_SECRET_ACCESS_KEY: str | None = None
     AWS_REGION: str = "us-east-1"
 
     # DynamoDB
