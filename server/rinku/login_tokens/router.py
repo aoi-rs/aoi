@@ -11,7 +11,7 @@ router = APIRouter(prefix="/login_tokens")
 
 
 @router.post("/request", status_code=202)
-async def request_login_token(
+async def request(
     request: LoginTokenRequest, session: AsyncSession = Depends(get_db_session)
 ):
     """
@@ -22,7 +22,7 @@ async def request_login_token(
 
 
 @router.post("/check")
-async def check_login_token(
+async def check(
     request: Request,
     return_to: ReturnTo,
     data: LoginTokenCheck,
@@ -36,7 +36,6 @@ async def check_login_token(
         session,
         request,
         return_to=return_to,
-        login_token_id=data.login_token_id,
         email=data.email,
         token=data.token,
     )

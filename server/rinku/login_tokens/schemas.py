@@ -1,5 +1,5 @@
 from rinku.kit.schemas import Schema
-from pydantic import EmailStr, UUID7
+from pydantic import EmailStr
 
 
 class LoginTokenRequest(Schema):
@@ -7,6 +7,5 @@ class LoginTokenRequest(Schema):
 
 
 class LoginTokenCheck(Schema):
-    login_token_id: UUID7
     email: EmailStr
     token: str
