@@ -18,18 +18,10 @@ resource "tfe_variable" "service_secret_production" {
   sensitive       = true
 }
 
-resource "tfe_variable" "aws_access_key_id_production" {
+resource "tfe_variable" "service_resend_api_key_production" {
   variable_set_id = tfe_variable_set.production.id
-  key             = "aws_access_key_id_production"
+  key             = "service_resend_api_key_production"
   category        = "terraform"
-  description     = "AWS Access Key ID for production"
-  sensitive       = true
-}
-
-resource "tfe_variable" "aws_secret_access_key_production" {
-  variable_set_id = tfe_variable_set.production.id
-  key             = "aws_secret_access_key_production"
-  category        = "terraform"
-  description     = "AWS Secret Access Key for production"
+  description     = "Resend API Key for production"
   sensitive       = true
 }
