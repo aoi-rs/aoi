@@ -104,7 +104,7 @@ data "aws_iam_policy_document" "github_actions_iam" {
   statement {
     effect    = "Allow"
     actions   = ["iam:PassRole"]
-    resources = [aws_iam_role.ecs_execution.arn]
+    resources = [aws_iam_role.ecs_execution.arn, aws_iam_role.ecs_task.arn]
 
     condition {
       test     = "StringEquals"
