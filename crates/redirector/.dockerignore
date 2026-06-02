@@ -1,0 +1,13 @@
+# build
+target/
+
+# environment variable files
+.env
+.env.*
+
+# git
+.gitignore
+
+# docker
+Dockerfile
+.dockerignore
