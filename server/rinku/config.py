@@ -23,6 +23,7 @@ if env == Environment.test:
 else:
     env_file = ".env"
 
+
 class Settings(BaseSettings):
     ENV: Environment = Environment.development
     SECRET: str = "secret"
