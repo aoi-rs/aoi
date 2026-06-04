@@ -69,7 +69,7 @@ async def get_db_session(request: Request) -> AsyncGenerator[AsyncSession]:
     except AttributeError as e:
         raise RuntimeError(
             "Session is not present in the request state. "
-            "You might have forgotten to add DBSessionMiddleware"
+            "You might have forgotten to add AsyncSessionMiddleware"
         ) from e
 
     try:

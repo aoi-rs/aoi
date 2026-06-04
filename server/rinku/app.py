@@ -4,18 +4,18 @@ from fastapi import FastAPI
 from typing import TypedDict
 from collections.abc import AsyncIterator
 
-from rinku.kit.db.postgres import (
-    AsyncEngine,
-    AsyncSessionMaker,
-    create_async_sessionmaker,
-)
 from rinku.postgres import AsyncSessionMiddleware, create_async_engine
 from rinku.redis import Redis, create_redis
 from rinku.router import router
 from rinku.health.router import router as health_router
 from rinku.links.router import redirect_router
 from rinku.exception_handlers import add_exception_handlers
-from rinku.auth.middlewares import RequestContextMiddleware
+
+from rinku.kit.db.postgres import (
+    AsyncEngine,
+    AsyncSessionMaker,
+    create_async_sessionmaker,
+)
 
 
 class State(TypedDict):
@@ -54,7 +54,6 @@ async def lifespan(app: FastAPI) -> AsyncIterator[State]:
 
 rinku = FastAPI(lifespan=lifespan)
 
-rinku.add_middleware(RequestContextMiddleware)
 rinku.add_middleware(AsyncSessionMiddleware)
 
 add_exception_handlers(rinku)

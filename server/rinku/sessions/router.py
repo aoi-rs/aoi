@@ -5,9 +5,9 @@ from rinku.kit.pagination import ListResource, PaginationParamsQuery
 from rinku.exceptions import ResourceMissing
 from rinku.postgres import AsyncSession, get_db_session
 from rinku.sessions.schemas import SessionSchema, SessionRefresh
-from rinku.auth.models import RequestContext
-from rinku.auth.middlewares import authenticate_request
+from rinku.sessions.auth import SessionsRead, SessionsWrite
 from rinku.sessions.service import sessions
+from rinku.auth.models import is_user_session
 
 router = APIRouter(prefix="/sessions")
 
@@ -15,14 +15,14 @@ router = APIRouter(prefix="/sessions")
 @router.get("/", summary="List Sessions", response_model=ListResource[SessionSchema])
 async def list(
     pagination: PaginationParamsQuery,
-    context: RequestContext = Depends(authenticate_request),
+    auth_context: SessionsRead,
     session: AsyncSession = Depends(get_db_session),
 ) -> ListResource[SessionSchema]:
     """
     Lists the currently active sessions.
     """
 
-    items, count = await sessions.list(session, context, pagination=pagination)
+    items, count = await sessions.list(session, auth_context, pagination=pagination)
 
     return ListResource[SessionSchema].from_paginated_results(
         [
@@ -32,7 +32,9 @@ async def list(
                 user_agent=item.user_agent,
                 refreshed_at=item.refreshed_at,
                 revoked=item.revoked,
-                is_current_session=item.id == context.session.id,
+                is_current_session=item.id == auth_context.session.id
+                if is_user_session(auth_context.session)
+                else False,
                 created_at=item.created_at,
                 modified_at=item.modified_at,
             )
@@ -50,19 +52,19 @@ async def list(
 )
 async def revoke(
     id: UUID7,
+    auth_context: SessionsWrite,
     session: AsyncSession = Depends(get_db_session),
-    context: RequestContext = Depends(authenticate_request),
 ):
     """
     Revokes a session.
     """
 
-    user_session = await sessions.get(session, context, id)
+    user_session = await sessions.get(session, auth_context, id)
 
     if user_session is None:
         raise ResourceMissing(message=f"The session '{id}' could not be found")
 
-    await sessions.revoke(session, context, user_session)
+    await sessions.revoke(session, user_session)
 
 
 @router.post(

@@ -1,9 +1,11 @@
-from rinku.kit.repository import RepositoryBase
+from uuid import UUID
+
+from rinku.kit.repository import RepositoryBase, RepositoryIDMixin
 from rinku.models import User, OAuthAccount
 from rinku.models.user import OAuthPlatform
 
 
-class UserRepository(RepositoryBase[User]):
+class UserRepository(RepositoryBase[User], RepositoryIDMixin[User, UUID]):
     model = User
 
     async def get_by_email(self, email: str) -> User | None:

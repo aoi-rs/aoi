@@ -15,7 +15,7 @@ from rinku.models import LoginToken
 from rinku.exceptions import RinkuError
 from rinku.users.service import users
 from rinku.sessions.service import sessions
-from rinku.kit.crypto import RefreshToken
+from rinku.kit.refresh_tokens import RefreshToken
 from rinku.email.sender import email_sender
 from rinku.auth.service import auth
 from rinku.login_tokens.repository import LoginTokenRepository

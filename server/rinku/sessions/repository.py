@@ -2,14 +2,14 @@ from sqlalchemy import Select
 from uuid import UUID
 
 from rinku.kit.repository import RepositoryBase, Options
-from rinku.auth.models import RequestContext
+from rinku.auth.models import AuthContext
 from rinku.models import Session
 
 
 class SessionRepository(RepositoryBase[Session]):
     model = Session
 
-    def get_readable_statement(self, context: RequestContext) -> Select[tuple[Session]]:
+    def get_readable_statement(self, context: AuthContext) -> Select[tuple[Session]]:
         statement = self.get_base_statement().where(Session.user_id == context.user.id)
         return statement
 

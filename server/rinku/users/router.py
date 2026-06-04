@@ -1,19 +1,24 @@
 from fastapi import APIRouter, Depends
 
 from rinku.users.schemas import UserSchema
-from rinku.models import User
-from rinku.auth.models import RequestContext
-from rinku.auth.middlewares import authenticate_request
+from rinku.users.auth import UserRead
+from rinku.users.service import users
+from rinku.postgres import AsyncSession, get_db_session
 
 router = APIRouter()
 
 
 @router.get("/user", response_model=UserSchema)
 async def authenticated_user(
-    context: RequestContext = Depends(authenticate_request),
-) -> User:
+    auth_context: UserRead, session: AsyncSession = Depends(get_db_session)
+) -> UserSchema:
     """
     Gets the authenticated user.
     """
 
-    return context.user
+    user = await users.get(session, auth_context.user.id)
+
+    if not user:
+        raise
+
+    return UserSchema.model_validate(user)

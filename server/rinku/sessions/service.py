@@ -16,13 +16,13 @@ from rinku.kit.pagination import PaginationParams
 from rinku.kit.utils import utc_now
 from rinku.models import Session, User
 from rinku.config import settings
-from rinku.auth.models import RequestContext
+from rinku.auth.models import AuthContext
 from rinku.sessions.repository import SessionRepository
 from rinku.sessions.schemas import SessionRefresh
 from rinku.exceptions import ResourceMissing, RinkuError
 from rinku.auth.service import auth as auth_service
 
-from rinku.kit.crypto import (
+from rinku.kit.refresh_tokens import (
     RefreshToken,
     parse_refresh_token,
     RefreshTokenParseError,
@@ -60,12 +60,13 @@ class SessionService:
     async def list(
         self,
         session: AsyncSession,
-        context: RequestContext,
+        auth_context: AuthContext,
         pagination: PaginationParams,
     ) -> tuple[Sequence[Session], int]:
         repository = SessionRepository.from_session(session)
+
         statement = select(Session).where(
-            Session.user_id == context.user.id, Session.revoked.is_(False)
+            Session.user_id == auth_context.user.id, Session.revoked.is_(False)
         )
 
         items, count = await repository.paginate(statement, limit=pagination.limit)
@@ -73,16 +74,16 @@ class SessionService:
         return items, count
 
     async def get(
-        self, session: AsyncSession, context: RequestContext, id: uuid.UUID
+        self, session: AsyncSession, auth_context: AuthContext, id: uuid.UUID
     ) -> Session | None:
         repository = SessionRepository.from_session(session)
-        statement = repository.get_readable_statement(context).where(Session.id == id)
+        statement = repository.get_readable_statement(auth_context).where(
+            Session.id == id
+        )
 
         return await repository.get_one_or_none(statement)
 
-    async def revoke(
-        self, session: AsyncSession, context: RequestContext, user_session: Session
-    ) -> Session:
+    async def revoke(self, session: AsyncSession, user_session: Session) -> Session:
         repository = SessionRepository.from_session(session)
         return await repository.update(user_session, update_dict={"revoked": True})
 

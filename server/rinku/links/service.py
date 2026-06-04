@@ -3,7 +3,7 @@ from fastapi.responses import Response, RedirectResponse
 
 from rinku.links.schemas import LinkSchema, DestinationURL
 from rinku.links.repository import link_repository
-from rinku.auth.models import RequestContext
+from rinku.auth.models import AuthContext
 from rinku.links.counter import monotonic_counter
 from rinku.links.utils import generate_slug, extract_uuid_timestamp
 from rinku.exceptions import ResourceMissing
@@ -18,7 +18,7 @@ class LinkMissing(ResourceMissing):
 
 class LinkService:
     def create(
-        self, context: RequestContext, destination_url: DestinationURL
+        self, auth_context: AuthContext, destination_url: DestinationURL
     ) -> LinkSchema:
         number = monotonic_counter.increment()
         slug = generate_slug(number)
@@ -27,7 +27,7 @@ class LinkService:
 
         link = LinkSchema(
             id=id,
-            user_id=context.user.id,
+            user_id=auth_context.user.id,
             slug=slug,
             destination_url=str(destination_url),
             created_at=created_at,
@@ -46,7 +46,7 @@ class LinkService:
         return RedirectResponse(destination_url, status_code=301)
 
     def list(
-        self, context: RequestContext, pagination: PaginationParams
+        self, context: AuthContext, pagination: PaginationParams
     ) -> Sequence[LinkSchema]:
         return link_repository.paginate(context, limit=pagination.limit)
 

@@ -1,3 +1,3 @@
-from .base import RepositoryBase, Options
+from .base import Options, RepositoryBase, RepositoryIDMixin
 
-__all__ = ["RepositoryBase", "Options"]
+__all__ = ["Options", "RepositoryBase", "RepositoryIDMixin"]

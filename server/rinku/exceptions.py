@@ -9,10 +9,12 @@ class RinkuError(Exception):
         self,
         message: str,
         status_code: int = 500,
+        headers: dict[str, str] | None = None,
     ):
         super().__init__(message)
         self.message = message
         self.status_code = status_code
+        self.headers = headers
 
     @classmethod
     def schema(cls) -> type[BaseModel]:
@@ -36,19 +38,41 @@ class Unauthorized(RinkuError):
     def __init__(
         self, message: str = "Requires authentication", status_code: int = 401
     ):
-        super().__init__(message, status_code=status_code)
+        super().__init__(
+            message,
+            status_code,
+        )
+
+
+class Forbidden(RinkuError):
+    def __init__(
+        self,
+        message: str = "Forbidden",
+        status_code: int = 403,
+    ):
+        super().__init__(message, status_code)
 
 
 class ResourceMissing(RinkuError):
     def __init__(
         self, message: str = "This resource could not be found", status_code: int = 404
     ):
-        super().__init__(message, status_code=status_code)
+        super().__init__(message, status_code)
 
 
 class RinkuRedirectionError(RinkuError):
+    """
+    Exception class for errors
+    that should be displayed nicely to the user through our UI.
+
+    A specific exception handler will redirect to `/error` page in the website.
+
+    Args:
+        return_to: Target URL of the *Go back* button on the error page.
+    """
+
     def __init__(
         self, message: str, status_code: int = 400, return_to: str | None = None
     ):
         self.return_to = return_to
-        super().__init__(message, status_code=status_code)
+        super().__init__(message, status_code)

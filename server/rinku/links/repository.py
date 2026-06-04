@@ -5,7 +5,7 @@ from boto3.dynamodb.conditions import Key
 from rinku.links.schemas import LinkSchema
 from rinku.links.utils import extract_uuid_timestamp
 from rinku.integrations.aws.dynamodb.client import dynamodb
-from rinku.auth.models import RequestContext
+from rinku.auth.models import AuthContext
 
 table = dynamodb.Table("links")
 
@@ -14,10 +14,10 @@ class LinkRepository:
     def create(self, schema: LinkSchema):
         table.put_item(Item=self._encode(schema))
 
-    def paginate(self, context: RequestContext, *, limit: int) -> list[LinkSchema]:
+    def paginate(self, auth_context: AuthContext, *, limit: int) -> list[LinkSchema]:
         response = table.query(
             IndexName="user_links",
-            KeyConditionExpression=Key("u").eq(context.user.id.bytes),
+            KeyConditionExpression=Key("u").eq(auth_context.user.id.bytes),
             ScanIndexForward=False,
             Limit=limit,
         )

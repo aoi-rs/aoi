@@ -1,14 +1,15 @@
-import jwt
-
 from fastapi import Request, Response
 from fastapi.responses import RedirectResponse
 from datetime import datetime, timedelta
 from typing import TypeVar
+from uuid import UUID
+from jwt import encode, decode, DecodeError
 
 from rinku.models import User, Session
 from rinku.kit.utils import utc_now
 from rinku.kit.http import get_safe_return_url
 from rinku.config import settings
+from rinku.auth.models import SessionRef
 
 R = TypeVar("R", bound=Response)
 
@@ -26,7 +27,7 @@ class AuthService:
     ) -> Response:
         expires_at = utc_now() + timedelta(hours=1)
 
-        access_token = jwt.encode(
+        access_token = encode(
             {
                 "sub": str(user.id),
                 "session_id": str(user_session.id),
@@ -81,6 +82,22 @@ class AuthService:
         )
 
         return response
+
+    def authenticate(self, request: Request) -> SessionRef | None:
+        token = request.cookies.get(settings.ACCESS_TOKEN_COOKIE_KEY)
+
+        if token is None:
+            return None
+
+        try:
+            claims = decode(token, settings.JWT_PRIVATE_KEY, algorithms=["HS256"])
+        except DecodeError:
+            return None
+
+        user_id = UUID(claims["sub"])
+        session_id = UUID(claims["session_id"])
+
+        return SessionRef(session_id, user_id)
 
 
 auth = AuthService()

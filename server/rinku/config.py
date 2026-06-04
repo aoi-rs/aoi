@@ -23,9 +23,6 @@ if env == Environment.test:
 else:
     env_file = ".env"
 
-file_extension = ".exe" if os.name == "nt" else ""
-
-
 class Settings(BaseSettings):
     ENV: Environment = Environment.development
     SECRET: str = "secret"
