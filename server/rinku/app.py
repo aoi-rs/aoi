@@ -20,19 +20,33 @@ from rinku.kit.db.postgres import (
     create_async_sessionmaker,
 )
 
+
 def configure_cors(app: FastAPI):
     configs: list[CORSConfig] = []
 
     # Asahi frontend CORS configuration
     if settings.CORS_ORIGINS:
+
         def asahi_frontend_matcher(origin: str, scope: Scope) -> bool:
             return origin in settings.CORS_ORIGINS
 
-        asahi_frontend_config = CORSConfig(asahi_frontend_matcher, allow_origins=[str(origin) for origin in settings.CORS_ORIGINS], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+        asahi_frontend_config = CORSConfig(
+            asahi_frontend_matcher,
+            allow_origins=[str(origin) for origin in settings.CORS_ORIGINS],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
 
         configs.append(asahi_frontend_config)
 
-    service_config = CORSConfig(lambda origin, scope: True, allow_origins=["*"], allow_credentials=False, allow_methods=["*"], allow_headers=["Authorization"])
+    service_config = CORSConfig(
+        lambda origin, scope: True,
+        allow_origins=["*"],
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["Authorization"],
+    )
 
     configs.append(service_config)
 
@@ -45,6 +59,7 @@ class State(TypedDict):
     async_read_engine: AsyncEngine
     async_read_sessionmaker: AsyncSessionMaker
     redis: Redis
+
 
 @contextlib.asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[State]:
