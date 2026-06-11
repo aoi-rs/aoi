@@ -33,7 +33,7 @@ dev = [
 ]
 
 [tool.taskipy.tasks]
-service = { cmd = "uvicorn rinku.app:rinku --reload --host 127.0.0.1 --port 8000", help = "run service" }
+service = { cmd = "uvicorn rinku.app:app --reload --host 127.0.0.1 --port 8000", help = "run service" }
 db_migrate = { cmd = "alembic upgrade head", help = "run alembic upgrade" }
 lint = { cmd = "ruff format --check . && ruff check .", help = "run ruff linter" }
 lint_fix = { cmd = "ruff format . && ruff check --fix .", help = "run ruff linter with autofix" }

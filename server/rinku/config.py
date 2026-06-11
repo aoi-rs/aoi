@@ -51,6 +51,9 @@ class Settings(BaseSettings):
     REDIS_PORT: int = 6379
     REDIS_DB: int = 0
 
+    # CORS
+    CORS_ORIGINS: list[str] = []
+
     # Emails
     EMAIL_SENDER: EmailSender = EmailSender.logger
     EMAIL_FROM_NAME: str = "Rinku"
