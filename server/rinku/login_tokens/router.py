@@ -1,7 +1,8 @@
-from fastapi import Depends, Request
+from fastapi import Depends, Request, Form
 from fastapi.routing import APIRouter
+from pydantic import EmailStr
 
-from rinku.login_tokens.schemas import LoginTokenRequest, LoginTokenCheck
+from rinku.login_tokens.schemas import LoginTokenRequest
 from rinku.postgres import get_db_session
 from rinku.kit.db.postgres import AsyncSession
 from rinku.kit.http import ReturnTo
@@ -25,7 +26,8 @@ async def request(
 async def check(
     request: Request,
     return_to: ReturnTo,
-    data: LoginTokenCheck,
+    email: EmailStr,
+    token: str = Form(),
     session: AsyncSession = Depends(get_db_session),
 ):
     """
@@ -36,6 +38,6 @@ async def check(
         session,
         request,
         return_to=return_to,
-        email=data.email,
-        token=data.token,
+        email=email,
+        token=token,
     )

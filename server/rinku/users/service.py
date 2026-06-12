@@ -1,7 +1,9 @@
 from uuid import UUID
+from sqlalchemy import update
 
 from rinku.models import User
 from rinku.kit.db.postgres import AsyncSession
+from rinku.users.schemas import UserUpdate
 from rinku.users.repository import UserRepository
 
 
@@ -26,6 +28,19 @@ class UserService:
 
         session.add(user)
         await session.flush()
+
+        return user
+
+    async def update(self, id: UUID, session: AsyncSession, update_schema: UserUpdate):
+        statement = (
+            update(User)
+            .where(User.id == id)
+            .values(**update_schema.model_dump(exclude_unset=True))
+            .returning(User)
+        )
+
+        result = await session.execute(statement)
+        user = result.scalar_one()
 
         return user
 

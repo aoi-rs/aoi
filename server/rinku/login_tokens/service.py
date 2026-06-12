@@ -2,6 +2,7 @@ import secrets
 import string
 import hmac
 import hashlib
+import structlog
 
 from datetime import timedelta
 from fastapi import Request
@@ -19,6 +20,8 @@ from rinku.kit.refresh_tokens import RefreshToken
 from rinku.email.sender import email_sender
 from rinku.auth.service import auth
 from rinku.login_tokens.repository import LoginTokenRepository
+
+logger = structlog.get_logger()
 
 
 class LoginTokenInvalidOrExpired(RinkuError):
@@ -46,6 +49,9 @@ class LoginTokenService:
             subject="Login to Rinku",
             html_content=f"Your one-time code is {token}",
         )
+
+        if settings.is_development():
+            logger.info(f"🔑 LOGIN TOKEN GENERATED: {token}")
 
     async def check(
         self,

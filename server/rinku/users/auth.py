@@ -13,3 +13,7 @@ UserRead = Annotated[
         )
     ),
 ]
+
+UserWrite = Annotated[
+    AuthContext, Depends(Authenticator(required_permissions={Permission.user_write}))
+]

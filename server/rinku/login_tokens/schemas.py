@@ -4,8 +4,3 @@ from pydantic import EmailStr
 
 class LoginTokenRequest(Schema):
     email: EmailStr
-
-
-class LoginTokenCheck(Schema):
-    email: EmailStr
-    token: str
