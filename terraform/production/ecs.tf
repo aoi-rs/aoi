@@ -18,13 +18,18 @@ locals {
   service_task_definition_id             = "asahi"
   service_task_definition_container_name = "asahi"
 
-  redirector_task_definition_id = "asahi-redirector"
+  redirector_task_definition_id             = "asahi-redirector"
   redirector_task_definition_container_name = "asahi-redirector"
 }
 
 // data "aws_ecs_container_definition" "service" {
 //   task_definition = local.service_task_definition_id
 //   container_name  = local.service_task_definition_container_name
+// }
+
+// data "aws_ecs_container_definition" "redirector" {
+//   task_definition = local.redirector_task_definition_id
+//   container_name  = local.redirector_task_definition_container_name
 // }
 
 resource "aws_ecs_task_definition" "service" {
@@ -109,6 +114,39 @@ resource "aws_ecs_task_definition" "service" {
   ])
 }
 
+resource "aws_ecs_task_definition" "redirector" {
+  family                   = "asahi-redirector"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = 256
+  memory                   = 512
+  execution_role_arn       = aws_iam_role.ecs_execution.arn
+  task_role_arn            = aws_iam_role.ecs_task.arn
+  track_latest             = true
+
+  container_definitions = jsonencode({
+    name      = "asahi-redirector"
+    image     = "public.ecr.aws/ecs-sample-image/amazon-ecs-sample:latest"
+    essential = true
+
+    portMappings = [
+      {
+        containerPort = 3000
+        hostPort      = 3000
+      }
+    ]
+
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        awslogs-group         = aws_cloudwatch_log_group.service.name
+        awslogs-region        = aws_cloudwatch_log_group.service.region
+        awslogs-stream-prefix = "asahi-redirector"
+      }
+    }
+  })
+}
+
 resource "aws_ecs_service" "service" {
   name            = "asahi"
   cluster         = aws_ecs_cluster.main.id
@@ -133,5 +171,33 @@ resource "aws_ecs_service" "service" {
     target_group_arn = aws_alb_target_group.service.arn
     container_name   = "asahi"
     container_port   = 10000
+  }
+}
+
+resource "aws_ecs_service" "redirector" {
+  name = "asahi-redirector"
+
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.service.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    assign_public_ip = true
+
+    subnets = [
+      aws_subnet.public_a.id,
+      aws_subnet.public_b.id
+    ]
+
+    security_groups = [
+      aws_security_group.ecs.id
+    ]
+  }
+
+  load_balancer {
+    target_group_arn = aws_alb_target_group.service.arn
+    container_name   = "asahi-redirector"
+    container_port   = 3000
   }
 }
