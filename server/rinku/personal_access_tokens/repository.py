@@ -33,5 +33,4 @@ class PersonalAccessTokenRepository(
 
     async def get_by_token_hash(self, token_hash: str) -> PersonalAccessToken | None:
         statement = self.get_base_statement().where(self.model.token_hash == token_hash)
-
         return await self.get_one_or_none(statement)

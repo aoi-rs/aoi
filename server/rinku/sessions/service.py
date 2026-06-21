@@ -87,6 +87,17 @@ class SessionService:
         repository = SessionRepository.from_session(session)
         return await repository.update(user_session, update_dict={"revoked": True})
 
+    async def revoke_others(self, session: AsyncSession, auth_context: AuthContext):
+        repository = SessionRepository.from_session(session)
+
+        return await repository.revoke_user_sessions(
+            auth_context.user.id, exclude_session_id=auth_context.session.id
+        )
+
+    async def revoke_current(self, session: AsyncSession, auth_context: AuthContext):
+        repository = SessionRepository.from_session(session)
+        return await repository.revoke(auth_context.session.id)
+
     async def create(
         self, request: Request, session: AsyncSession, user: User
     ) -> tuple[Session, bytes]:

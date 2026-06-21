@@ -14,7 +14,6 @@ That's it. Just a fast service designed to do one thing well: shorten links and 
 ### Functional Requirements 
 
 - Users should be able to login via email code / magic link
-- Users should be able to login with Google
 - Users should be able to get their profile, including email and an optional name 
 - Users should be able to manage their account sessions, including list their sessions and revoke sessions 
 - Users should be able to create short URLs scoped at their account-level 

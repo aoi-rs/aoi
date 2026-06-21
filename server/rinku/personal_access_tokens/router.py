@@ -33,6 +33,22 @@ async def list(
     )
 
 
+@router.get("/{id}", response_model=PersonalAccessTokenSchema)
+async def get(
+    id: UUID7,
+    auth_context: PersonalAccessTokensRead,
+    session: AsyncSession = Depends(get_db_session),
+) -> PersonalAccessTokenSchema:
+    personal_access_token = await personal_access_tokens.get(session, auth_context, id)
+
+    if personal_access_token is None:
+        raise ResourceMissing(
+            message=f"The personal access token '{id}' could not be found"
+        )
+
+    return PersonalAccessTokenSchema.model_validate(personal_access_token)
+
+
 @router.post("/", response_model=PersonalAccessTokenCreateResponse, status_code=201)
 async def create(
     personal_access_token_create: PersonalAccessTokenCreate,
@@ -70,7 +86,7 @@ async def update(
 
 
 @router.delete(
-    "/{id}/revoke",
+    "/{id}",
     summary="Revoke personal access token",
     status_code=204,
     responses={204: {"description": "Personal access token revoked."}},

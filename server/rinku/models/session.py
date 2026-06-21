@@ -2,6 +2,8 @@ from datetime import datetime
 from uuid import UUID
 from sqlalchemy import Text, Boolean, TIMESTAMP, Uuid, ForeignKey, BIGINT
 from sqlalchemy.orm import Mapped, mapped_column, relationship, declared_attr
+from functools import cached_property
+from ua_parser import parse
 
 from rinku.kit.db.models import RecordModel
 from rinku.models import User
@@ -27,3 +29,12 @@ class Session(RecordModel):
     @declared_attr
     def user(cls) -> Mapped[User]:
         return relationship(User, lazy="joined")
+
+    @cached_property
+    def name(self) -> str:
+        ua = parse(self.user_agent)
+
+        browser = ua.user_agent.family if ua.user_agent else "Unknown browser"
+        os = ua.os.family if ua.os else "unknown OS"
+
+        return f"{browser} on {os}"

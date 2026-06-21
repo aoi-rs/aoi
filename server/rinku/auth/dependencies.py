@@ -1,5 +1,6 @@
 from fastapi import Request, Depends
 from fastapi.security.utils import get_authorization_scheme_param
+from typing import Annotated
 
 from rinku.exceptions import Unauthorized, Forbidden
 from rinku.postgres import AsyncSession, get_db_session
@@ -16,7 +17,12 @@ from .service import auth as auth_service
 
 class BadCredentialsError(Unauthorized):
     def __init__(self):
-        super().__init__(message="Bad credentials")
+        super().__init__("Bad credentials")
+
+
+class SessionRequiredError(Forbidden):
+    def __init__(self):
+        super().__init__("Requires an authenticated session")
 
 
 async def get_personal_access_token(session: AsyncSession, token: str):
@@ -43,8 +49,14 @@ def get_bearer_token(request: Request):
 
 
 class Authenticator:
-    def __init__(self, *, required_permissions: set[Permission]):
+    def __init__(
+        self,
+        *,
+        required_permissions: set[Permission],
+        forbid_bearer_tokens: bool = False,
+    ):
         self.required_permissions = required_permissions
+        self.forbid_bearer_tokens = forbid_bearer_tokens
 
     async def __call__(
         self, request: Request, session: AsyncSession = Depends(get_db_session)
@@ -57,6 +69,9 @@ class Authenticator:
 
                 if not personal_access_token:
                     raise BadCredentialsError()
+
+                if self.forbid_bearer_tokens:
+                    raise SessionRequiredError()
 
                 token_permissions = set(personal_access_token.permissions)
 
@@ -77,3 +92,8 @@ class Authenticator:
             return AuthContext(session_ref.user_id, set(Permission), session_ref)
 
         raise Unauthorized()
+
+
+_WebSession = Authenticator(required_permissions=set(), forbid_bearer_tokens=True)
+
+WebSession = Annotated[AuthContext, Depends(_WebSession)]

@@ -13,10 +13,16 @@ DestinationURL = Annotated[
 
 class LinkSchema(IDSchema):
     user_id: UUID7
+    name: str | None
     slug: str
     destination_url: str
     created_at: datetime
 
 
 class LinkCreate(Schema):
+    name: str | None = None
     destination_url: DestinationURL
+
+
+class LinkUpdate(Schema):
+    name: str | None = None

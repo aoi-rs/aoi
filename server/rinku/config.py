@@ -86,10 +86,6 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_ROTATION_ENABLED: bool = True
     SESSION_COOKIE_DOMAIN: str = "127.0.0.1"
 
-    # Google
-    GOOGLE_CLIENT_ID: str = ""
-    GOOGLE_CLIENT_SECRET: str = ""
-
     # AWS (DynamoDB)
     AWS_ACCESS_KEY_ID: str | None = None
     AWS_SECRET_ACCESS_KEY: str | None = None
@@ -98,6 +94,9 @@ class Settings(BaseSettings):
     # DynamoDB
     # Remember to set to http://127.0.0.1:8080 during development
     DYNAMODB_ENDPOINT_URL: str | None = None
+
+    # Favicons
+    LOGO_DEV_PUBLISHABLE_KEY: str = ""
 
     # JWTs
     JWT_PRIVATE_KEY: str = "secret"

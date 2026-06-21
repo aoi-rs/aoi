@@ -40,7 +40,7 @@ class UserService:
         )
 
         result = await session.execute(statement)
-        user = result.scalar_one()
+        user = result.unique().scalar_one()
 
         return user
 

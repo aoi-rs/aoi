@@ -1,7 +1,8 @@
 from collections.abc import Sequence
-from fastapi.responses import Response, RedirectResponse
+from uuid import UUID
+from botocore.errorfactory import ClientError
 
-from rinku.links.schemas import LinkSchema, DestinationURL
+from rinku.links.schemas import LinkSchema, LinkCreate, LinkUpdate
 from rinku.links.repository import link_repository
 from rinku.auth.models import AuthContext
 from rinku.links.counter import monotonic_counter
@@ -12,13 +13,15 @@ from rinku.kit.utils import generate_uuid
 
 
 class LinkMissing(ResourceMissing):
-    def __init__(self, slug: str):
-        super().__init__(f"The link '{slug}' could not be found")
+    def __init__(self, id: UUID):
+        super().__init__(f"The link '{id}' could not be found")
 
 
 class LinkService:
     def create(
-        self, auth_context: AuthContext, destination_url: DestinationURL
+        self,
+        auth_context: AuthContext,
+        create_schema: LinkCreate,
     ) -> LinkSchema:
         number = monotonic_counter.increment()
         slug = generate_slug(number)
@@ -28,8 +31,9 @@ class LinkService:
         link = LinkSchema(
             id=id,
             user_id=auth_context.user.id,
+            name=create_schema.name,
             slug=slug,
-            destination_url=str(destination_url),
+            destination_url=str(create_schema.destination_url),
             created_at=created_at,
         )
 
@@ -37,18 +41,41 @@ class LinkService:
 
         return link
 
-    def redirect(self, slug: str) -> Response:
-        destination_url = link_repository.get_destination_url_by_slug(slug)
+    def update(
+        self, auth_context: AuthContext, id: UUID, update_schema: LinkUpdate
+    ) -> LinkSchema:
+        update_dict = update_schema.model_dump(exclude_unset=True)
 
-        if destination_url is None:
-            raise LinkMissing(slug)
+        if update_dict:
+            try:
+                return link_repository.update(auth_context, id, **update_dict)
+            except ClientError as e:
+                if self._is_conditional_check_failed_error(e):
+                    raise LinkMissing(id) from e
 
-        return RedirectResponse(destination_url, status_code=301)
+                raise
+        else:
+            link = link_repository.get_one_or_none(auth_context, id)
+
+            if not link:
+                raise LinkMissing(id)
+
+            return link
+
+    def get(self, auth_context: AuthContext, id: UUID) -> LinkSchema | None:
+        return link_repository.get_one_or_none(auth_context, id)
 
     def list(
         self, context: AuthContext, pagination: PaginationParams
     ) -> Sequence[LinkSchema]:
         return link_repository.paginate(context, limit=pagination.limit)
+
+    def _is_conditional_check_failed_error(self, err: ClientError) -> bool:
+        return (
+            "Error" in err.response
+            and "Code" in err.response["Error"]
+            and err.response["Error"]["Code"] == "ConditionalCheckFailedException"
+        )
 
 
 links = LinkService()

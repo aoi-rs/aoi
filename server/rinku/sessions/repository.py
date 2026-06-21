@@ -1,4 +1,4 @@
-from sqlalchemy import Select
+from sqlalchemy import Select, delete
 from uuid import UUID
 
 from rinku.kit.repository import RepositoryBase, Options
@@ -9,9 +9,25 @@ from rinku.models import Session
 class SessionRepository(RepositoryBase[Session]):
     model = Session
 
-    def get_readable_statement(self, context: AuthContext) -> Select[tuple[Session]]:
-        statement = self.get_base_statement().where(Session.user_id == context.user.id)
+    def get_readable_statement(
+        self, auth_context: AuthContext
+    ) -> Select[tuple[Session]]:
+        statement = self.get_base_statement().where(
+            Session.user_id == auth_context.user.id
+        )
+
         return statement
+
+    async def revoke(self, session_id: UUID):
+        statement = delete(self.model).where(self.model.id == session_id)
+        return await self.session.execute(statement)
+
+    async def revoke_user_sessions(self, user: UUID, exclude_session_id: UUID):
+        statement = delete(self.model).where(
+            self.model.user_id == user, self.model.id != exclude_session_id
+        )
+
+        return await self.session.execute(statement)
 
     async def get_by_id_for_update(
         self, session_id: UUID, *, nowait: bool = True, options: Options = ()

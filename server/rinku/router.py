@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from .login_tokens.router import router as login_token_router
 from .sessions.router import router as session_router
 from .users.router import router as user_router
+from .auth.router import router as auth_router
 from .links.router import router as link_router
 from .personal_access_tokens.router import router as personal_access_token_router
 
@@ -13,6 +14,9 @@ router.include_router(login_token_router)
 
 # /user & /users
 router.include_router(user_router)
+
+# /auth
+router.include_router(auth_router)
 
 # /sessions
 router.include_router(session_router)

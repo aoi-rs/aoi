@@ -7,6 +7,7 @@ from rinku.postgres import AsyncSession, get_db_session
 from rinku.sessions.schemas import SessionSchema, SessionRefresh
 from rinku.sessions.auth import SessionsRead, SessionsWrite
 from rinku.sessions.service import sessions
+from rinku.auth.dependencies import WebSession
 from rinku.auth.models import is_user_session
 
 router = APIRouter(prefix="/sessions")
@@ -30,6 +31,7 @@ async def list(
                 id=item.id,
                 user_id=item.user_id,
                 user_agent=item.user_agent,
+                name=item.name,
                 refreshed_at=item.refreshed_at,
                 revoked=item.revoked,
                 is_current_session=item.id == auth_context.session.id
@@ -45,7 +47,23 @@ async def list(
 
 
 @router.delete(
-    "/{id}/revoke",
+    "/others",
+    summary="Revoke Other Sessions",
+    status_code=204,
+    responses={204: {"description": "Sessions revoked."}},
+)
+async def revoke_others(
+    auth_context: WebSession, session: AsyncSession = Depends(get_db_session)
+):
+    """
+    Revokes all of user's sessions excluding the current one.
+    """
+
+    await sessions.revoke_others(session, auth_context)
+
+
+@router.delete(
+    "/{id}",
     summary="Revoke Session",
     status_code=204,
     responses={204: {"description": "Session revoked."}},
