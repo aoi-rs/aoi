@@ -3,15 +3,14 @@ resource "aws_ecs_cluster" "main" {
 }
 
 # =============================================================================
-# ECS container definition data source
+# ECS container definition data sources
 #
 # We read the container definition from AWS to avoid stale state in Terraform 
 # causing unwanted rollbacks.
 #
-# First-time setup: create the service first without the data source — use 
-# "${aws_ecr_repository.repository_url}:latest" as the image URL — 
-# then add the data source with the task definition ID from 
-# `terraform state show aws_ecs_task_definition.service`
+# First-time setup: create the service first without the data source — use a 
+# default tag like "latest"  — then add the data sources with their task 
+# definition IDs from the Terraform state.
 # =============================================================================
 
 locals {
@@ -22,15 +21,15 @@ locals {
   redirector_task_definition_container_name = "asahi-redirector"
 }
 
-// data "aws_ecs_container_definition" "service" {
-//   task_definition = local.service_task_definition_id
-//   container_name  = local.service_task_definition_container_name
-// }
+data "aws_ecs_container_definition" "service" {
+  task_definition = local.service_task_definition_id
+  container_name  = local.service_task_definition_container_name
+}
 
-// data "aws_ecs_container_definition" "redirector" {
-//   task_definition = local.redirector_task_definition_id
-//   container_name  = local.redirector_task_definition_container_name
-// }
+data "aws_ecs_container_definition" "redirector" {
+  task_definition = local.redirector_task_definition_id
+  container_name  = local.redirector_task_definition_container_name
+}
 
 resource "aws_ecs_task_definition" "service" {
   family                   = "asahi"
@@ -45,7 +44,7 @@ resource "aws_ecs_task_definition" "service" {
   container_definitions = jsonencode([
     {
       name      = "asahi"
-      image     = "public.ecr.aws/ecs-sample-image/amazon-ecs-sample:latest"
+      image     = data.aws_ecs_container_definition.service.image
       essential = true
 
       portMappings = [
@@ -127,7 +126,7 @@ resource "aws_ecs_task_definition" "redirector" {
   container_definitions = jsonencode([
     {
       name      = "asahi-redirector"
-      image     = "public.ecr.aws/ecs-sample-image/amazon-ecs-sample:latest"
+      image     = data.aws_ecs_container_definition.redirector.image
       essential = true
 
       portMappings = [
