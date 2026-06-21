@@ -15,8 +15,8 @@ resource "aws_ecs_cluster" "main" {
 # =============================================================================
 
 locals {
-  service_task_definition_id             = "asahi-service"
-  service_task_definition_container_name = "service"
+  service_task_definition_id             = "asahi"
+  service_task_definition_container_name = "asahi"
 }
 
 // data "aws_ecs_container_definition" "service" {
@@ -25,7 +25,7 @@ locals {
 // }
 
 resource "aws_ecs_task_definition" "service" {
-  family                   = "asahi-service"
+  family                   = "asahi"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 256
@@ -36,7 +36,7 @@ resource "aws_ecs_task_definition" "service" {
 
   container_definitions = jsonencode([
     {
-      name      = "service"
+      name      = "asahi"
       image     = "public.ecr.aws/ecs-sample-image/amazon-ecs-sample:latest"
       essential = true
 
@@ -52,7 +52,7 @@ resource "aws_ecs_task_definition" "service" {
         options = {
           awslogs-group         = aws_cloudwatch_log_group.service.name
           awslogs-region        = aws_cloudwatch_log_group.service.region
-          awslogs-stream-prefix = "service"
+          awslogs-stream-prefix = "asahi"
         }
       }
 
@@ -107,7 +107,7 @@ resource "aws_ecs_task_definition" "service" {
 }
 
 resource "aws_ecs_service" "service" {
-  name            = "service"
+  name            = "asahi"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.service.arn
   desired_count   = 1
