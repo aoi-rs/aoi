@@ -17,6 +17,9 @@ resource "aws_ecs_cluster" "main" {
 locals {
   service_task_definition_id             = "asahi"
   service_task_definition_container_name = "asahi"
+
+  redirector_task_definition_id = "asahi-redirector"
+  redirector_task_definition_container_name = "asahi-redirector"
 }
 
 // data "aws_ecs_container_definition" "service" {
@@ -128,7 +131,7 @@ resource "aws_ecs_service" "service" {
 
   load_balancer {
     target_group_arn = aws_alb_target_group.service.arn
-    container_name   = "service"
+    container_name   = "asahi"
     container_port   = 10000
   }
 }
