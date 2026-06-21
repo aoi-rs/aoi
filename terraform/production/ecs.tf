@@ -124,27 +124,29 @@ resource "aws_ecs_task_definition" "redirector" {
   task_role_arn            = aws_iam_role.ecs_task.arn
   track_latest             = true
 
-  container_definitions = jsonencode({
-    name      = "asahi-redirector"
-    image     = "public.ecr.aws/ecs-sample-image/amazon-ecs-sample:latest"
-    essential = true
+  container_definitions = jsonencode([
+    {
+      name      = "asahi-redirector"
+      image     = "public.ecr.aws/ecs-sample-image/amazon-ecs-sample:latest"
+      essential = true
 
-    portMappings = [
-      {
-        containerPort = 3000
-        hostPort      = 3000
-      }
-    ]
+      portMappings = [
+        {
+          containerPort = 3000
+          hostPort      = 3000
+        }
+      ]
 
-    logConfiguration = {
-      logDriver = "awslogs"
-      options = {
-        awslogs-group         = aws_cloudwatch_log_group.service.name
-        awslogs-region        = aws_cloudwatch_log_group.service.region
-        awslogs-stream-prefix = "asahi-redirector"
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.service.name
+          awslogs-region        = aws_cloudwatch_log_group.service.region
+          awslogs-stream-prefix = "asahi-redirector"
+        }
       }
     }
-  })
+  ])
 }
 
 resource "aws_ecs_service" "service" {
