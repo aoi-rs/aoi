@@ -1,11 +1,12 @@
-name: Build Docker Images
+name: Build & Publish
 
 on:
   push:
     branches: [main]
     paths:
       - server/**
-      - .github/workflows/build-docker-images.yml
+      - crates/redirector/**
+      - .github/workflows/build.yml
 
   workflow_dispatch:
 
@@ -15,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       server: ${{ steps.filter.outputs.server }}
+      redirector: ${{ steps.filter.outputs.redirector }}
       migrations: ${{ steps.filter.outputs.migrations }}
     steps:
       - name: Checkout
@@ -27,12 +29,15 @@ jobs:
           filters: |
             server:
               - 'server/**'
-              - '.github/workflows/build-docker-images.yml'
+              - '.github/workflows/build.yml'
+            redirector:
+              - 'crates/redirector/**'
+              - '.github/workflows/build.yml'
             migrations:
               - 'server/migrations/**'
 
   build:
-    name: Build Docker Images
+    name: Build & Push Service
     needs: changes
     if: needs.changes.outputs.server == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: blacksmith-4vcpu-ubuntu-2404
@@ -41,7 +46,7 @@ jobs:
       contents: read
     outputs:
       image: |
-        ${{ steps.login.outputs.registry }}/rinku@${{ steps.push.outputs.digest }}
+        ${{ steps.login.outputs.registry }}/asahi@${{ steps.push.outputs.digest }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -66,7 +71,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login.outputs.registry }}
         with:
           images: |
-            ${{ env.ECR_REGISTRY }}/rinku
+            ${{ env.ECR_REGISTRY }}/asahi
           tags: |
             type=sha
             type=raw,value=latest,enable={{is_default_branch}}
@@ -79,6 +84,55 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           context: server
+
+  build-redirector:
+    name: Build & Push Redirector
+    needs: changes
+    if: needs.changes.outputs.redirector == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      image: |
+        ${{ steps.login.outputs.registry }}/asahi-redirector@${{ steps.push.outputs.digest }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::891924440815:role/github-actions
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Setup Blacksmith Builder
+        uses: useblacksmith/setup-docker-builder@v1
+
+      - name: Docker Meta
+        id: meta
+        uses: docker/metadata-action@v6
+        env:
+          ECR_REGISTRY: ${{ steps.login.outputs.registry }}
+        with:
+          images: |
+            ${{ env.ECR_REGISTRY }}/asahi-redirector
+          tags: |
+            type=sha
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build & Push
+        id: push
+        uses: useblacksmith/build-push-action@v2
+        with:
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          context: crates/redirector
 
   release:
     name: Release
