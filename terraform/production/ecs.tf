@@ -1,5 +1,5 @@
 resource "aws_ecs_cluster" "main" {
-  name = "rinku"
+  name = "asahi"
 }
 
 # =============================================================================
@@ -9,14 +9,14 @@ resource "aws_ecs_cluster" "main" {
 # causing unwanted rollbacks.
 #
 # First-time setup: create the service first without the data source — use 
-# "${aws_ecr_repository.rinku.repository_url}:latest" as the image URL — 
+# "${aws_ecr_repository.repository_url}:latest" as the image URL — 
 # then add the data source with the task definition ID from 
 # `terraform state show aws_ecs_task_definition.service`
 # =============================================================================
 
 locals {
-  service_task_definition_id             = "rinku"
-  service_task_definition_container_name = "rinku"
+  service_task_definition_id             = "asahi-service"
+  service_task_definition_container_name = "service"
 }
 
 data "aws_ecs_container_definition" "service" {
@@ -25,7 +25,7 @@ data "aws_ecs_container_definition" "service" {
 }
 
 resource "aws_ecs_task_definition" "service" {
-  family                   = "rinku"
+  family                   = "asahi-service"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 256
@@ -36,7 +36,7 @@ resource "aws_ecs_task_definition" "service" {
 
   container_definitions = jsonencode([
     {
-      name      = "rinku"
+      name      = "service"
       image     = data.aws_ecs_container_definition.service.image
       essential = true
 
@@ -107,7 +107,7 @@ resource "aws_ecs_task_definition" "service" {
 }
 
 resource "aws_ecs_service" "service" {
-  name            = "rinku"
+  name            = "service"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.service.arn
   desired_count   = 1
@@ -128,7 +128,7 @@ resource "aws_ecs_service" "service" {
 
   load_balancer {
     target_group_arn = aws_alb_target_group.service.arn
-    container_name   = "rinku"
+    container_name   = "service"
     container_port   = 10000
   }
 }

@@ -1,30 +1,42 @@
-resource "aws_ecr_repository" "rinku" {
-  name = "rinku"
+resource "aws_ecr_repository" "service" {
+  name = "asahi-service"
 
   image_scanning_configuration {
     scan_on_push = true
   }
 }
 
-resource "aws_ecr_lifecycle_policy" "rinku" {
-  repository = aws_ecr_repository.rinku.name
+resource "aws_ecr_repository" "redirector" {
+  name = "asahi-redirector"
 
-  policy = jsonencode({
-    rules = [
-      {
-        rulePriority = 1
-        description  = "Keep last 10 images"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
 
-        selection = {
-          tagStatus   = "any"
-          countType   = "imageCountMoreThan"
-          countNumber = 10
-        }
+data "aws_ecr_lifecycle_policy_document" "default" {
+  rule {
+    priority    = 1
+    description = "Retain 10 most recent images"
 
-        action = {
-          type = "expire"
-        }
-      }
-    ]
-  })
+    selection {
+      tag_status   = "any"
+      count_type   = "imageCountMoreThan"
+      count_number = 10
+    }
+
+    action {
+      type = "expire"
+    }
+  }
+}
+
+resource "aws_ecr_lifecycle_policy" "service" {
+  repository = aws_ecr_repository.service.name
+  policy     = data.aws_ecr_lifecycle_policy_document.default.json
+}
+
+resource "aws_ecr_lifecycle_policy" "redirector" {
+  repository = aws_ecr_repository.redirector.name
+  policy     = data.aws_ecr_lifecycle_policy_document.default.json
 }
