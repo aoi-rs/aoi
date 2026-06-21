@@ -13,15 +13,18 @@ resource "aws_dynamodb_table_item" "global_counter" {
   table_name = aws_dynamodb_table.counters.name
   hash_key   = "k"
 
-  item = jsonencode({
-    k = {
-      S = "global"
+  item = <<ATTR
+    {
+      "k": { "S": "global" },
+      "v": { "N": "14776336" }
     }
+  ATTR
 
-    v = {
-      N = "14776336"
-    }
-  })
+  lifecycle {
+    ignore_changes = [
+      item
+    ]
+  }
 }
 
 resource "aws_dynamodb_table" "links" {

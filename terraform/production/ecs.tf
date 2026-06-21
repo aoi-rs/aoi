@@ -19,10 +19,10 @@ locals {
   service_task_definition_container_name = "service"
 }
 
-data "aws_ecs_container_definition" "service" {
-  task_definition = local.service_task_definition_id
-  container_name  = local.service_task_definition_container_name
-}
+// data "aws_ecs_container_definition" "service" {
+//   task_definition = local.service_task_definition_id
+//   container_name  = local.service_task_definition_container_name
+// }
 
 resource "aws_ecs_task_definition" "service" {
   family                   = "asahi-service"
@@ -37,7 +37,7 @@ resource "aws_ecs_task_definition" "service" {
   container_definitions = jsonencode([
     {
       name      = "service"
-      image     = data.aws_ecs_container_definition.service.image
+      image     = "public.ecr.aws/ecs-sample-image/amazon-ecs-sample:latest"
       essential = true
 
       portMappings = [
