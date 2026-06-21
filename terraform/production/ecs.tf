@@ -180,7 +180,7 @@ resource "aws_ecs_service" "redirector" {
   name = "asahi-redirector"
 
   cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.service.arn
+  task_definition = aws_ecs_task_definition.redirector.arn
   desired_count   = 1
   launch_type     = "FARGATE"
 
