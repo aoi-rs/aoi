@@ -1,5 +1,5 @@
 resource "aws_alb" "main" {
-  name               = "rinku"
+  name               = "aoi"
   load_balancer_type = "application"
   internal           = false
 
@@ -15,7 +15,7 @@ resource "aws_alb" "main" {
 
 resource "aws_alb_target_group" "service" {
   vpc_id      = aws_vpc.main.id
-  name        = "rinku"
+  name        = "aoi"
   port        = 10000
   protocol    = "HTTP"
   target_type = "ip"

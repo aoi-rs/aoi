@@ -51,7 +51,7 @@ jobs:
       contents: read
     outputs:
       image: |
-        ${{ steps.login.outputs.registry }}/asahi@${{ steps.push.outputs.digest }}
+        ${{ steps.login.outputs.registry }}/aoi@${{ steps.push.outputs.digest }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -76,7 +76,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login.outputs.registry }}
         with:
           images: |
-            ${{ env.ECR_REGISTRY }}/asahi
+            ${{ env.ECR_REGISTRY }}/aoi
           tags: |
             type=sha
             type=raw,value=latest,enable={{is_default_branch}}
@@ -100,7 +100,7 @@ jobs:
       contents: read
     outputs:
       image: |
-        ${{ steps.login.outputs.registry }}/asahi-redirector@${{ steps.push.outputs.digest }}
+        ${{ steps.login.outputs.registry }}/aoi-redirector@${{ steps.push.outputs.digest }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -125,7 +125,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login.outputs.registry }}
         with:
           images: |
-            ${{ env.ECR_REGISTRY }}/asahi-redirector
+            ${{ env.ECR_REGISTRY }}/aoi-redirector
           tags: |
             type=sha
             type=raw,value=latest,enable={{is_default_branch}}

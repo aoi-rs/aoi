@@ -1,5 +1,5 @@
 resource "aws_db_subnet_group" "main" {
-  name = "rinku-db-subnets"
+  name = "aoi-db-subnets"
 
   subnet_ids = [
     aws_subnet.private_a.id,
@@ -13,16 +13,16 @@ resource "random_password" "postgres" {
 }
 
 resource "aws_db_instance" "postgres" {
-  identifier     = "rinku-postgres"
+  identifier     = "aoi-postgres"
   engine         = "postgres"
   engine_version = "18"
 
   instance_class    = "db.t4g.micro"
   allocated_storage = 20
 
-  username            = "rinku_db_user"
+  username            = "aoi_db_user"
   password            = random_password.postgres.result
-  db_name             = "rinku_db"
+  db_name             = "aoi_db"
   publicly_accessible = false
 
   vpc_security_group_ids = [aws_security_group.postgres.id]

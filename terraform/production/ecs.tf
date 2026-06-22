@@ -1,5 +1,5 @@
 resource "aws_ecs_cluster" "main" {
-  name = "asahi"
+  name = "aoi"
 }
 
 # =============================================================================
@@ -14,11 +14,11 @@ resource "aws_ecs_cluster" "main" {
 # =============================================================================
 
 locals {
-  service_task_definition_id             = "asahi"
-  service_task_definition_container_name = "asahi"
+  service_task_definition_id             = "aoi"
+  service_task_definition_container_name = "aoi"
 
-  redirector_task_definition_id             = "asahi-redirector"
-  redirector_task_definition_container_name = "asahi-redirector"
+  redirector_task_definition_id             = "aoi-redirector"
+  redirector_task_definition_container_name = "aoi-redirector"
 }
 
 data "aws_ecs_container_definition" "service" {
@@ -32,7 +32,7 @@ data "aws_ecs_container_definition" "redirector" {
 }
 
 resource "aws_ecs_task_definition" "service" {
-  family                   = "asahi"
+  family                   = "aoi"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 256
@@ -43,7 +43,7 @@ resource "aws_ecs_task_definition" "service" {
 
   container_definitions = jsonencode([
     {
-      name      = "asahi"
+      name      = "aoi"
       image     = data.aws_ecs_container_definition.service.image
       essential = true
 
@@ -59,7 +59,7 @@ resource "aws_ecs_task_definition" "service" {
         options = {
           awslogs-group         = aws_cloudwatch_log_group.service.name
           awslogs-region        = aws_cloudwatch_log_group.service.region
-          awslogs-stream-prefix = "asahi"
+          awslogs-stream-prefix = "aoi"
         }
       }
 
@@ -114,7 +114,7 @@ resource "aws_ecs_task_definition" "service" {
 }
 
 resource "aws_ecs_task_definition" "redirector" {
-  family                   = "asahi-redirector"
+  family                   = "aoi-redirector"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 256
@@ -125,7 +125,7 @@ resource "aws_ecs_task_definition" "redirector" {
 
   container_definitions = jsonencode([
     {
-      name      = "asahi-redirector"
+      name      = "aoi-redirector"
       image     = data.aws_ecs_container_definition.redirector.image
       essential = true
 
@@ -141,7 +141,7 @@ resource "aws_ecs_task_definition" "redirector" {
         options = {
           awslogs-group         = aws_cloudwatch_log_group.service.name
           awslogs-region        = aws_cloudwatch_log_group.service.region
-          awslogs-stream-prefix = "asahi-redirector"
+          awslogs-stream-prefix = "aoi-redirector"
         }
       }
     }
@@ -149,7 +149,7 @@ resource "aws_ecs_task_definition" "redirector" {
 }
 
 resource "aws_ecs_service" "service" {
-  name            = "asahi"
+  name            = "aoi"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.service.arn
   desired_count   = 1
@@ -170,13 +170,13 @@ resource "aws_ecs_service" "service" {
 
   load_balancer {
     target_group_arn = aws_alb_target_group.service.arn
-    container_name   = "asahi"
+    container_name   = "aoi"
     container_port   = 10000
   }
 }
 
 resource "aws_ecs_service" "redirector" {
-  name = "asahi-redirector"
+  name = "aoi-redirector"
 
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.redirector.arn
@@ -198,7 +198,7 @@ resource "aws_ecs_service" "redirector" {
 
   load_balancer {
     target_group_arn = aws_alb_target_group.service.arn
-    container_name   = "asahi-redirector"
+    container_name   = "aoi-redirector"
     container_port   = 3000
   }
 }

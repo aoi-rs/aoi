@@ -55,7 +55,7 @@ resource "aws_route_table_association" "public_b" {
 
 resource "aws_security_group" "alb" {
   vpc_id = aws_vpc.main.id
-  name   = "rinku-alb"
+  name   = "aoi-alb"
 
   ingress {
     from_port   = 80
@@ -81,7 +81,7 @@ resource "aws_security_group" "alb" {
 
 resource "aws_security_group" "ecs" {
   vpc_id = aws_vpc.main.id
-  name   = "runku-ecs"
+  name   = "aoi-ecs"
 
   ingress {
     from_port       = 10000
@@ -100,7 +100,7 @@ resource "aws_security_group" "ecs" {
 
 resource "aws_security_group" "postgres" {
   vpc_id = aws_vpc.main.id
-  name   = "rinku-postgres"
+  name   = "aoi-postgres"
 
   ingress {
     from_port       = 5432
@@ -112,7 +112,7 @@ resource "aws_security_group" "postgres" {
 
 resource "aws_security_group" "redis" {
   vpc_id = aws_vpc.main.id
-  name   = "rinku-redis"
+  name   = "aoi-redis"
 
   ingress {
     from_port       = 6379

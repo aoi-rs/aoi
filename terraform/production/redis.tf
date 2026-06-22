@@ -1,5 +1,5 @@
 resource "aws_elasticache_subnet_group" "main" {
-  name = "rinku-redis-subnets"
+  name = "aoi-redis-subnets"
 
   subnet_ids = [
     aws_subnet.private_a.id,
@@ -8,7 +8,7 @@ resource "aws_elasticache_subnet_group" "main" {
 }
 
 resource "aws_elasticache_cluster" "redis" {
-  cluster_id        = "rinku-redis"
+  cluster_id        = "aoi-redis"
   engine            = "redis"
   node_type         = "cache.t4g.micro"
   num_cache_nodes   = 1

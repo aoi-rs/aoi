@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "service" {
-  name = "asahi"
+  name = "aoi"
 
   image_scanning_configuration {
     scan_on_push = true
@@ -7,7 +7,7 @@ resource "aws_ecr_repository" "service" {
 }
 
 resource "aws_ecr_repository" "redirector" {
-  name = "asahi-redirector"
+  name = "aoi-redirector"
 
   image_scanning_configuration {
     scan_on_push = true
