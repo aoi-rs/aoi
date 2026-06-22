@@ -13,23 +13,23 @@ resource "aws_ecs_cluster" "main" {
 # definition IDs from the Terraform state.
 # =============================================================================
 
-# locals {
-#   service_task_definition_id             = "aoi"
-#   service_task_definition_container_name = "aoi"
-#
-#   redirector_task_definition_id          = "aoi-redirector"
-#   redirector_task_definition_container_name = "aoi-redirector"
-# }
+locals {
+  service_task_definition_id             = "aoi"
+  service_task_definition_container_name = "aoi"
 
-# data "aws_ecs_container_definition" "service" {
-#   task_definition = local.service_task_definition_id
-#   container_name  = local.service_task_definition_container_name
-# }
+  redirector_task_definition_id          = "aoi-redirector"
+  redirector_task_definition_container_name = "aoi-redirector"
+}
 
-# data "aws_ecs_container_definition" "redirector" {
-#   task_definition = local.redirector_task_definition_id
-#   container_name  = local.redirector_task_definition_container_name
-# }
+data "aws_ecs_container_definition" "service" {
+  task_definition = local.service_task_definition_id
+  container_name  = local.service_task_definition_container_name
+}
+
+data "aws_ecs_container_definition" "redirector" {
+  task_definition = local.redirector_task_definition_id
+  container_name  = local.redirector_task_definition_container_name
+}
 
 resource "aws_ecs_task_definition" "service" {
   family                   = "aoi"
@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "service" {
   container_definitions = jsonencode([
     {
       name      = "aoi"
-      image     = "public.ecr.aws/ecs-sample-image/amazon-ecs-sample:latest"
+      image     = data.aws_ecs_container_definition.service.image
       essential = true
 
       portMappings = [
@@ -126,7 +126,7 @@ resource "aws_ecs_task_definition" "redirector" {
   container_definitions = jsonencode([
     {
       name      = "aoi-redirector"
-      image     = "public.ecr.aws/ecs-sample-image/amazon-ecs-sample:latest"
+      image     = data.aws_ecs_container_definition.redirector.image
       essential = true
 
       portMappings = [

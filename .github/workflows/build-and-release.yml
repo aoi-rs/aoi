@@ -161,7 +161,7 @@ jobs:
           echo "Deployment URL: $DEPLOYMENT"
 
   release:
-    name: Release
+    name: Release Service
     needs: [diff, build]
     if: always() && (needs.build.result == 'success' || needs.build.result == 'skipped') && (needs.diff.outputs.server == 'true' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
