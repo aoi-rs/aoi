@@ -43,11 +43,11 @@ resource "aws_alb_listener" "http" {
   protocol          = "HTTP"
 
   default_action {
-    type             = "redirect"
+    type = "redirect"
 
     redirect {
-      port = "443"
-      protocol = "HTTPS"
+      port        = "443"
+      protocol    = "HTTPS"
       status_code = "HTTP_301"
     }
   }
@@ -83,7 +83,7 @@ resource "aws_alb_listener_rule" "service" {
   }
 
   action {
-    type = "forward"
+    type             = "forward"
     target_group_arn = aws_alb_target_group.service.arn
   }
 }
@@ -101,7 +101,7 @@ resource "aws_alb_listener_rule" "redirector" {
   }
 
   action {
-    type = "forward"
+    type             = "forward"
     target_group_arn = aws_alb_target_group.redirector.arn
   }
 }
