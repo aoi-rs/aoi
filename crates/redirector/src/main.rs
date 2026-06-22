@@ -16,15 +16,18 @@ async fn handler(
 ) -> Result<Redirect, Failure> {
     let output = state
         .dynamodb
-        .get_item()
+        .query()
         .table_name("links")
+        .index_name("link_destinations")
         .projection_expression("d")
-        .key("s", AttributeValue::S(slug.to_owned()))
+        .key_condition_expression("s = :slug")
+        .expression_attribute_values(":slug", AttributeValue::S(slug.to_owned()))
+        .limit(1)
         .send()
         .await
         .map_err(|_| failure!())?;
 
-    match output.item {
+    match output.items().first() {
         Some(item) => {
             let destination_url = item
                 .get("d")
