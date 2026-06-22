@@ -131,8 +131,8 @@ resource "aws_ecs_task_definition" "redirector" {
 
       portMappings = [
         {
-          containerPort = 3000
-          hostPort      = 3000
+          containerPort = 12000
+          hostPort      = 12000
         }
       ]
 
@@ -177,7 +177,6 @@ resource "aws_ecs_service" "service" {
 
 resource "aws_ecs_service" "redirector" {
   name = "aoi-redirector"
-
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.redirector.arn
   desired_count   = 1
@@ -199,6 +198,6 @@ resource "aws_ecs_service" "redirector" {
   load_balancer {
     target_group_arn = aws_alb_target_group.redirector.arn
     container_name   = "aoi-redirector"
-    container_port   = 3000
+    container_port   = 12000
   }
 }
