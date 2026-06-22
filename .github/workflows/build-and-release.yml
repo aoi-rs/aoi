@@ -182,8 +182,8 @@ jobs:
         id: render
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition-arn: arn:aws:ecs:us-east-1:891924440815:task-definition/asahi
-          container-name: asahi
+          task-definition-arn: arn:aws:ecs:us-east-1:891924440815:task-definition/aoi
+          container-name: aoi
           image: ${{ needs.build.outputs.image }}
         
       - name: Run Database Migrations
@@ -191,7 +191,7 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.render.outputs.task-definition }}
-          cluster: asahi
+          cluster: aoi
           run-task: true
           run-task-launch-type: FARGATE
           wait-for-task-stopped: true
@@ -201,7 +201,7 @@ jobs:
           run-task-container-overrides: |
             [
               {
-                "name": "asahi",
+                "name": "aoi",
                 "command": ["uv", "run", "task", "db_migrate"]
               }
             ]
@@ -210,8 +210,8 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.render.outputs.task-definition }}
-          cluster: asahi
-          service: asahi
+          cluster: aoi
+          service: aoi
           wait-for-service-stability: true
   
   release-redirector:
@@ -236,16 +236,16 @@ jobs:
         id: render
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition-arn: arn:aws:ecs:us-east-1:891924440815:task-definition/asahi-redirector
-          container-name: redirector
+          task-definition-arn: arn:aws:ecs:us-east-1:891924440815:task-definition/aoi-redirector
+          container-name: aoi-redirector
           image: ${{ needs.build-redirector.outputs.image }}
         
       - name: Deploy ECS Task Definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.render.outputs.task-definition }}
-          cluster: asahi
-          service: asahi-redirector
+          cluster: aoi
+          service: aoi-redirector
           wait-for-service-stability: true
 
   release-studio:
