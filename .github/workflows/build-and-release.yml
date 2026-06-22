@@ -158,7 +158,7 @@ jobs:
         run: |
           DEPLOYMENT=$(vercel deploy --prod --skip-domain --yes --token=${{ secrets.VERCEL_TOKEN }})
           echo "deployment=$DEPLOYMENT" >> $GITHUB_OUTPUT
-          echo "Deployment URL: $DEPLOYMENT_URL"
+          echo "Deployment URL: $DEPLOYMENT"
 
   release:
     name: Release
