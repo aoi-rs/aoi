@@ -25,6 +25,18 @@ resource "aws_alb_target_group" "service" {
   }
 }
 
+resource "aws_alb_target_group" "redirector" {
+  vpc_id      = aws_vpc.main.id
+  name        = "aoi-redirector"
+  port        = 3000
+  protocol    = "HTTP"
+  target_type = "ip"
+
+  health_check {
+    path = "/"
+  }
+}
+
 resource "aws_alb_listener" "http" {
   load_balancer_arn = aws_alb.main.arn
   port              = 80
@@ -44,7 +56,47 @@ resource "aws_alb_listener" "https" {
   certificate_arn   = aws_acm_certificate_validation.main.certificate_arn
 
   default_action {
-    type             = "forward"
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      status_code  = "404"
+      message_body = "not found"
+    }
+  }
+}
+
+resource "aws_alb_listener_rule" "service" {
+  listener_arn = aws_alb_listener.https.arn
+
+  condition {
+    host_header {
+      values = [
+        "service.aoi.rs"
+      ]
+    }
+  }
+
+  action {
+    type = "forward"
     target_group_arn = aws_alb_target_group.service.arn
+  }
+}
+
+resource "aws_alb_listener_rule" "redirector" {
+  listener_arn = aws_alb_listener.https.arn
+
+  condition {
+    host_header {
+      values = [
+        "aoi.rs",
+        "www.aoi.rs"
+      ]
+    }
+  }
+
+  action {
+    type = "forward"
+    target_group_arn = aws_alb_target_group.redirector.arn
   }
 }
