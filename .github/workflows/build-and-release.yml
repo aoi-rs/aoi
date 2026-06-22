@@ -6,17 +6,19 @@ on:
     paths:
       - server/**
       - crates/redirector/**
+      - apps/www/**
       - .github/workflows/build-and-release.yml
 
   workflow_dispatch:
 
 jobs:
-  changes:
-    name: Detect Changes
+  diff:
+    name: Detect Modified Paths
     runs-on: ubuntu-latest
     outputs:
       server: ${{ steps.filter.outputs.server }}
       redirector: ${{ steps.filter.outputs.redirector }}
+      studio: ${{ steps.filter.outputs.studio }}
       migrations: ${{ steps.filter.outputs.migrations }}
     steps:
       - name: Checkout
@@ -33,13 +35,16 @@ jobs:
             redirector:
               - 'crates/redirector/**'
               - '.github/workflows/build-and-release.yml'
+            studio:
+              - 'apps/www/**'
+              - '.github/workflows/build-and-release.yml'
             migrations:
               - 'server/migrations/**'
 
   build:
     name: Build & Push Service
-    needs: changes
-    if: needs.changes.outputs.server == 'true' || github.event_name == 'workflow_dispatch'
+    needs: diff
+    if: needs.diff.outputs.server == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: blacksmith-4vcpu-ubuntu-2404
     permissions:
       id-token: write
@@ -87,8 +92,8 @@ jobs:
 
   build-redirector:
     name: Build & Push Redirector
-    needs: changes
-    if: needs.changes.outputs.redirector == 'true' || github.event_name == 'workflow_dispatch'
+    needs: diff
+    if: needs.diff.outputs.redirector == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: blacksmith-4vcpu-ubuntu-2404
     permissions:
       id-token: write
@@ -134,10 +139,31 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           context: crates/redirector
 
+  build-studio:
+    name: Build Studio
+    needs: diff
+    if: needs.diff.outputs.studio == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    outputs:
+      deployment: ${{ steps.create.outputs.url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Create Deployment
+        id: create
+        run: |
+          DEPLOYMENT=$(vercel deploy --prod --skip-domain --token ${{ secrets.VERCEL_TOKEN }})
+          echo "deployment=$DEPLOYMENT" >> $GITHUB_OUTPUT
+          echo "Deployment URL: $DEPLOYMENT_URL"
+
   release:
     name: Release
-    needs: [changes, build]
-    if: always() && (needs.build.result == 'success' || needs.build.result == 'skipped') && (needs.changes.outputs.server == 'true' || github.event_name == 'workflow_dispatch')
+    needs: [diff, build]
+    if: always() && (needs.build.result == 'success' || needs.build.result == 'skipped') && (needs.diff.outputs.server == 'true' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -161,7 +187,7 @@ jobs:
           image: ${{ needs.build.outputs.image }}
         
       - name: Run Database Migrations
-        if: needs.changes.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch'
+        if: needs.diff.outputs.migrations == 'true' || github.event_name == 'workflow_dispatch'
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.render.outputs.task-definition }}
@@ -190,8 +216,8 @@ jobs:
   
   release-redirector:
     name: Release Redirector
-    needs: [changes, build-redirector]
-    if: always() && (needs.build-redirector.result == 'success' || needs.build-redirector.result == 'skipped') && (needs.changes.outputs.redirector == 'true' || github.event_name == 'workflow_dispatch')
+    needs: [diff, build-redirector]
+    if: always() && (needs.build-redirector.result == 'success' || needs.build-redirector.result == 'skipped') && (needs.diff.outputs.redirector == 'true' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -221,3 +247,18 @@ jobs:
           cluster: asahi
           service: asahi-redirector
           wait-for-service-stability: true
+
+  release-studio:
+    name: Release Studio
+    needs: [diff, build-studio, release]
+    if: always() && (needs.build-studio.result == 'success' || needs.build-studio.result == 'skipped') && (needs.diff.outputs.studio == 'true' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Promote to Production
+        run: |
+          echo "Releasing studio: ${{ needs.build-studio.outputs.deployment }}"
+          vercel promote ${{ needs.build-studio.outputs.deployment }} --token ${{ secrets.VERCEL_TOKEN }}
+          echo "Released: ${{ needs.build-studio.outputs.deployment }}"
