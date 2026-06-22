@@ -10,7 +10,7 @@ async fn main() -> io::Result<()> {
     let state = Arc::new(SharedState::from_env().await);
 
     let router = Router::new()
-        .route("/_healthz", get(health_handler))
+        .route("/", get(health_handler))
         .route("/{slug}", get(redirect_handler))
         .with_state(state);
 
