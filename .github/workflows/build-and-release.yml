@@ -145,7 +145,7 @@ jobs:
     if: needs.diff.outputs.studio == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     outputs:
-      deployment: ${{ steps.create.outputs.url }}
+      deployment: ${{ steps.deploy.outputs.deployment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -154,9 +154,9 @@ jobs:
         run: npm install --global vercel@latest
 
       - name: Create Deployment
-        id: create
+        id: deploy
         run: |
-          DEPLOYMENT=$(vercel deploy --prod --skip-domain --token ${{ secrets.VERCEL_TOKEN }})
+          DEPLOYMENT=$(vercel deploy --prod --skip-domain --token=${{ secrets.VERCEL_TOKEN }})
           echo "deployment=$DEPLOYMENT" >> $GITHUB_OUTPUT
           echo "Deployment URL: $DEPLOYMENT_URL"
 
@@ -257,8 +257,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
       - name: Promote to Production
         run: |
           echo "Releasing studio: ${{ needs.build-studio.outputs.deployment }}"
-          vercel promote ${{ needs.build-studio.outputs.deployment }} --token ${{ secrets.VERCEL_TOKEN }}
+          vercel promote ${{ needs.build-studio.outputs.deployment }} --token=${{ secrets.VERCEL_TOKEN }}
           echo "Released: ${{ needs.build-studio.outputs.deployment }}"
