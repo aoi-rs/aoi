@@ -17,7 +17,7 @@ locals {
   service_task_definition_id             = "aoi"
   service_task_definition_container_name = "aoi"
 
-  redirector_task_definition_id          = "aoi-redirector"
+  redirector_task_definition_id             = "aoi-redirector"
   redirector_task_definition_container_name = "aoi-redirector"
 }
 

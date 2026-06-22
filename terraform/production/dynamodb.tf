@@ -28,15 +28,16 @@ resource "aws_dynamodb_table_item" "global_counter" {
 resource "aws_dynamodb_table" "links" {
   name         = "links"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "s"
+  hash_key     = "u"
+  range_key    = "i"
 
   attribute {
-    name = "i"
+    name = "u"
     type = "B"
   }
 
   attribute {
-    name = "u"
+    name = "i"
     type = "B"
   }
 
@@ -46,18 +47,13 @@ resource "aws_dynamodb_table" "links" {
   }
 
   global_secondary_index {
-    name               = "user_links"
+    name               = "link_destinations"
     projection_type    = "INCLUDE"
     non_key_attributes = ["d"]
 
     key_schema {
-      attribute_name = "u"
+      attribute_name = "s"
       key_type       = "HASH"
-    }
-
-    key_schema {
-      attribute_name = "i"
-      key_type       = "RANGE"
     }
   }
 }
