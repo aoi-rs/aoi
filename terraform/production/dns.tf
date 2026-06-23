@@ -26,3 +26,10 @@ resource "vercel_dns_record" "service" {
   name   = "service"
   value  = aws_alb.main.dns_name
 }
+
+resource "vercel_dns_record" "redirects" {
+  domain = "aoi.rs"
+  type   = "ALIAS"
+  name   = ""
+  value  = aws_cloudfront_distribution.redirects.domain_name
+}
