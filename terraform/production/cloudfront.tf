@@ -1,3 +1,24 @@
+resource "aws_cloudfront_cache_policy" "redirects" {
+  name        = "redirects"
+  min_ttl     = 0
+  default_ttl = 0
+  max_ttl     = 31536000
+
+  parameters_in_cache_key_and_forwarded_to_origin {
+    cookies_config {
+      cookie_behavior = "none"
+    }
+
+    headers_config {
+      header_behavior = "none"
+    }
+
+    query_strings_config {
+      query_string_behavior = "none"
+    }
+  }
+}
+
 resource "aws_cloudfront_distribution" "redirects" {
   enabled = true
   aliases = ["aoi.rs"]
@@ -19,6 +40,7 @@ resource "aws_cloudfront_distribution" "redirects" {
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
+    cache_policy_id        = aws_cloudfront_cache_policy.redirects.id
   }
 
   viewer_certificate {
