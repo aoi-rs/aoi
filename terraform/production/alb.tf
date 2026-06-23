@@ -28,7 +28,7 @@ resource "aws_alb_target_group" "service" {
 resource "aws_alb_target_group" "redirector" {
   vpc_id      = aws_vpc.main.id
   name        = "aoi-redirector"
-  port        = 3000
+  port        = 12000
   protocol    = "HTTP"
   target_type = "ip"
 
