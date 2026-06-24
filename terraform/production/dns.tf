@@ -29,9 +29,9 @@ resource "vercel_dns_record" "service" {
 
 resource "vercel_dns_record" "lb" {
   domain = "aoi.rs"
-  type = "CNAME"
-  name = "lb"
-  value = aws_alb.internal.dns_name
+  type   = "CNAME"
+  name   = "lb"
+  value  = aws_alb.internal.dns_name
 }
 
 resource "vercel_dns_record" "redirects" {

@@ -24,7 +24,7 @@ resource "aws_cloudfront_distribution" "redirects" {
   aliases = ["aoi.rs"]
 
   origin {
-    domain_name = aws_alb.internal.dns_name
+    domain_name = "lb.aoi.rs"
     origin_id   = "load-balancer"
   }
 
