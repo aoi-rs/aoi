@@ -117,7 +117,7 @@ resource "aws_security_group" "ecs" {
     from_port       = 12000
     to_port         = 12000
     protocol        = "tcp"
-    security_groups = [aws_security_group.alb.id]
+    security_groups = [aws_security_group.internal_alb]
   }
 
   egress {
