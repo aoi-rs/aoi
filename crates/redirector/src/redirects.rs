@@ -11,6 +11,8 @@ pub async fn handler(
     State(state): State<Arc<SharedState>>,
     Path(slug): Path<String>,
 ) -> Result<Redirect, Failure> {
+    println!("redirect call received");
+
     let output = state
         .dynamodb
         .query()
@@ -22,15 +24,24 @@ pub async fn handler(
         .limit(1)
         .send()
         .await
-        .map_err(|_| failure!())?;
+        .map_err(|err| {
+            println!("error querying DynamoDB: {err:?}");
+            failure!()
+        })?;
 
     match output.items().first() {
         Some(item) => {
             let destination_url = item
                 .get("d")
-                .ok_or_else(|| failure!())?
+                .ok_or_else(|| {
+                    println!("error accessing 'd' attribute in ok_or_else");
+                    failure!()
+                })?
                 .as_s()
-                .map_err(|_| failure!())?;
+                .map_err(|err| {
+                    println!("error using 'as_s()' in 'd' attribute: {err:?}");
+                    failure!()
+                })?;
 
             Ok(Redirect::permanent(destination_url))
         }
