@@ -4,10 +4,6 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
 }
 
-resource "aws_internet_gateway" "main" {
-  vpc_id = aws_vpc.main.id
-}
-
 resource "aws_subnet" "public_a" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
