@@ -5,13 +5,15 @@ use axum::{
     http::StatusCode,
     response::Redirect,
 };
-use std::sync::Arc;
+use std::{sync::Arc, time::Instant};
 
 pub async fn handler(
     State(state): State<Arc<SharedState>>,
     Path(slug): Path<String>,
 ) -> Result<Redirect, Failure> {
     println!("redirect call received");
+
+    let start = Instant::now();
 
     let output = state
         .dynamodb
@@ -28,6 +30,8 @@ pub async fn handler(
             println!("error querying DynamoDB: {err:?}");
             failure!()
         })?;
+
+    println!("DynamoDB query took: {:?}", start.elapsed());
 
     match output.items().first() {
         Some(item) => {
