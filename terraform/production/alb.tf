@@ -18,6 +18,10 @@ resource "aws_alb" "internal" {
   load_balancer_type = "application"
   internal           = true
 
+  security_groups = [
+    aws_security_group.internal_alb.id
+  ]
+
   subnets = [
     aws_subnet.private_a.id,
     aws_subnet.private_b.id
