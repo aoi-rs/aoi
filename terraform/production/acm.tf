@@ -1,6 +1,6 @@
 resource "aws_acm_certificate" "main" {
   domain_name               = "aoi.rs"
-  subject_alternative_names = ["service.aoi.rs"]
+  subject_alternative_names = ["service.aoi.rs", "lb.aoi.rs"]
   validation_method         = "DNS"
 
   lifecycle {
