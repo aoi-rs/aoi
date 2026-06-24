@@ -29,7 +29,7 @@ resource "aws_cloudfront_distribution" "redirects" {
   }
 
   default_cache_behavior {
-    target_origin_id       = "redirects"
+    target_origin_id       = "load-balancer"
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
