@@ -1,3 +1,18 @@
+resource "aws_cloudfront_vpc_origin" "load_balancer" {
+  vpc_origin_endpoint_config {
+    name                   = "load-balancer"
+    arn                    = aws_alb.internal.arn
+    http_port              = 80
+    https_port             = 443
+    origin_protocol_policy = "https-only"
+
+    origin_ssl_protocols {
+      items    = ["TLSv1.2"]
+      quantity = 1
+    }
+  }
+}
+
 resource "aws_cloudfront_cache_policy" "redirects" {
   name        = "redirects"
   min_ttl     = 0
@@ -24,14 +39,11 @@ resource "aws_cloudfront_distribution" "redirects" {
   aliases = ["aoi.rs"]
 
   origin {
-    domain_name = aws_alb.main.dns_name
+    domain_name = aws_alb.internal.dns_name
     origin_id   = "redirects"
 
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
+    vpc_origin_config {
+      vpc_origin_id = aws_cloudfront_vpc_origin.load_balancer.id
     }
   }
 

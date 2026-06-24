@@ -1,5 +1,5 @@
 resource "aws_alb" "main" {
-  name               = "aoi"
+  name               = "main"
   load_balancer_type = "application"
   internal           = false
 
@@ -13,9 +13,20 @@ resource "aws_alb" "main" {
   ]
 }
 
+resource "aws_alb" "internal" {
+  name               = "internal"
+  load_balancer_type = "application"
+  internal           = true
+
+  subnets = [
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id
+  ]
+}
+
 resource "aws_alb_target_group" "service" {
   vpc_id      = aws_vpc.main.id
-  name        = "aoi"
+  name        = "service"
   port        = 10000
   protocol    = "HTTP"
   target_type = "ip"
@@ -27,7 +38,7 @@ resource "aws_alb_target_group" "service" {
 
 resource "aws_alb_target_group" "redirector" {
   vpc_id      = aws_vpc.main.id
-  name        = "aoi-redirector"
+  name        = "redirector"
   port        = 12000
   protocol    = "HTTP"
   target_type = "ip"
@@ -53,55 +64,31 @@ resource "aws_alb_listener" "http" {
   }
 }
 
+locals {
+  load_balancers = {
+    main = {
+      arn              = aws_alb.main.arn
+      target_group_arn = aws_alb_target_group.service.arn
+    }
+
+    internal = {
+      arn              = aws_alb.internal.arn
+      target_group_arn = aws_alb_target_group.redirector.arn
+    }
+  }
+}
+
 resource "aws_alb_listener" "https" {
-  load_balancer_arn = aws_alb.main.arn
+  for_each = local.load_balancers
+
+  load_balancer_arn = each.value.arn
   port              = 443
   protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09"
   certificate_arn   = aws_acm_certificate_validation.main.certificate_arn
 
   default_action {
-    type = "fixed-response"
-
-    fixed_response {
-      content_type = "text/plain"
-      status_code  = "404"
-      message_body = "not found"
-    }
-  }
-}
-
-resource "aws_alb_listener_rule" "service" {
-  listener_arn = aws_alb_listener.https.arn
-
-  condition {
-    host_header {
-      values = [
-        "service.aoi.rs"
-      ]
-    }
-  }
-
-  action {
     type             = "forward"
-    target_group_arn = aws_alb_target_group.service.arn
-  }
-}
-
-resource "aws_alb_listener_rule" "redirector" {
-  listener_arn = aws_alb_listener.https.arn
-
-  condition {
-    host_header {
-      values = [
-        "aoi.rs",
-        "www.aoi.rs"
-      ]
-    }
-  }
-
-  action {
-    type             = "forward"
-    target_group_arn = aws_alb_target_group.redirector.arn
+    target_group_arn = each.value.target_group_arn
   }
 }
