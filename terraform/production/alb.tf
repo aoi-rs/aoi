@@ -16,7 +16,6 @@ resource "aws_alb" "main" {
 resource "aws_alb" "internal" {
   name               = "internal"
   load_balancer_type = "application"
-  internal           = true
 
   security_groups = [
     aws_security_group.internal_alb.id
