@@ -1,11 +1,15 @@
-# Rinku Infrastructure as Code (IaC)
+# Aoi Infrastructure as Code (IaC)
 
-Rinku uses Terraform to manage and provision its cloud infrastructure. The Terraform state, secrets and runs are managed on [HCP Terraform](https://developer.hashicorp.com/terraform/cloud-docs).
+Aoi uses Terraform to manage and provision its cloud infrastructure. The Terraform state, secrets and runs are managed on [HCP Terraform](https://developer.hashicorp.com/terraform/cloud-docs).
 
 ## Infrastructure details
 
-Rinku uses...
+Aoi uses...
 
-- [AWS ECS on Fargate](https://aws.amazon.com/ecs) for webservices
-- [AWS RDS](https://aws.amazon.com/rds) for relational databases
-- [GHCR](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) to store container images
+- [Amazon CloudFront](https://aws.amazon.com/cloudfront/) to cache redirects
+- [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) to store short URLs
+- [Amazon ECR](https://aws.amazon.com/ecr/) to store container images
+- [Amazon VPC](https://aws.amazon.com/vpc/) to isolate networking resources
+- [Amazon ECS with AWS Fargate](https://aws.amazon.com/ecs/) to run containerized services
+- [Amazon RDS](https://aws.amazon.com/rds/) for relational data
+- [Vercel](https://vercel.com) to host the frontend and manage DNS
