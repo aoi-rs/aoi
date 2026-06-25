@@ -22,21 +22,21 @@ from aoi.kit.db.postgres import (
 def configure_cors(app: FastAPI):
     configs: list[CORSConfig] = []
 
-    # Asahi frontend CORS configuration
+    # Aoi frontend CORS configuration
     if settings.CORS_ORIGINS:
 
-        def asahi_frontend_matcher(origin: str, scope: Scope) -> bool:
+        def aoi_frontend_matcher(origin: str, scope: Scope) -> bool:
             return origin in settings.CORS_ORIGINS
 
-        asahi_frontend_config = CORSConfig(
-            asahi_frontend_matcher,
+        aoi_frontend_config = CORSConfig(
+            aoi_frontend_matcher,
             allow_origins=[str(origin) for origin in settings.CORS_ORIGINS],
             allow_credentials=True,
             allow_methods=["*"],
             allow_headers=["*"],
         )
 
-        configs.append(asahi_frontend_config)
+        configs.append(aoi_frontend_config)
 
     service_config = CORSConfig(
         lambda origin, scope: True,
