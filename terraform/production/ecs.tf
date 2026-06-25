@@ -101,12 +101,40 @@ resource "aws_ecs_task_definition" "service" {
           value = aws_db_instance.postgres.db_name
         },
         {
-          name  = "RINKU_REDIS_HOST"
-          value = aws_elasticache_cluster.redis.cache_nodes[0].address
+          name  = "AOI_ENV"
+          value = "production"
         },
         {
-          name  = "RINKU_REDIS_PORT"
-          value = tostring(aws_elasticache_cluster.redis.port)
+          name  = "AOI_SECRET"
+          value = var.service_secret_production
+        },
+        {
+          name  = "AOI_EMAIL_SENDER",
+          value = "resend"
+        },
+        {
+          name  = "AOI_RESEND_API_KEY",
+          value = var.service_resend_api_key_production
+        },
+        {
+          name  = "AOI_POSTGRES_USER"
+          value = aws_db_instance.postgres.username
+        },
+        {
+          name  = "AOI_POSTGRES_PWD"
+          value = aws_db_instance.postgres.password
+        },
+        {
+          name  = "AOI_POSTGRES_HOST"
+          value = aws_db_instance.postgres.address
+        },
+        {
+          name  = "AOI_POSTGRES_PORT"
+          value = tostring(aws_db_instance.postgres.port)
+        },
+        {
+          name  = "AOI_POSTGRES_DATABASE"
+          value = aws_db_instance.postgres.db_name
         },
       ]
     }
