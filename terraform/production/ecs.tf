@@ -65,42 +65,6 @@ resource "aws_ecs_task_definition" "service" {
 
       environment = [
         {
-          name  = "RINKU_ENV"
-          value = "production"
-        },
-        {
-          name  = "RINKU_SECRET"
-          value = var.service_secret_production
-        },
-        {
-          name  = "RINKU_EMAIL_SENDER",
-          value = "resend"
-        },
-        {
-          name  = "RINKU_RESEND_API_KEY",
-          value = var.service_resend_api_key_production
-        },
-        {
-          name  = "RINKU_POSTGRES_USER"
-          value = aws_db_instance.postgres.username
-        },
-        {
-          name  = "RINKU_POSTGRES_PWD"
-          value = aws_db_instance.postgres.password
-        },
-        {
-          name  = "RINKU_POSTGRES_HOST"
-          value = aws_db_instance.postgres.address
-        },
-        {
-          name  = "RINKU_POSTGRES_PORT"
-          value = tostring(aws_db_instance.postgres.port)
-        },
-        {
-          name  = "RINKU_POSTGRES_DATABASE"
-          value = aws_db_instance.postgres.db_name
-        },
-        {
           name  = "AOI_ENV"
           value = "production"
         },
