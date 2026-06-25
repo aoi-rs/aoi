@@ -1,7 +1,7 @@
 [project]
-name = "rinku"
+name = "aoi"
 version = "0.1.0"
-description = "Rinku is an internal authentication service that provides straighforward integration with existing codebases"
+description = "A minimal URL shortener focused on speed and user experience."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
@@ -11,9 +11,7 @@ dependencies = [
     "dramatiq>=2.1.0",
     "fastapi[standard]>=0.136.1",
     "httpx>=0.28.1",
-    "httpx-oauth>=0.16.1",
     "pyjwt[crypto]>=2.12.1",
-    "redis>=7.4.0",
     "safe-redirect-url>=0.1.1",
     "sqlalchemy[asyncio]>=2.0.49",
     "uvicorn[standard]>=0.46.0",
@@ -29,15 +27,14 @@ dependencies = [
 dev = [
     "pyright>=1.1.409",
     "ruff>=0.15.14",
-    "types-redis>=4.6.0.20241004",
     "boto3-stubs[essential,dynamodb]>=1.43.17",
     "locust>=2.44.0",
 ]
 
 [tool.taskipy.tasks]
-service = { cmd = "uvicorn rinku.app:app --reload --host 127.0.0.1 --port 8000", help = "run service" }
+service = { cmd = "uvicorn aoi.app:app --reload --host 127.0.0.1 --port 8000", help = "run service" }
 db_migrate = { cmd = "alembic upgrade head", help = "run alembic upgrade" }
 lint = { cmd = "ruff format --check . && ruff check .", help = "run ruff linter" }
 lint_fix = { cmd = "ruff format . && ruff check --fix .", help = "run ruff linter with autofix" }
-type_check = { cmd = "pyright rinku", help = "run pyright type checker" }
+type_check = { cmd = "pyright aoi", help = "run pyright type checker" }
 loadtest = { cmd = "locust -f load_tests/locustfile.py --host=http://127.0.0.1:8000", help = "run load tests" }

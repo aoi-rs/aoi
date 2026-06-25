@@ -7,8 +7,8 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from rinku.config import settings
-from rinku.models import Model
+from aoi.config import settings
+from aoi.models import Model
 
 
 def include_object(object, name, type_, reflected, compare_to):

@@ -2,14 +2,14 @@ services:
   postgres:
     image: postgres:18.3-trixie
     environment:
-      - POSTGRES_USER=${RINKU_POSTGRES_USER}
-      - POSTGRES_PASSWORD=${RINKU_POSTGRES_PWD}
-      - POSTGRES_DB=${RINKU_POSTGRES_DATABASE}
-      - POSTGRES_PORT=${RINKU_POSTGRES_PORT:-5432}
+      - POSTGRES_USER=${AOI_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${AOI_POSTGRES_PWD}
+      - POSTGRES_DB=${AOI_POSTGRES_DATABASE}
+      - POSTGRES_PORT=${AOI_POSTGRES_PORT:-5432}
     volumes:
       - database:/var/lib/postgresql
     ports:
-      - ${RINKU_POSTGRES_PORT:-5432}:5432
+      - ${AOI_POSTGRES_PORT:-5432}:5432
     healthcheck:
       test:
         [
@@ -17,28 +17,18 @@ services:
           "pg_isready",
           "-q",
           "-d",
-          "${RINKU_POSTGRES_DATABASE}",
+          "${AOI_POSTGRES_DATABASE}",
           "-U",
-          "${RINKU_POSTGRES_USER}",
+          "${AOI_POSTGRES_USER}",
         ]
       timeout: 40s
       interval: 2s
       retries: 20
 
-  redis:
-    image: redis:alpine
-    ports:
-      - "${RINKU_REDIS_PORT:-6379}:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 2s
-      timeout: 10s
-      retries: 10
-
   dynamodb:
     image: amazon/dynamodb-local:3.3.0
     ports:
-      - "${RINKU_DYNAMODB_PORT:-8080}:8000"
+      - "${AOI_DYNAMODB_PORT:-8080}:8000"
 
 volumes:
   database:

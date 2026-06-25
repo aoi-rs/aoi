@@ -1,5 +1,5 @@
 """
-Load testing suite for Rinku infrastructure.
+Load testing suite for Aoi infrastructure.
 
 This package contains load tests for:
 - Links API (creation & pagination)

@@ -17,4 +17,4 @@ RUN uv sync --locked
 
 COPY . .
 
-CMD ["uv", "run", "uvicorn", "rinku.app:app", "--host", "0.0.0.0", "--port", "10000"]
+CMD ["uv", "run", "uvicorn", "aoi.app:app", "--host", "0.0.0.0", "--port", "10000"]
