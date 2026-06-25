@@ -1,12 +1,12 @@
 data "tfe_project" "production" {
   name         = "Production"
-  organization = "rinku-sh"
+  organization = "aoi-rs"
 }
 
 resource "tfe_variable_set" "production" {
   name              = "Production Settings"
   description       = "For variables specific to the production environment"
-  organization      = "rinku-sh"
+  organization      = "aoi-rs"
   parent_project_id = data.tfe_project.production.id
 }
 

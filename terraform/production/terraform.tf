@@ -2,7 +2,7 @@ terraform {
   required_version = ">= 1.15"
 
   cloud {
-    organization = "rinku-sh"
+    organization = "aoi-rs"
 
     workspaces {
       name = "production"
