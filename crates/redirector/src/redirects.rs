@@ -2,15 +2,40 @@ use crate::{Failure, SharedState};
 use aws_sdk_dynamodb::types::AttributeValue;
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
-    response::Redirect,
+    http::{StatusCode, header},
+    response::{IntoResponse, Response},
 };
 use std::{sync::Arc, time::Instant};
+
+pub struct RedirectResponse {
+    destination_url: String,
+}
+
+impl RedirectResponse {
+    pub fn new(destination_url: impl Into<String>) -> Self {
+        Self {
+            destination_url: destination_url.into(),
+        }
+    }
+}
+
+impl IntoResponse for RedirectResponse {
+    fn into_response(self) -> Response {
+        (
+            StatusCode::PERMANENT_REDIRECT,
+            [
+                (header::LOCATION, self.destination_url.as_str()),
+                (header::CACHE_CONTROL, "public, max-age=31536000, immutable"),
+            ],
+        )
+            .into_response()
+    }
+}
 
 pub async fn handler(
     State(state): State<Arc<SharedState>>,
     Path(slug): Path<String>,
-) -> Result<Redirect, Failure> {
+) -> Result<RedirectResponse, Failure> {
     println!("redirect call received");
 
     let start = Instant::now();
@@ -47,7 +72,7 @@ pub async fn handler(
                     failure!()
                 })?;
 
-            Ok(Redirect::permanent(destination_url))
+            Ok(RedirectResponse::new(destination_url))
         }
         _ => Err(failure!(
             StatusCode::NOT_FOUND,
