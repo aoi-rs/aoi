@@ -5,7 +5,7 @@ use axum::{
     http::{StatusCode, header},
     response::{IntoResponse, Response},
 };
-use std::{sync::Arc, time::Instant};
+use std::sync::Arc;
 
 pub struct RedirectResponse {
     destination_url: String,
@@ -36,10 +36,6 @@ pub async fn handler(
     State(state): State<Arc<SharedState>>,
     Path(slug): Path<String>,
 ) -> Result<RedirectResponse, Failure> {
-    println!("redirect call received");
-
-    let start = Instant::now();
-
     let output = state
         .dynamodb
         .query()
@@ -51,26 +47,15 @@ pub async fn handler(
         .limit(1)
         .send()
         .await
-        .map_err(|err| {
-            println!("error querying DynamoDB: {err:?}");
-            failure!()
-        })?;
-
-    println!("DynamoDB query took: {:?}", start.elapsed());
+        .map_err(|_| failure!())?;
 
     match output.items().first() {
         Some(item) => {
             let destination_url = item
                 .get("d")
-                .ok_or_else(|| {
-                    println!("error accessing 'd' attribute in ok_or_else");
-                    failure!()
-                })?
+                .ok_or_else(|| failure!())?
                 .as_s()
-                .map_err(|err| {
-                    println!("error using 'as_s()' in 'd' attribute: {err:?}");
-                    failure!()
-                })?;
+                .map_err(|_| failure!())?;
 
             Ok(RedirectResponse::new(destination_url))
         }
