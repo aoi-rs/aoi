@@ -139,15 +139,3 @@ resource "aws_security_group" "postgres" {
     security_groups = [aws_security_group.ecs.id]
   }
 }
-
-resource "aws_security_group" "redis" {
-  vpc_id = aws_vpc.main.id
-  name   = "aoi-redis"
-
-  ingress {
-    from_port       = 6379
-    to_port         = 6379
-    protocol        = "tcp"
-    security_groups = [aws_security_group.ecs.id]
-  }
-}
