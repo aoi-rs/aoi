@@ -6,7 +6,7 @@ URL shortener built with bold scalability requirements and a minimal feature set
 - Personal Access Tokens (PATs)
 - Short URL creation
 - Short URL pagination
-- Redirects (short URL -> destination URL)
+- Redirects (from short URL to destination URL)
 
 ## Requirements
 
@@ -20,7 +20,7 @@ URL shortener built with bold scalability requirements and a minimal feature set
 - Users should be able to list their short URLs
 - The application should redirect requests to short URLs to their destination URLs
 
-## Non-Functional Requirements
+### Non-Functional Requirements
 
 - The application should support 10 million registered users
 - The application should support 100 million short URLs created daily
@@ -29,7 +29,7 @@ URL shortener built with bold scalability requirements and a minimal feature set
 - The short URL slugs should consist only of [Base62](https://en.wikipedia.org/wiki/Base62) characters
 - The short URLs should be as small as possible
 
-## Business Rules
+### Business Rules
 
 - Auth sessions, PATs, and short URLs are account-scoped, so only their owner can manage them 
 - The destination URL of a short URL cannot be modified or deleted. Since the application also doesn't track redirect metrics, every redirect can safely return [HTTP 308 Permanent Redirect](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/308)
