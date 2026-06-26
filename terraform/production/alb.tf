@@ -68,24 +68,9 @@ resource "aws_alb_listener" "http" {
   }
 }
 
-locals {
-  load_balancers = {
-    main = {
-      arn              = aws_alb.main.arn
-      target_group_arn = aws_alb_target_group.service.arn
-    }
-
-    internal = {
-      arn              = aws_alb.internal.arn
-      target_group_arn = aws_alb_target_group.redirector.arn
-    }
-  }
-}
 
 resource "aws_alb_listener" "https" {
-  for_each = local.load_balancers
-
-  load_balancer_arn = each.value.arn
+  load_balancer_arn = aws_alb.main.arn
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09"
@@ -93,6 +78,17 @@ resource "aws_alb_listener" "https" {
 
   default_action {
     type             = "forward"
-    target_group_arn = each.value.target_group_arn
+    target_group_arn = aws_alb_target_group.service.arn
+  }
+}
+
+resource "aws_alb_listener" "internal_http" {
+  load_balancer_arn = aws_alb.internal.arn
+  port = 80
+  protocol = "HTTP"
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_alb_target_group.redirector.arn
   }
 }
