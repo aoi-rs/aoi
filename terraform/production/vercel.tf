@@ -41,3 +41,34 @@ resource "vercel_dns_record" "redirects" {
   name   = ""
   value  = aws_cloudfront_distribution.redirects.domain_name
 }
+
+# =============================================================================
+# Resources for the account.aoi.rs website
+# =============================================================================
+
+resource "vercel_project" "website" {
+  name           = "aoi"
+  framework      = "nextjs"
+  root_directory = "apps/www"
+
+  git_repository = {
+    type = "github"
+    repo = "aoi-rs/aoi"
+  }
+
+  git_provider_options = {
+    create_deployments = false
+  }
+
+  environment = [
+    {
+      key   = "API_BASE_URL"
+      value = "https://service.aoi.rs"
+    }
+  ]
+}
+
+resource "vercel_project_domain" "self" {
+  project_id = vercel_project.website.id
+  domain     = "account.aoi.rs"
+}
