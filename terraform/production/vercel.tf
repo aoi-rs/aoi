@@ -73,7 +73,7 @@ resource "vercel_project" "website" {
   ]
 }
 
-resource "vercel_project_domain" "self" {
+resource "vercel_project_domain" "website" {
   project_id = vercel_project.website.id
   domain     = "account.aoi.rs"
 }
