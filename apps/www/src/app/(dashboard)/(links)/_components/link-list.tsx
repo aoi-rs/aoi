@@ -33,7 +33,7 @@ export function LinkList({ links: _links }: LinkListProps) {
             className="group/link cursor-default"
             href={'/link/' + link.id}
           >
-            <div className="mx-2 px-2 items-start hover:bg-asahi-800 rounded-lg flex gap-3 group-data-[active=true]/link:bg-asahi-700!">
+            <div className="mx-2 px-2 items-start hover:bg-aoi-800 rounded-lg flex gap-3 group-data-[active=true]/link:bg-aoi-700!">
               <div className="pt-3 min-w-6 shrink-0 flex">
                 <Avatar variant="rounded">
                   <AvatarImage src="/icon.svg" />
@@ -41,16 +41,16 @@ export function LinkList({ links: _links }: LinkListProps) {
               </div>
 
               <div className="flex flex-col gap-0.5 flex-1 py-2.5">
-                <span className="text-sm text-asahi-500 font-medium leading-[normal]">
+                <span className="text-sm text-aoi-500 font-medium leading-[normal]">
                   {link.name ?? 'Untitled'}
                 </span>
 
                 <div className="h-4 flex gap-1.5">
-                  <span className="text-xs text-asahi-500 font-[450] leading-[normal] flex-1">
+                  <span className="text-xs text-aoi-500 font-[450] leading-[normal] flex-1">
                     Redirects to {new URL(link.destination_url).hostname}
                   </span>
 
-                  <span className="text-asahi-500 text-xs leading-[normal]">
+                  <span className="text-aoi-500 text-xs leading-[normal]">
                     {shortenCreationDate(link.created_at)}
                   </span>
                 </div>

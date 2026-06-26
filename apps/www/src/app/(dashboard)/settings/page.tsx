@@ -23,7 +23,7 @@ export default async function Settings() {
             <div className="flex flex-col gap-0.5 px-4">
               <h2 className="text-sm font-medium">Sessions</h2>
 
-              <p className="text-sm font-[450] text-asahi-500">
+              <p className="text-sm font-[450] text-aoi-500">
                 See devices logged into your account
               </p>
             </div>
@@ -35,7 +35,7 @@ export default async function Settings() {
             <div className="flex flex-col gap-0.5 px-4">
               <h2 className="text-sm font-medium">Personal access tokens</h2>
 
-              <p className="text-sm font-[450] text-asahi-500">
+              <p className="text-sm font-[450] text-aoi-500">
                 Use the REST API to build your own integrations
               </p>
             </div>

@@ -133,7 +133,7 @@ function SidebarProvider({
           } as React.CSSProperties
         }
         className={cn(
-          'group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-asahi-950',
+          'group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-aoi-950',
           className,
         )}
         {...props}
@@ -164,7 +164,7 @@ function Sidebar({
       <div
         data-slot="sidebar"
         className={cn(
-          'flex h-full w-(--sidebar-width) flex-col bg-asahi-950 text-asahi-50',
+          'flex h-full w-(--sidebar-width) flex-col bg-aoi-950 text-aoi-50',
           className,
         )}
         {...props}
@@ -182,7 +182,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="w-(--sidebar-width) bg-asahi-950 p-0 text-asahi-50 [&>button]:hidden"
+          className="w-(--sidebar-width) bg-aoi-950 p-0 text-aoi-50 [&>button]:hidden"
           style={
             {
               '--sidebar-width': SIDEBAR_WIDTH_MOBILE,
@@ -198,7 +198,7 @@ function Sidebar({
 
   return (
     <div
-      className="group peer hidden text-asahi-50 md:block"
+      className="group peer hidden text-aoi-50 md:block"
       data-state={state}
       data-collapsible={state === 'collapsed' ? collapsible : ''}
       data-variant={variant}
@@ -237,7 +237,7 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="flex size-full flex-col bg-asahi-950 group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:border group-data-[variant=floating]:border-asahi-700"
+          className="flex size-full flex-col bg-aoi-950 group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:border group-data-[variant=floating]:border-aoi-700"
         >
           {children}
         </div>
@@ -261,7 +261,7 @@ function SidebarTrigger({
       size="icon"
       aria-label="Menu"
       className={cn(
-        'size-7 hover:bg-asahi-900 text-asahi-500 hover:text-white',
+        'size-7 hover:bg-aoi-900 text-aoi-500 hover:text-white',
         className,
       )}
       onClick={(event) => {
@@ -288,10 +288,10 @@ function SidebarRail({ className, ...props }: React.ComponentProps<'button'>) {
       onClick={toggleSidebar}
       title="Toggle Sidebar"
       className={cn(
-        'absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:inset-s-1/2 after:w-0.5 hover:after:bg-asahi-700 sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2',
+        'absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:inset-s-1/2 after:w-0.5 hover:after:bg-aoi-700 sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2',
         'in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize',
         '[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize',
-        'group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full hover:group-data-[collapsible=offcanvas]:bg-asahi-950',
+        'group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full hover:group-data-[collapsible=offcanvas]:bg-aoi-950',
         '[[data-side=left][data-collapsible=offcanvas]_&]:-right-2',
         '[[data-side=right][data-collapsible=offcanvas]_&]:-left-2',
         className,
@@ -306,7 +306,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<'main'>) {
     <main
       data-slot="sidebar-inset"
       className={cn(
-        'relative flex w-full flex-1 flex-col border border-asahi-700 bg-asahi-900 md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2',
+        'relative flex w-full flex-1 flex-col border border-aoi-700 bg-aoi-900 md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2',
         className,
       )}
       {...props}
@@ -322,7 +322,7 @@ function SidebarInput({
     <Input
       data-slot="sidebar-input"
       data-sidebar="input"
-      className={cn('h-8 w-full bg-asahi-900 shadow-none', className)}
+      className={cn('h-8 w-full bg-aoi-900 shadow-none', className)}
       {...props}
     />
   )
@@ -365,7 +365,7 @@ function SidebarSeparator({
     <Separator
       data-slot="sidebar-separator"
       data-sidebar="separator"
-      className={cn('mx-2 w-auto bg-asahi-700', className)}
+      className={cn('mx-2 w-auto bg-aoi-700', className)}
       {...props}
     />
   )
@@ -406,7 +406,7 @@ function SidebarGroupLabel({
     props: mergeProps<'div'>(
       {
         className: cn(
-          'flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-asahi-50/70 ring-sidebar-ring outline-hidden transition-[margin,opacity] duration-200 ease-linear group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
+          'flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-aoi-50/70 ring-sidebar-ring outline-hidden transition-[margin,opacity] duration-200 ease-linear group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
           className,
         ),
       },
@@ -485,7 +485,7 @@ const sidebarMenuButtonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'hover:bg-asahi-900',
+        default: 'hover:bg-aoi-900',
         outline:
           'bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]',
       },

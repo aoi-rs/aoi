@@ -52,18 +52,18 @@ export function ProfileForm() {
 
   return (
     <form onSubmit={form.handleSubmit(handleSubmit)}>
-      <div className="rounded-2xl bg-asahi-850 border border-asahi-700 bg-asahi-800">
-        <ul className="flex flex-col divide-asahi-700 divide-y">
+      <div className="rounded-2xl bg-aoi-850 border border-aoi-700 bg-aoi-800">
+        <ul className="flex flex-col divide-aoi-700 divide-y">
           <li className="p-4 flex items-center gap-3">
             <div className="flex flex-col flex-1">
               <span className="text-sm font-medium">Picture</span>
 
-              <span className="text-xs font-[450] text-asahi-500">
+              <span className="text-xs font-[450] text-aoi-500">
                 Best viewed at 256x256
               </span>
             </div>
 
-            <Avatar.Root className="group/avatar relative flex size-8 shrink-0 rounded-md select-none after:absolute after:inset-0 after:rounded-md after:border after:border-asahi-700 after:mix-blend-darken data-[size=lg]:size-10 data-[size=sm]:size-6 dark:after:mix-blend-lighten">
+            <Avatar.Root className="group/avatar relative flex size-8 shrink-0 rounded-md select-none after:absolute after:inset-0 after:rounded-md after:border after:border-aoi-700 after:mix-blend-darken data-[size=lg]:size-10 data-[size=sm]:size-6 dark:after:mix-blend-lighten">
               <Avatar.Image
                 className="rounded-md"
                 src="/preview-avatar.png"
@@ -76,7 +76,7 @@ export function ProfileForm() {
             <div className="flex flex-col flex-1">
               <span className="text-sm font-medium">Full name</span>
 
-              <span className="text-xs font-[450] text-asahi-500">
+              <span className="text-xs font-[450] text-aoi-500">
                 The name tied to your profile
               </span>
             </div>

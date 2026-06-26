@@ -8,11 +8,11 @@ const button = cva(
   {
     variants: {
       variant: {
-        default: 'bg-asahi-50 text-asahi-900 hover:bg-asahi-50/90',
-        outline: 'border border-asahi-700 bg-asahi-800 hover:bg-asahi-700',
-        ghost: 'hover:bg-asahi-700 text-white',
+        default: 'bg-aoi-50 text-aoi-900 hover:bg-aoi-50/90',
+        outline: 'border border-aoi-700 bg-aoi-800 hover:bg-aoi-700',
+        ghost: 'hover:bg-aoi-700 text-white',
         destructive: 'bg-red-600 hover:bg-red-500 text-white',
-        link: 'text-asahi-50 underline-offset-4 hover:underline',
+        link: 'text-aoi-50 underline-offset-4 hover:underline',
       },
       size: {
         default: 'h-10 px-4 py-2',

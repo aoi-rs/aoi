@@ -25,7 +25,7 @@ function createLoginResponse(request: NextRequest) {
 export async function proxy(request: NextRequest) {
   let user: schemas['UserSchema'] | undefined
 
-  if (request.cookies.has(CONFIG.ASAHI_ACCESS_TOKEN_COOKIE_KEY)) {
+  if (request.cookies.has(CONFIG.AOI_ACCESS_TOKEN_COOKIE_KEY)) {
     const client = await createSSRClient(
       request.headers,
       RequestCookiesAdapter.seal(request.cookies),
@@ -57,9 +57,7 @@ export async function proxy(request: NextRequest) {
   const headers: Record<string, string> = {}
 
   if (user) {
-    headers['x-asahi-user'] = Buffer.from(JSON.stringify(user)).toString(
-      'base64',
-    )
+    headers['x-aoi-user'] = Buffer.from(JSON.stringify(user)).toString('base64')
   }
 
   const response = NextResponse.next({ headers })

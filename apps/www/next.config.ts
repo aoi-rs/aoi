@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next'
 
-const ASAHI_ACCESS_TOKEN_COOKIE_NAME =
-  process.env.ASAHI_ACCESS_TOKEN_COOKIE_NAME || 'ah_access_token'
+const AOI_ACCESS_TOKEN_COOKIE_NAME =
+  process.env.AOI_ACCESS_TOKEN_COOKIE_NAME || 'aoi_access_token'
 
 const FRONTEND_HOSTNAME = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL
   ? new URL(process.env.NEXT_PUBLIC_FRONTEND_BASE_URL).hostname
@@ -24,7 +24,7 @@ const config: NextConfig = {
       has: [
         {
           type: 'cookie',
-          key: ASAHI_ACCESS_TOKEN_COOKIE_NAME,
+          key: AOI_ACCESS_TOKEN_COOKIE_NAME,
         },
         {
           type: 'host',

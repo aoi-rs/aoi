@@ -36,8 +36,8 @@ export function MainMenu() {
               <Link
                 href={item.link}
                 className={cn(
-                  'flex items-center rounded-lg border border-transparent cursor-default px-2.5 transition-colors text-asahi-500 hover:text-asahi-200',
-                  state === 'collapsed' && '!dark:text-asahi-600',
+                  'flex items-center rounded-lg border border-transparent cursor-default px-2.5 transition-colors text-aoi-500 hover:text-aoi-200',
+                  state === 'collapsed' && '!dark:text-aoi-600',
                 )}
               />
             }

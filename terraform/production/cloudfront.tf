@@ -48,7 +48,7 @@ resource "aws_cloudfront_distribution" "redirects" {
 
   default_cache_behavior {
     target_origin_id       = "alb"
-    viewer_protocol_policy = "redirect-to-https"
+    viewer_protocol_policy = "allow-all"
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD"]
     cache_policy_id        = aws_cloudfront_cache_policy.redirects.id

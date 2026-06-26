@@ -61,7 +61,7 @@ export function LinkLabelEditor({ link }: LinkLabelEditorProps) {
     <div
       ref={ref}
       data-empty-text="Untitled"
-      className="text-2xl text-white font-semibold cursor-text whitespace-pre-wrap wrap-anywhere focus:outline-none resize-none before:content-[attr(data-empty-text)] before:hidden before:float-left before:pointer-events-none before:h-0 before:text-asahi-600 empty:before:inline has-[>br:only-child]:before:inline"
+      className="text-2xl text-white font-semibold cursor-text whitespace-pre-wrap wrap-anywhere focus:outline-none resize-none before:content-[attr(data-empty-text)] before:hidden before:float-left before:pointer-events-none before:h-0 before:text-aoi-600 empty:before:inline has-[>br:only-child]:before:inline"
       role="textbox"
       aria-readonly="false"
       aria-multiline="false"

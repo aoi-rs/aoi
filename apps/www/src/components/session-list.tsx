@@ -45,20 +45,20 @@ export function SessionList({ sessions: _sessions }: SessionListProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="rounded-2xl bg-asahi-800 border border-asahi-700">
-        <ul className="flex flex-col divide-asahi-700 divide-y">
-          <li className="p-4 relative hover:bg-asahi-700 flex gap-4 items-center group/item rounded-2xl">
+      <div className="rounded-2xl bg-aoi-800 border border-aoi-700">
+        <ul className="flex flex-col divide-aoi-700 divide-y">
+          <li className="p-4 relative hover:bg-aoi-700 flex gap-4 items-center group/item rounded-2xl">
             <div className="inset-0 absolute block cursor-default group-last/item:rounded-b-2xl" />
 
-            <figure className="size-8 bg-asahi-700 grid place-content-center rounded-md">
-              <Globe className="size-4 text-asahi-500" />
+            <figure className="size-8 bg-aoi-700 grid place-content-center rounded-md">
+              <Globe className="size-4 text-aoi-500" />
             </figure>
 
             <div className="flex flex-col flex-1 gap-0.5">
               <span className="text-sm leading-4 font-medium flex items-center gap-2">
                 {current.name}
               </span>
-              <span className="text-asahi-500 text-sm leading-4 font-[450]">
+              <span className="text-aoi-500 text-sm leading-4 font-[450]">
                 Your current session
               </span>
             </div>
@@ -77,8 +77,8 @@ export function SessionList({ sessions: _sessions }: SessionListProps) {
       </div>
 
       {sessions.data.pagination.total_count > 1 && (
-        <div className="rounded-2xl bg-asahi-800 border border-asahi-700">
-          <header className="p-4 flex items-center justify-between border-b border-asahi-700">
+        <div className="rounded-2xl bg-aoi-800 border border-aoi-700">
+          <header className="p-4 flex items-center justify-between border-b border-aoi-700">
             <span className="text-white text-sm font-medium">
               {sessions.data.pagination.total_count - 1} other session
               {sessions.data.pagination.total_count > 2 && 's'}
@@ -93,23 +93,23 @@ export function SessionList({ sessions: _sessions }: SessionListProps) {
             </Button>
           </header>
 
-          <ul className="flex flex-col divide-asahi-700 divide-y">
+          <ul className="flex flex-col divide-aoi-700 divide-y">
             {others.map((session) => (
               <li
                 key={session.id}
-                className="p-4 relative flex gap-4 hover:bg-asahi-700 items-center group/item last:rounded-b-2xl"
+                className="p-4 relative flex gap-4 hover:bg-aoi-700 items-center group/item last:rounded-b-2xl"
               >
                 <div className="inset-0 absolute block cursor-default group-last/item:rounded-b-2xl" />
 
-                <figure className="size-8 bg-asahi-700 grid place-content-center rounded-md">
-                  <Globe className="size-4 text-asahi-500" />
+                <figure className="size-8 bg-aoi-700 grid place-content-center rounded-md">
+                  <Globe className="size-4 text-aoi-500" />
                 </figure>
 
                 <div className="flex flex-col flex-1 gap-0.5">
                   <span className="text-sm leading-4 font-medium flex items-center gap-2">
                     {session.name}
                   </span>
-                  <span className="text-asahi-500 text-sm leading-4 font-[450]">
+                  <span className="text-aoi-500 text-sm leading-4 font-[450]">
                     Last seen{' '}
                     {formatDistanceToNow(session.refreshed_at, {
                       addSuffix: true,

@@ -116,7 +116,7 @@ export default function PersonalAccessTokenForm({
         <div className="px-4 flex flex-col gap-1">
           <h1 className="text-2xl font-medium">Edit PAT</h1>
 
-          <p className="text-asahi-500 font-[450] text-sm">
+          <p className="text-aoi-500 font-[450] text-sm">
             Use a PAT to automate workflows and connect external tools
           </p>
         </div>
@@ -125,8 +125,8 @@ export default function PersonalAccessTokenForm({
           onSubmit={form.handleSubmit(handleSubmit)}
           className="flex flex-col gap-12"
         >
-          <div className="rounded-2xl bg-asahi-850 border border-asahi-700 bg-asahi-800">
-            <ul className="flex flex-col divide-asahi-700 divide-y">
+          <div className="rounded-2xl bg-aoi-850 border border-aoi-700 bg-aoi-800">
+            <ul className="flex flex-col divide-aoi-700 divide-y">
               <Controller
                 name="label"
                 control={form.control}
@@ -140,7 +140,7 @@ export default function PersonalAccessTokenForm({
                         Label
                       </label>
 
-                      <span className="text-xs font-[450] text-asahi-500">
+                      <span className="text-xs font-[450] text-aoi-500">
                         Choose a name that helps identify this token later
                       </span>
                     </div>
@@ -161,13 +161,13 @@ export default function PersonalAccessTokenForm({
             <div className="flex flex-col gap-0.5 px-4">
               <h2 className="text-sm font-medium">Permissions</h2>
 
-              <p className="text-sm font-[450] text-asahi-500">
+              <p className="text-sm font-[450] text-aoi-500">
                 Choose the minimal permissions necessary for your needs
               </p>
             </div>
 
-            <div className="rounded-2xl bg-asahi-800 border border-asahi-700">
-              <ul className="flex flex-col divide-asahi-700 divide-y">
+            <div className="rounded-2xl bg-aoi-800 border border-aoi-700">
+              <ul className="flex flex-col divide-aoi-700 divide-y">
                 {PERMISSION_SUBJECTS.map((sub) => (
                   <Controller
                     key={sub.name}

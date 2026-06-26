@@ -45,7 +45,7 @@ export default function Login() {
   const content = states[state]
 
   return (
-    <div className="min-h-screen flex pt-12 pb-12  bg-asahi-950">
+    <div className="min-h-screen flex pt-12 pb-12  bg-aoi-950">
       <div className="flex flex-col mt-36 w-full h-fit items-center gap-8 animate-in delay-200 duration-300 fade-in-0 fill-mode-both slide-in-from-top-[0.625rem]">
         <Logomark className="size-12" />
 
@@ -157,9 +157,9 @@ function EmailSent({ onStateChange, email }: StateProps & { email: string }) {
       <div className="flex flex-col items-center gap-6">
         <h1 className="text-center text-lg font-medium">Check your inbox</h1>
 
-        <p className="text-center text-sm font-[450] text-asahi-500">
+        <p className="text-center text-sm font-[450] text-aoi-500">
           We&apos;ve sent you a temporary login link. Please check your inbox at{' '}
-          <span className="text-asahi-200">{email}</span>.
+          <span className="text-aoi-200">{email}</span>.
         </p>
       </div>
 

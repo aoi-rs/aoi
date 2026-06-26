@@ -45,7 +45,7 @@ export function UserMenu() {
             <span className="truncate font-medium text-sm leading-tight">
               {user?.name ?? 'You'}
             </span>
-            <ChevronDown className="size-3! text-asahi-500" />
+            <ChevronDown className="size-3! text-aoi-500" />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="min-w-56" align="end" sideOffset={4}>
             <DropdownMenuSeparator />

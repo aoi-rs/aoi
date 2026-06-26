@@ -4,13 +4,13 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 import { getQueryClient } from '@/utils/query'
 
-interface AsahiQueryClientProviderProps {
+interface AoiQueryClientProviderProps {
   children: ReactNode
 }
 
-export function AsahiQueryClientProvider({
+export function AoiQueryClientProvider({
   children,
-}: AsahiQueryClientProviderProps) {
+}: AoiQueryClientProviderProps) {
   const queryClient = getQueryClient()
 
   return (

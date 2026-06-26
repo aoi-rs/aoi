@@ -65,18 +65,18 @@ export function PersonalAccessTokenDetails({
             </DropdownMenu>
           </div>
 
-          <p className="text-sm font-[450] text-asahi-500">
+          <p className="text-sm font-[450] text-aoi-500">
             Created {format(token.created_at, 'MMM d y')}
           </p>
         </div>
 
-        <div className="rounded-2xl bg-asahi-850 border border-asahi-700 bg-asahi-800">
-          <ul className="flex flex-col divide-asahi-700 divide-y">
+        <div className="rounded-2xl bg-aoi-850 border border-aoi-700 bg-aoi-800">
+          <ul className="flex flex-col divide-aoi-700 divide-y">
             <li className="p-4 flex items-center gap-3">
               <div className="flex flex-col">
                 <span className="text-sm font-medium">PAT name</span>
 
-                <span className="text-xs font-[450] text-asahi-500">
+                <span className="text-xs font-[450] text-aoi-500">
                   {token.name}
                 </span>
               </div>
@@ -86,7 +86,7 @@ export function PersonalAccessTokenDetails({
               <div className="flex flex-col">
                 <span className="text-sm font-medium">Lifetime</span>
 
-                <span className="text-xs font-[450] text-asahi-500">
+                <span className="text-xs font-[450] text-aoi-500">
                   {token.expires_at
                     ? 'Ends on ' + format(token.expires_at, 'MMM d y')
                     : 'Unlimited'}
@@ -101,7 +101,7 @@ export function PersonalAccessTokenDetails({
                 {permissions.read.length > 0 && (
                   <div className="text-xs py-1">
                     <span className="font-medium text-white">Read</span>
-                    <span className="font-[450] text-asahi-500">
+                    <span className="font-[450] text-aoi-500">
                       {' '}
                       access to {LIST_FORMATTER.format(permissions.read)}
                     </span>
@@ -111,7 +111,7 @@ export function PersonalAccessTokenDetails({
                 {permissions.write.length > 0 && (
                   <div className="text-xs py-1">
                     <span className="font-medium text-white">Read & write</span>
-                    <span className="font-[450] text-asahi-500">
+                    <span className="font-[450] text-aoi-500">
                       {' '}
                       access to {LIST_FORMATTER.format(permissions.write)}
                     </span>

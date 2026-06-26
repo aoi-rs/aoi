@@ -20,7 +20,7 @@ export function LinksHeader() {
   const [creating, setCreating] = useState(false)
 
   return (
-    <header className="flex h-10.75 shrink-0 items-center gap-2 px-2 border-b border-asahi-700 transition-[width,height] ease-linear">
+    <header className="flex h-10.75 shrink-0 items-center gap-2 px-2 border-b border-aoi-700 transition-[width,height] ease-linear">
       <div className="flex items-center justify-between flex-1 gap-1.5">
         <div className="flex flex-1 items-center gap-3 lg:gap-3.5">
           <SidebarTrigger />
@@ -33,7 +33,7 @@ export function LinksHeader() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-asahi-500 hover:text-white size-7"
+                className="text-aoi-500 hover:text-white size-7"
               >
                 <Plus />
               </Button>

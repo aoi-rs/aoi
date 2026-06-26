@@ -5,14 +5,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-asahi-950: oklch(14% 0 0);
-  --color-asahi-900: oklch(17.5% 0 0);
-  --color-asahi-800: oklch(20.5% 0 0);
-  --color-asahi-700: oklch(23.5% 0 0);
-  --color-asahi-600: oklch(44.9% 0.0035 264.53);
-  --color-asahi-500: oklch(66.6% 0.0032 264.54);
-  --color-asahi-200: oklch(91.5% 0.0029 264.54);
-  --color-asahi-50: oklch(98.51% 0 0);
+  --color-aoi-950: oklch(14% 0 0);
+  --color-aoi-900: oklch(17.5% 0 0);
+  --color-aoi-800: oklch(20.5% 0 0);
+  --color-aoi-700: oklch(23.5% 0 0);
+  --color-aoi-600: oklch(44.9% 0.0035 264.53);
+  --color-aoi-500: oklch(66.6% 0.0032 264.54);
+  --color-aoi-200: oklch(91.5% 0.0029 264.54);
+  --color-aoi-50: oklch(98.51% 0 0);
 
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);

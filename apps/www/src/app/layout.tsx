@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import { AsahiQueryClientProvider } from '@/providers/query'
+import { AoiQueryClientProvider } from '@/providers/query'
 import { UserProvider } from '@/providers/user'
 import { resolveAuthenticatedUser } from '@/utils/user'
 
@@ -25,16 +25,16 @@ export default async function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn('font-sans antialiased bg-asahi-950', fontSans.variable)}
+      className={cn('font-sans antialiased bg-aoi-950', fontSans.variable)}
     >
       <body>
-        <AsahiQueryClientProvider>
+        <AoiQueryClientProvider>
           <ThemeProvider forcedTheme="dark">
             <TooltipProvider>
               <UserProvider user={user}>{children}</UserProvider>
             </TooltipProvider>
           </ThemeProvider>
-        </AsahiQueryClientProvider>
+        </AoiQueryClientProvider>
         <Toaster />
       </body>
     </html>

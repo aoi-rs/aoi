@@ -33,20 +33,19 @@ export function PersonalAccessTokenList() {
   })
 
   return (
-    <div className="rounded-2xl bg-asahi-800 border border-asahi-700">
+    <div className="rounded-2xl bg-aoi-800 border border-aoi-700">
       {tokens.data && (
         <header
           className={cn(
             'p-4 flex items-center justify-between',
-            tokens.data.pagination.total_count > 0 &&
-              'border-b border-asahi-700',
+            tokens.data.pagination.total_count > 0 && 'border-b border-aoi-700',
           )}
         >
           <span
             className={cn(
               'text-white text-sm font-medium',
               tokens.data.pagination.total_count === 0 &&
-                'text-asahi-500 font-[450]',
+                'text-aoi-500 font-[450]',
             )}
           >
             {tokens.data.pagination.total_count > 0
@@ -67,26 +66,26 @@ export function PersonalAccessTokenList() {
       )}
 
       {tokens.data && (
-        <ul className="flex flex-col divide-asahi-700 divide-y">
+        <ul className="flex flex-col divide-aoi-700 divide-y">
           {tokens.data.items.map((token) => (
             <li
               key={token.id}
-              className="p-4 relative hover:bg-asahi-700 flex gap-4 items-center group/item last:rounded-b-2xl"
+              className="p-4 relative hover:bg-aoi-700 flex gap-4 items-center group/item last:rounded-b-2xl"
             >
               <Link
                 className="inset-0 absolute block cursor-default group-last/item:rounded-b-2xl"
                 href={'/settings/tokens/' + token.id}
               />
 
-              <figure className="size-8 bg-asahi-700 grid place-content-center rounded-sm">
-                <Key className="size-4 text-asahi-500" />
+              <figure className="size-8 bg-aoi-700 grid place-content-center rounded-sm">
+                <Key className="size-4 text-aoi-500" />
               </figure>
 
               <div className="flex flex-col flex-1 gap-0.5">
                 <span className="text-sm leading-4 font-medium flex items-center gap-2">
                   {token.name}
                 </span>
-                <span className="text-asahi-500 text-sm leading-4 font-[450]">
+                <span className="text-aoi-500 text-sm leading-4 font-[450]">
                   Created{' '}
                   {formatDistanceToNow(token.created_at, {
                     addSuffix: true,
