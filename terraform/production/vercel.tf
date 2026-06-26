@@ -62,8 +62,13 @@ resource "vercel_project" "website" {
 
   environment = [
     {
-      key   = "API_BASE_URL"
-      value = "https://service.aoi.rs"
+      key       = "API_BASE_URL"
+      value     = "https://service.aoi.rs"
+      sensitive = false
+
+      target = [
+        "production"
+      ]
     }
   ]
 }
