@@ -102,7 +102,7 @@ resource "aws_ecs_task_definition" "service" {
         },
         {
           name = "AOI_CORS_ORIGINS"
-          value = "[\"https://service.aoi.rs\"]"
+          value = "[\"https://account.aoi.rs\"]"
         }
       ]
     }
