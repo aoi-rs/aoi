@@ -20,18 +20,18 @@ resource "aws_cloudfront_cache_policy" "redirects" {
 }
 
 resource "aws_cloudfront_vpc_origin" "redirects" {
-    vpc_origin_endpoint_config {
-      name = "alb"
-      arn = aws_alb.internal.arn
-      http_port = 80
-      https_port = 443
-      origin_protocol_policy = "https-only"
+  vpc_origin_endpoint_config {
+    name                   = "alb"
+    arn                    = aws_alb.internal.arn
+    http_port              = 80
+    https_port             = 443
+    origin_protocol_policy = "match-viewer"
 
-      origin_ssl_protocols {
-        items = ["TLSv1.2"]
-        quantity = 1
-      }
+    origin_ssl_protocols {
+      items    = ["TLSv1.2"]
+      quantity = 1
     }
+  }
 }
 
 resource "aws_cloudfront_distribution" "redirects" {
@@ -39,19 +39,16 @@ resource "aws_cloudfront_distribution" "redirects" {
   aliases = ["aoi.rs"]
 
   origin {
-    domain_name = "lb.aoi.rs"
-    origin_id   = "load-balancer"
+    domain_name = aws_alb.internal.dns_name
+    origin_id   = "alb"
 
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
+    vpc_origin_config {
+      vpc_origin_id = aws_cloudfront_vpc_origin.redirects.id
     }
   }
 
   default_cache_behavior {
-    target_origin_id       = "load-balancer"
+    target_origin_id       = "alb"
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
