@@ -25,7 +25,7 @@ resource "aws_cloudfront_vpc_origin" "redirects" {
     arn                    = aws_alb.internal.arn
     http_port              = 80
     https_port             = 443
-    origin_protocol_policy = "https-only"
+    origin_protocol_policy = "match-viewer"
 
     origin_ssl_protocols {
       items    = ["TLSv1.2"]
@@ -49,7 +49,7 @@ resource "aws_cloudfront_distribution" "redirects" {
   default_cache_behavior {
     target_origin_id       = "alb"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD"]
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD"]
     cache_policy_id        = aws_cloudfront_cache_policy.redirects.id
   }
