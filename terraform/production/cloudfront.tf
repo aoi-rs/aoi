@@ -39,7 +39,7 @@ resource "aws_cloudfront_distribution" "redirects" {
   aliases = ["aoi.rs"]
 
   origin {
-    domain_name = aws_alb.internal.dns_name
+    domain_name = "aoi.rs"
     origin_id   = "alb"
 
     vpc_origin_config {
