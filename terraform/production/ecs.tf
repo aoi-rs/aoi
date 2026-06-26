@@ -100,6 +100,10 @@ resource "aws_ecs_task_definition" "service" {
           name  = "AOI_POSTGRES_DATABASE"
           value = aws_db_instance.postgres.db_name
         },
+        {
+          name = "AOI_CORS_ORIGINS"
+          value = "[\"https://service.aoi.rs\"]"
+        }
       ]
     }
   ])
