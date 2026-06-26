@@ -36,6 +36,7 @@ resource "aws_cloudfront_vpc_origin" "redirects" {
 
 resource "aws_cloudfront_distribution" "redirects" {
   enabled = true
+  aliases = ["aoi.rs"]
 
   origin {
     domain_name = aws_alb.internal.dns_name
@@ -55,7 +56,8 @@ resource "aws_cloudfront_distribution" "redirects" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn = aws_acm_certificate.main.arn
+    ssl_support_method  = "sni-only"
   }
 
   restrictions {
