@@ -101,6 +101,10 @@ resource "aws_ecs_task_definition" "service" {
           value = aws_db_instance.postgres.db_name
         },
         {
+          name  = "AOI_SESSION_COOKIE_DOMAIN"
+          value = "aoi.rs"
+        },
+        {
           name  = "AOI_CORS_ORIGINS"
           value = "[\"https://account.aoi.rs\"]"
         },
