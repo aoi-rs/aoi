@@ -103,6 +103,10 @@ resource "aws_ecs_task_definition" "service" {
         {
           name = "AOI_CORS_ORIGINS"
           value = "[\"https://account.aoi.rs\"]"
+        },
+        {
+          name = "AOI_ALLOWED_HOSTS"
+          value = "[\"account.aoi.rs\"]"
         }
       ]
     }
