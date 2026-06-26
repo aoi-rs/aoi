@@ -59,7 +59,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
-          role-to-assume: arn:aws:iam::891924440815:role/github-actions
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
 
       - name: Login to Amazon ECR
@@ -108,7 +108,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
-          role-to-assume: arn:aws:iam::891924440815:role/github-actions
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
 
       - name: Login to Amazon ECR
@@ -175,14 +175,14 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
-          role-to-assume: arn:aws:iam::891924440815:role/github-actions
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
         
       - name: Render ECS Task Definition
         id: render
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition-arn: arn:aws:ecs:us-east-1:891924440815:task-definition/aoi
+          task-definition-arn: ${{ secrets.AWS_SERVICE_TASK_DEFINITION_ARN }}
           container-name: aoi
           image: ${{ needs.build.outputs.image }}
         
@@ -195,8 +195,8 @@ jobs:
           run-task: true
           run-task-launch-type: FARGATE
           wait-for-task-stopped: true
-          run-task-subnets: ${{ vars.ECS_PUBLIC_SUBNETS }}
-          run-task-security-groups: ${{ vars.ECS_SECURITY_GROUP }}
+          run-task-subnets: ${{ secrets.AWS_PUBLIC_SUBNETS }}
+          run-task-security-groups: ${{ secrets.AWS_SERVICE_SECURITY_GROUP }}
           run-task-assign-public-IP: ENABLED
           run-task-container-overrides: |
             [
@@ -229,14 +229,14 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
-          role-to-assume: arn:aws:iam::891924440815:role/github-actions
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
       
       - name: Render ECS Task Definition
         id: render
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition-arn: arn:aws:ecs:us-east-1:891924440815:task-definition/aoi-redirector
+          task-definition-arn: ${{ secrets.AWS_REDIRECTOR_TASK_DEFINITION_ARN }}
           container-name: aoi-redirector
           image: ${{ needs.build-redirector.outputs.image }}
         
