@@ -1,3 +1,14 @@
+# =============================================================================
+# DNS records needed to validate ACM certificate
+# =============================================================================
+
+resource "vercel_dns_record" "caa_amazon" {
+  domain = "aoi.rs"
+  type   = "CAA"
+  name   = ""
+  value  = "0 issue \"amazon.com\""
+}
+
 resource "vercel_dns_record" "acm_validation" {
   for_each = {
     for d in aws_acm_certificate.main.domain_validation_options : d.domain_name => {
@@ -13,12 +24,9 @@ resource "vercel_dns_record" "acm_validation" {
   value  = trimsuffix(each.value.value, ".")
 }
 
-resource "vercel_dns_record" "caa_amazon" {
-  domain = "aoi.rs"
-  type   = "CAA"
-  name   = ""
-  value  = "0 issue \"amazon.com\""
-}
+# =============================================================================
+# DNS records that connect the AWS infrastructure to the aoi.rs domain
+# =============================================================================
 
 resource "vercel_dns_record" "service" {
   domain = "aoi.rs"

@@ -19,12 +19,12 @@ resource "aws_alb" "internal" {
   internal           = false
 
   security_groups = [
-    aws_security_group.internal_alb.id
+    aws_security_group.internal_alb.id,
   ]
 
   subnets = [
-    aws_subnet.public_a.id,
-    aws_subnet.public_b.id
+    aws_subnet.private_a.id,
+    aws_subnet.private_b.id,
   ]
 }
 

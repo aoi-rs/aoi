@@ -19,6 +19,21 @@ resource "aws_cloudfront_cache_policy" "redirects" {
   }
 }
 
+resource "aws_cloudfront_vpc_origin" "redirects" {
+    vpc_origin_endpoint_config {
+      name = "alb"
+      arn = aws_alb.internal.arn
+      http_port = 80
+      https_port = 443
+      origin_protocol_policy = "https-only"
+
+      origin_ssl_protocols {
+        items = ["TLSv1.2"]
+        quantity = 1
+      }
+    }
+}
+
 resource "aws_cloudfront_distribution" "redirects" {
   enabled = true
   aliases = ["aoi.rs"]
