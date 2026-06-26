@@ -101,12 +101,16 @@ resource "aws_ecs_task_definition" "service" {
           value = aws_db_instance.postgres.db_name
         },
         {
-          name = "AOI_CORS_ORIGINS"
+          name  = "AOI_CORS_ORIGINS"
           value = "[\"https://account.aoi.rs\"]"
         },
         {
-          name = "AOI_ALLOWED_HOSTS"
+          name  = "AOI_ALLOWED_HOSTS"
           value = "[\"account.aoi.rs\"]"
+        },
+        {
+          name  = "AOI_FRONTEND_BASE_URL"
+          value = "https://account.aoi.rs"
         }
       ]
     }
