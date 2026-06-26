@@ -156,7 +156,7 @@ resource "aws_ecs_service" "service" {
     ]
 
     security_groups = [
-      aws_security_group.ecs.id
+      aws_security_group.service.id
     ]
   }
 
@@ -183,7 +183,7 @@ resource "aws_ecs_service" "redirector" {
     ]
 
     security_groups = [
-      aws_security_group.ecs.id
+      aws_security_group.redirector.id
     ]
   }
 

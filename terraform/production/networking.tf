@@ -53,9 +53,9 @@ resource "aws_route_table_association" "public_b" {
   route_table_id = aws_route_table.public.id
 }
 
-resource "aws_security_group" "alb" {
+resource "aws_security_group" "service_alb" {
   vpc_id = aws_vpc.main.id
-  name   = "aoi-alb"
+  name   = "service-alb"
 
   ingress {
     from_port   = 80
@@ -83,7 +83,7 @@ data "aws_ec2_managed_prefix_list" "cloudfront" {
   name = "com.amazonaws.global.cloudfront.origin-facing"
 }
 
-resource "aws_security_group" "internal_alb" {
+resource "aws_security_group" "redirector_alb" {
   vpc_id = aws_vpc.main.id
   name   = "redirector-alb"
 
@@ -102,22 +102,34 @@ resource "aws_security_group" "internal_alb" {
   }
 }
 
-resource "aws_security_group" "ecs" {
+resource "aws_security_group" "service" {
   vpc_id = aws_vpc.main.id
-  name   = "aoi-ecs"
+  name   = "service"
 
   ingress {
     from_port       = 10000
     to_port         = 10000
     protocol        = "tcp"
-    security_groups = [aws_security_group.alb.id]
+    security_groups = [aws_security_group.service_alb.id]
   }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "redirector" {
+  vpc_id = aws_vpc.main.id
+  name   = "redirector"
 
   ingress {
     from_port       = 12000
     to_port         = 12000
     protocol        = "tcp"
-    security_groups = [aws_security_group.internal_alb.id]
+    security_groups = [aws_security_group.redirector_alb.id]
   }
 
   egress {
@@ -130,7 +142,7 @@ resource "aws_security_group" "ecs" {
 
 resource "aws_security_group" "postgres" {
   vpc_id = aws_vpc.main.id
-  name   = "aoi-postgres"
+  name   = "postgres"
 
   ingress {
     from_port       = 5432

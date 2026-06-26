@@ -1,10 +1,10 @@
-resource "aws_alb" "main" {
-  name               = "main"
+resource "aws_alb" "service" {
+  name               = "service"
   load_balancer_type = "application"
   internal           = false
 
   security_groups = [
-    aws_security_group.alb.id
+    aws_security_group.service_alb.id
   ]
 
   subnets = [
@@ -13,18 +13,18 @@ resource "aws_alb" "main" {
   ]
 }
 
-resource "aws_alb" "internal" {
-  name               = "internal"
+resource "aws_alb" "redirector" {
+  name               = "redirector"
   load_balancer_type = "application"
   internal           = true
 
   security_groups = [
-    aws_security_group.internal_alb.id,
+    aws_security_group.redirector_alb.id
   ]
 
   subnets = [
     aws_subnet.private_a.id,
-    aws_subnet.private_b.id,
+    aws_subnet.private_b.id
   ]
 }
 
@@ -71,12 +71,12 @@ resource "aws_alb_listener" "http" {
 locals {
   load_balancers = {
     main = {
-      arn = aws_alb.main.arn
+      arn              = aws_alb.main.arn
       target_group_arn = aws_alb_target_group.service.arn
     }
 
     internal = {
-      arn = aws_alb.internal.arn
+      arn              = aws_alb.internal.arn
       target_group_arn = aws_alb_target_group.redirector.arn
     }
   }
