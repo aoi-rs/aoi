@@ -79,7 +79,7 @@ resource "aws_security_group" "alb" {
   }
 }
 
-data "aws_ec2_managed_prefix_list" "cloudfront" {
+data "aws_prefix_list" "cloudfront" {
   name = "com.amazonaws.global.cloudfront.origin-facing"
 }
 
@@ -91,7 +91,7 @@ resource "aws_security_group" "internal_alb" {
     from_port       = 443
     to_port         = 443
     protocol        = "tcp"
-    prefix_list_ids = [data.aws_ec2_managed_prefix_list.cloudfront.id]
+    prefix_list_ids = [data.aws_prefix_list.cloudfront.id]
   }
 
   egress {
