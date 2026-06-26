@@ -82,17 +82,6 @@ resource "aws_alb_listener" "https" {
   }
 }
 
-resource "aws_alb_listener" "internal_http" {
-  load_balancer_arn = aws_alb.internal.arn
-  port              = 80
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_alb_target_group.redirector.arn
-  }
-}
-
 resource "aws_alb_listener" "internal_https" {
   load_balancer_arn = aws_alb.internal.arn
   port              = 443

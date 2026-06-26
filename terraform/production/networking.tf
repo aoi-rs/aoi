@@ -88,7 +88,7 @@ resource "aws_security_group" "internal_alb" {
   name   = "redirector-alb"
 
   ingress {
-    from_port       = 80
+    from_port       = 443
     to_port         = 443
     protocol        = "tcp"
     prefix_list_ids = [data.aws_ec2_managed_prefix_list.cloudfront.id]
