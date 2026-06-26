@@ -22,7 +22,7 @@ resource "aws_cloudfront_cache_policy" "redirects" {
 resource "aws_cloudfront_vpc_origin" "redirects" {
   vpc_origin_endpoint_config {
     name                   = "alb"
-    arn                    = aws_alb.internal.arn
+    arn                    = aws_alb.redirector.arn
     http_port              = 80
     https_port             = 443
     origin_protocol_policy = "https-only"

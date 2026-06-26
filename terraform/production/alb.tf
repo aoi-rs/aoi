@@ -53,7 +53,7 @@ resource "aws_alb_target_group" "redirector" {
 }
 
 resource "aws_alb_listener" "http" {
-  load_balancer_arn = aws_alb.main.arn
+  load_balancer_arn = aws_alb.service.arn
   port              = 80
   protocol          = "HTTP"
 
@@ -71,12 +71,12 @@ resource "aws_alb_listener" "http" {
 locals {
   load_balancers = {
     main = {
-      arn              = aws_alb.main.arn
+      arn              = aws_alb.service.arn
       target_group_arn = aws_alb_target_group.service.arn
     }
 
     internal = {
-      arn              = aws_alb.internal.arn
+      arn              = aws_alb.redirector.arn
       target_group_arn = aws_alb_target_group.redirector.arn
     }
   }

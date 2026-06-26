@@ -32,7 +32,7 @@ resource "vercel_dns_record" "service" {
   domain = "aoi.rs"
   type   = "CNAME"
   name   = "service"
-  value  = aws_alb.main.dns_name
+  value  = aws_alb.service.dns_name
 }
 
 resource "vercel_dns_record" "redirects" {
