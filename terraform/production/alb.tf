@@ -92,3 +92,16 @@ resource "aws_alb_listener" "internal_http" {
     target_group_arn = aws_alb_target_group.redirector.arn
   }
 }
+
+resource "aws_alb_listener" "internal_https" {
+  load_balancer_arn = aws_alb.internal.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09"
+  certificate_arn   = aws_acm_certificate_validation.main.certificate_arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_alb_target_group.redirector.arn
+  }
+}
