@@ -5,6 +5,16 @@ import { formatDistanceToNow } from 'date-fns'
 import { Ellipsis, Key, SlidersVertical, X } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import {
+  ListView,
+  ListViewClickable,
+  ListViewDescription,
+  ListViewDetails,
+  ListViewFigure,
+  ListViewHeader,
+  ListViewItem,
+  ListViewTitle,
+} from '@/app/(dashboard)/settings/_components/list-view'
 import { RevokePersonalAccessTokenDialog } from '@/components/revoke-personal-access-token-dialog'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,7 +24,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { unwrap } from '@/generated/server'
-import { cn } from '@/lib/utils'
 import { service } from '@/utils/client'
 import { defaultRetry } from '@/utils/retry'
 
@@ -33,24 +42,13 @@ export function PersonalAccessTokenList() {
   })
 
   return (
-    <div className="rounded-2xl bg-aoi-800 border border-aoi-700">
+    <ListView>
       {tokens.data && (
-        <header
-          className={cn(
-            'p-4 flex items-center justify-between',
-            tokens.data.pagination.total_count > 0 && 'border-b border-aoi-700',
-          )}
-        >
-          <span
-            className={cn(
-              'text-white text-sm font-medium',
-              tokens.data.pagination.total_count === 0 &&
-                'text-aoi-500 font-[450]',
-            )}
-          >
+        <ListViewHeader>
+          <span>
             {tokens.data.pagination.total_count > 0
               ? tokens.data.pagination.total_count +
-                ' Personal access token' +
+                ' PAT' +
                 (tokens.data.pagination.total_count > 1 ? 's' : '')
               : "You don't have tokens registered"}
           </span>
@@ -58,34 +56,32 @@ export function PersonalAccessTokenList() {
           <Button
             variant="ghost"
             size="sm"
-            className="rounded-full"
-            render={<Link href="/settings/tokens/create">Create token</Link>}
+            render={<Link href="/settings/tokens/create" />}
             nativeButton={false}
-          />
-        </header>
+          >
+            Create token
+          </Button>
+        </ListViewHeader>
       )}
 
       {tokens.data && (
-        <ul className="flex flex-col divide-aoi-700 divide-y">
+        <ListView>
           {tokens.data.items.map((token) => (
-            <li
-              key={token.id}
-              className="p-4 relative hover:bg-aoi-700 flex gap-4 items-center group/item last:rounded-b-2xl"
-            >
-              <Link
-                className="inset-0 absolute block cursor-default group-last/item:rounded-b-2xl"
-                href={'/settings/tokens/' + token.id}
+            <ListViewItem key={token.id}>
+              <ListViewClickable
+                render={<Link  href={'/settings/tokens/' + token.id} />}
               />
 
-              <figure className="size-8 bg-aoi-700 grid place-content-center rounded-sm">
-                <Key className="size-4 text-aoi-500" />
-              </figure>
+              <ListViewFigure>
+                <Key />
+              </ListViewFigure>
 
-              <div className="flex flex-col flex-1 gap-0.5">
-                <span className="text-sm leading-4 font-medium flex items-center gap-2">
+              <ListViewDetails>
+                <ListViewTitle>
                   {token.name}
-                </span>
-                <span className="text-aoi-500 text-sm leading-4 font-[450]">
+                </ListViewTitle>
+
+                <ListViewDescription>
                   Created{' '}
                   {formatDistanceToNow(token.created_at, {
                     addSuffix: true,
@@ -95,17 +91,17 @@ export function PersonalAccessTokenList() {
                     ? 'Last used ' +
                       formatDistanceToNow(token.created_at, { addSuffix: true })
                     : 'never used'}
-                </span>
-              </div>
+                </ListViewDescription>
+              </ListViewDetails>
 
               <DropdownMenu>
                 <DropdownMenuTrigger
                   render={
                     <Button
                       className="z-10 size-8 [&_svg]:size-4!"
+                      data-slot="button"
                       size="icon"
                       variant="ghost"
-                      data-slot="dropdown-menu-trigger"
                     >
                       <Ellipsis />
                     </Button>
@@ -128,9 +124,9 @@ export function PersonalAccessTokenList() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </li>
+            </ListViewItem>
           ))}
-        </ul>
+        </ListView>
       )}
 
       <RevokePersonalAccessTokenDialog
@@ -142,6 +138,6 @@ export function PersonalAccessTokenList() {
           }
         }}
       />
-    </div>
+    </ListView>
   )
 }

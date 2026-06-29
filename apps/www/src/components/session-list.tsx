@@ -4,6 +4,17 @@ import { useQuery } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { Globe } from 'lucide-react'
 import { useState } from 'react'
+import {
+  ListView,
+  ListViewClickable,
+  ListViewContent,
+  ListViewDescription,
+  ListViewDetails,
+  ListViewFigure,
+  ListViewHeader,
+  ListViewItem,
+  ListViewTitle,
+} from '@/app/(dashboard)/settings/_components/list-view'
 import { LogoutDialog } from '@/components/logout-dialog'
 import { RevokeOtherSessionsDialog } from '@/components/revoke-other-sessions-dialog'
 import { RevokeSessionDialog } from '@/components/revoke-session-dialog'
@@ -45,41 +56,35 @@ export function SessionList({ sessions: _sessions }: SessionListProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="rounded-2xl bg-aoi-800 border border-aoi-700">
-        <ul className="flex flex-col divide-aoi-700 divide-y">
-          <li className="p-4 relative hover:bg-aoi-700 flex gap-4 items-center group/item rounded-2xl">
-            <div className="inset-0 absolute block cursor-default group-last/item:rounded-b-2xl" />
+      <ListView>
+        <ListViewContent>
+          <ListViewItem>
+            <ListViewClickable />
 
-            <figure className="size-8 bg-aoi-700 grid place-content-center rounded-md">
-              <Globe className="size-4 text-aoi-500" />
-            </figure>
+            <ListViewFigure>
+              <Globe />
+            </ListViewFigure>
 
-            <div className="flex flex-col flex-1 gap-0.5">
-              <span className="text-sm leading-4 font-medium flex items-center gap-2">
-                {current.name}
-              </span>
-              <span className="text-aoi-500 text-sm leading-4 font-[450]">
-                Your current session
-              </span>
-            </div>
+            <ListViewDetails>
+              <ListViewTitle>{current.name}</ListViewTitle>
+              <ListViewDescription>Your current session</ListViewDescription>
+            </ListViewDetails>
 
             <Button
-              className="z-10 opacity-0 group-hover/item:opacity-100"
               size="sm"
               variant="ghost"
-              data-slot="dropdown-menu-trigger"
               onClick={() => setLoggingOut(true)}
             >
               Log out
             </Button>
-          </li>
-        </ul>
-      </div>
+          </ListViewItem>
+        </ListViewContent>
+      </ListView>
 
       {sessions.data.pagination.total_count > 1 && (
-        <div className="rounded-2xl bg-aoi-800 border border-aoi-700">
-          <header className="p-4 flex items-center justify-between border-b border-aoi-700">
-            <span className="text-white text-sm font-medium">
+        <ListView>
+          <ListViewHeader>
+            <span>
               {sessions.data.pagination.total_count - 1} other session
               {sessions.data.pagination.total_count > 2 && 's'}
             </span>
@@ -91,45 +96,43 @@ export function SessionList({ sessions: _sessions }: SessionListProps) {
             >
               Revoke all
             </Button>
-          </header>
+          </ListViewHeader>
 
-          <ul className="flex flex-col divide-aoi-700 divide-y">
+          <ListViewContent>
             {others.map((session) => (
-              <li
+              <ListViewItem
                 key={session.id}
-                className="p-4 relative flex gap-4 hover:bg-aoi-700 items-center group/item last:rounded-b-2xl"
               >
-                <div className="inset-0 absolute block cursor-default group-last/item:rounded-b-2xl" />
+                <ListViewClickable />
 
-                <figure className="size-8 bg-aoi-700 grid place-content-center rounded-md">
-                  <Globe className="size-4 text-aoi-500" />
-                </figure>
+                <ListViewFigure>
+                  <Globe  />
+                </ListViewFigure>
 
-                <div className="flex flex-col flex-1 gap-0.5">
-                  <span className="text-sm leading-4 font-medium flex items-center gap-2">
+                <ListViewDetails>
+                  <ListViewTitle>
                     {session.name}
-                  </span>
-                  <span className="text-aoi-500 text-sm leading-4 font-[450]">
+                  </ListViewTitle>
+
+                  <ListViewDescription>
                     Last seen{' '}
                     {formatDistanceToNow(session.refreshed_at, {
                       addSuffix: true,
                     })}
-                  </span>
-                </div>
+                  </ListViewDescription>
+                </ListViewDetails>
 
                 <Button
-                  className="z-10 opacity-0 group-hover/item:opacity-100"
                   size="sm"
                   variant="ghost"
-                  data-slot="dropdown-menu-trigger"
                   onClick={() => setRevoking(session.id)}
                 >
                   Revoke
                 </Button>
-              </li>
+              </ListViewItem>
             ))}
-          </ul>
-        </div>
+          </ListViewContent>
+        </ListView>
       )}
 
       <LogoutDialog open={loggingOut} onOpenChange={setLoggingOut} />

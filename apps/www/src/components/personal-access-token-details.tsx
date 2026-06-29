@@ -4,6 +4,14 @@ import { format } from 'date-fns'
 import { Ellipsis, SlidersVertical, X } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import {
+  ListView,
+  ListViewContent,
+  ListViewDescription,
+  ListViewDetails,
+  ListViewItem,
+  ListViewTitle,
+} from '@/app/(dashboard)/settings/_components/list-view'
 import { RevokePersonalAccessTokenDialog } from '@/components/revoke-personal-access-token-dialog'
 import { Button } from '@/components/ui/button'
 import {
@@ -32,7 +40,7 @@ export function PersonalAccessTokenDetails({
       <div className="w-full max-w-160 flex flex-col gap-8">
         <div className="flex flex-col gap-1 px-4">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-medium flex-1">{token.name}</h1>
+            <h1 className="text-2xl font-medium flex-1 text-white">{token.name}</h1>
 
             <DropdownMenu>
               <DropdownMenuTrigger
@@ -41,6 +49,7 @@ export function PersonalAccessTokenDetails({
                     size="icon"
                     variant="ghost"
                     data-slot="dropdown-menu-trigger"
+                    className="text-[oklch(0.6674_0.003_271.37)] hover:text-white hover:bg-[oklch(0.2269_0.0013_271.31)]"
                   >
                     <Ellipsis />
                   </Button>
@@ -65,43 +74,40 @@ export function PersonalAccessTokenDetails({
             </DropdownMenu>
           </div>
 
-          <p className="text-sm font-[450] text-aoi-500">
+          <p className="text-sm font-[450] text-[oklch(0.6674_0.003_271.37)]">
             Created {format(token.created_at, 'MMM d y')}
           </p>
         </div>
 
-        <div className="rounded-2xl bg-aoi-850 border border-aoi-700 bg-aoi-800">
-          <ul className="flex flex-col divide-aoi-700 divide-y">
-            <li className="p-4 flex items-center gap-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">PAT name</span>
+        <ListView>
+          <ListViewContent>
+            <ListViewItem>
+              <ListViewDetails>
+                <ListViewTitle>PAT name</ListViewTitle>
+                <ListViewDescription>{token.name}</ListViewDescription>
+              </ListViewDetails>
+            </ListViewItem>
 
-                <span className="text-xs font-[450] text-aoi-500">
-                  {token.name}
-                </span>
-              </div>
-            </li>
+            <ListViewItem>
+              <ListViewDetails>
+                <ListViewTitle>Lifetime</ListViewTitle>
 
-            <li className="p-4 flex items-center gap-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">Lifetime</span>
-
-                <span className="text-xs font-[450] text-aoi-500">
+                <ListViewDescription>
                   {token.expires_at
                     ? 'Ends on ' + format(token.expires_at, 'MMM d y')
                     : 'Unlimited'}
-                </span>
-              </div>
-            </li>
+                </ListViewDescription>
+              </ListViewDetails>
+            </ListViewItem>
 
-            <li className="p-4 flex items-center gap-3">
+            <ListViewItem>
               <div className="flex flex-col gap-0.75">
-                <div className="text-sm font-medium">Permissions</div>
+                <ListViewTitle>Permissions</ListViewTitle>
 
                 {permissions.read.length > 0 && (
-                  <div className="text-xs py-1">
+                  <div className="text-xs leading-[normal] py-1">
                     <span className="font-medium text-white">Read</span>
-                    <span className="font-[450] text-aoi-500">
+                    <span className="font-[450] text-[oklch(0.6784_0.0036_271.33)]">
                       {' '}
                       access to {LIST_FORMATTER.format(permissions.read)}
                     </span>
@@ -109,18 +115,18 @@ export function PersonalAccessTokenDetails({
                 )}
 
                 {permissions.write.length > 0 && (
-                  <div className="text-xs py-1">
+                  <div className="text-xs leading-[normal] py-1">
                     <span className="font-medium text-white">Read & write</span>
-                    <span className="font-[450] text-aoi-500">
+                    <span className="font-[450] text-[oklch(0.6784_0.0036_271.33)]">
                       {' '}
                       access to {LIST_FORMATTER.format(permissions.write)}
                     </span>
                   </div>
                 )}
               </div>
-            </li>
-          </ul>
-        </div>
+            </ListViewItem>
+          </ListViewContent>
+        </ListView>
       </div>
 
       <RevokePersonalAccessTokenDialog

@@ -63,7 +63,13 @@ export function CreateLinkForm({ onCreate }: CreateLinkFormProps) {
         render={({ field }) => (
           <div className="flex flex-col gap-1">
             <Label htmlFor={FORM_ID + '-label'}>Label</Label>
-            <Input {...field} id={FORM_ID + '-label'} placeholder="Label" />
+
+            <Input
+              {...field}
+              id={FORM_ID + '-label'}
+              placeholder="Course materials"
+              className="bg-transparent border h-8 text-white border-[oklch(0.2881_0.006_270.55)] rounded-lg py-1.5 px-3 placeholder:text-[oklch(0.4822_0.0036_271.22)]"
+            />
           </div>
         )}
         control={form.control}
@@ -73,14 +79,13 @@ export function CreateLinkForm({ onCreate }: CreateLinkFormProps) {
         name="destination_url"
         render={({ field }) => (
           <div className="flex flex-col gap-1">
-            <Label htmlFor={FORM_ID + '-destination-url'}>
-              Destination URL
-            </Label>
+            <Label htmlFor={FORM_ID + '-destination-url'}>URL</Label>
 
             <Input
               {...field}
               id={FORM_ID + '-destination-url'}
-              placeholder="..."
+              placeholder="https://"
+              className="bg-transparent border h-8 text-white border-[oklch(0.2881_0.006_270.55)] rounded-lg py-1.5 px-3 placeholder:text-[oklch(0.4822_0.0036_271.22)]"
             />
           </div>
         )}

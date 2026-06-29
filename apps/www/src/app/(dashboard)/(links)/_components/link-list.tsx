@@ -32,25 +32,26 @@ export function LinkList({ links: _links }: LinkListProps) {
           <ActiveLink
             className="group/link cursor-default"
             href={'/link/' + link.id}
+            matcher={'/link/' + link.id}
           >
-            <div className="mx-2 px-2 items-start hover:bg-aoi-800 rounded-lg flex gap-3 group-data-[active=true]/link:bg-aoi-700!">
-              <div className="pt-3 min-w-6 shrink-0 flex">
+            <div className="mx-2 px-2 items-start hover:bg-[oklch(0.2_0.0021_271.12)] rounded-lg flex gap-3 group-data-[active=true]/link:bg-[oklch(0.2275_0.0032_270.9)]!">
+              <div className="pt-3 min-w-6 shrink-0 flex **:after:border-0">
                 <Avatar variant="rounded">
                   <AvatarImage src="/icon.svg" />
                 </Avatar>
               </div>
 
               <div className="flex flex-col gap-0.5 flex-1 py-2.5">
-                <span className="text-sm text-aoi-500 font-medium leading-[normal]">
+                <span className="text-sm text-[oklch(0.6674_0.003_271.37)] font-medium leading-[normal] group-data-[active=true]/link:text-[oklch(0.9221_0.0042_271.37)]">
                   {link.name ?? 'Untitled'}
                 </span>
 
                 <div className="h-4 flex gap-1.5">
-                  <span className="text-xs text-aoi-500 font-[450] leading-[normal] flex-1">
+                  <span className="text-xs text-[oklch(0.6674_0.003_271.37)] font-[450] leading-[normal] flex-1 group-data-[active=true]/link:text-[oklch(0.6878_0.0042_271.29)]">
                     Redirects to {new URL(link.destination_url).hostname}
                   </span>
 
-                  <span className="text-aoi-500 text-xs leading-[normal]">
+                  <span className="text-[oklch(0.6674_0.003_271.37)] text-xs leading-[normal] group-data-[active=true]/link:text-[oklch(0.6878_0.0042_271.29)]">
                     {shortenCreationDate(link.created_at)}
                   </span>
                 </div>

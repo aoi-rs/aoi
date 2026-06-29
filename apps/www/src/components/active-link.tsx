@@ -7,9 +7,16 @@ import type { ComponentProps } from 'react'
 /**
  * Props for {@link ActiveLink}
  */
-export interface ActiveLinkProps extends ComponentProps<typeof Link> {}
-
-const TRAILING_SLASH_REGEXP = /\/$/
+export interface ActiveLinkProps extends ComponentProps<typeof Link> {
+  /**
+   * Determines whether the link should be considered active for the current
+   * pathname.
+   *
+   * - If a string is provided, the pathname must match it exactly.
+   * - If a regular expression is provided, the pathname must satisfy it.
+   */
+  matcher: string | RegExp
+}
 
 /**
  * A wrapper around 'next/link' that marks itself as active when its
@@ -22,8 +29,9 @@ export function ActiveLink(props: ActiveLinkProps) {
   const pathname = usePathname()
 
   const active =
-    props.href.toString().replace(TRAILING_SLASH_REGEXP, '') ===
-    pathname.replace(TRAILING_SLASH_REGEXP, '')
+    typeof props.matcher === 'string'
+      ? pathname === props.matcher
+      : props.matcher.test(pathname)
 
   return <Link data-active={active} {...props} />
 }

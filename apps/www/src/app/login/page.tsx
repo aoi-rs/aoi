@@ -45,7 +45,7 @@ export default function Login() {
   const content = states[state]
 
   return (
-    <div className="min-h-screen flex pt-12 pb-12  bg-aoi-950">
+    <div className="min-h-screen flex pt-12 pb-12 bg-background text-foreground">
       <div className="flex flex-col mt-36 w-full h-fit items-center gap-8 animate-in delay-200 duration-300 fade-in-0 fill-mode-both slide-in-from-top-[0.625rem]">
         <Logomark className="size-12" />
 
@@ -70,7 +70,7 @@ function Start({ onStateChange }: StateProps) {
       <div className="flex flex-col gap-4">
         <Button>Continue with Google</Button>
 
-        <Button variant="outline" onClick={() => onStateChange(State.EMAIL)}>
+        <Button variant="secondary" onClick={() => onStateChange(State.EMAIL)}>
           Continue with email
         </Button>
       </div>
@@ -121,17 +121,17 @@ function EmailForm({
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <Input ref={field} placeholder="alice@example.com" />
 
-        <Button type="submit" variant="outline" disabled={processing}>
+        <Button type="submit" variant="secondary" disabled={processing}>
           Continue with email
         </Button>
 
-        <Button
+        <button
           type="button"
-          variant="link"
+          className="hover:underline-offset-3 hover:underline text-sm"
           onClick={() => onStateChange(State.DEFAULT)}
         >
           Back to login
-        </Button>
+        </button>
       </form>
     </div>
   )
@@ -157,9 +157,9 @@ function EmailSent({ onStateChange, email }: StateProps & { email: string }) {
       <div className="flex flex-col items-center gap-6">
         <h1 className="text-center text-lg font-medium">Check your inbox</h1>
 
-        <p className="text-center text-sm font-[450] text-aoi-500">
+        <p className="text-center text-sm font-[450] text-[oklch(0.6663_0.0032_264.54)]">
           We&apos;ve sent you a temporary login link. Please check your inbox at{' '}
-          <span className="text-aoi-200">{email}</span>.
+          <span className="text-foreground">{email}</span>.
         </p>
       </div>
 
@@ -169,13 +169,17 @@ function EmailSent({ onStateChange, email }: StateProps & { email: string }) {
       >
         {method === 'default' && (
           <div className="flex flex-col gap-4">
-            <Button variant="outline" onClick={() => setMethod('manual')}>
+            <Button variant="secondary" onClick={() => setMethod('manual')}>
               Enter code manually
             </Button>
 
-            <Button variant="link" onClick={() => onStateChange(State.DEFAULT)}>
+            <button
+              type="button"
+              className="hover:underline-offset-3 hover:underline text-sm"
+              onClick={() => onStateChange(State.DEFAULT)}
+            >
               Back to login
-            </Button>
+            </button>
           </div>
         )}
 
@@ -211,7 +215,6 @@ function EmailSent({ onStateChange, email }: StateProps & { email: string }) {
 
               <Button
                 type="submit"
-                className="rounded-full"
                 disabled={loading}
                 onClick={() => setMethod('manual')}
               >
@@ -219,9 +222,13 @@ function EmailSent({ onStateChange, email }: StateProps & { email: string }) {
               </Button>
             </form>
 
-            <Button variant="link" onClick={() => onStateChange(State.DEFAULT)}>
+            <button
+              type="button"
+              className="hover:underline-offset-3 hover:underline text-sm"
+              onClick={() => onStateChange(State.DEFAULT)}
+            >
               Back to login
-            </Button>
+            </button>
           </div>
         )}
       </div>

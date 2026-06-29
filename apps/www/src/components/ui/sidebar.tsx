@@ -164,7 +164,7 @@ function Sidebar({
       <div
         data-slot="sidebar"
         className={cn(
-          'flex h-full w-(--sidebar-width) flex-col bg-aoi-950 text-aoi-50',
+          'flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground',
           className,
         )}
         {...props}
@@ -198,7 +198,7 @@ function Sidebar({
 
   return (
     <div
-      className="group peer hidden text-aoi-50 md:block"
+      className="group peer hidden text-sidebar-foreground md:block"
       data-state={state}
       data-collapsible={state === 'collapsed' ? collapsible : ''}
       data-variant={variant}
@@ -261,7 +261,7 @@ function SidebarTrigger({
       size="icon"
       aria-label="Menu"
       className={cn(
-        'size-7 hover:bg-aoi-900 text-aoi-500 hover:text-white',
+        'size-7 hover:bg-[oklch(0.1711_0.0011_271.29)] text-[oklch(0.6674_0.003_271.37)] hover:text-white',
         className,
       )}
       onClick={(event) => {
@@ -306,7 +306,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<'main'>) {
     <main
       data-slot="sidebar-inset"
       className={cn(
-        'relative flex w-full flex-1 flex-col border border-aoi-700 bg-aoi-900 md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2',
+        'relative flex w-full flex-1 flex-col border border-[oklch(0.2143_0.0037_270.75)] bg-[oklch(0.1711_0.0011_271.29)] md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2',
         className,
       )}
       {...props}
@@ -485,14 +485,10 @@ const sidebarMenuButtonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'hover:bg-aoi-900',
-        outline:
-          'bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]',
+        default: 'hover:bg-sidebar-accent',
       },
       size: {
-        default: 'h-8 text-sm',
-        sm: 'h-7 text-xs',
-        lg: 'h-12 text-sm group-data-[collapsible=icon]:p-0!',
+        default: 'h-7 text-[.8125rem] leading-[normal]',
       },
     },
     defaultVariants: {

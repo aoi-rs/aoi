@@ -1,31 +1,33 @@
 'use client'
 
-import { Globe, SlidersHorizontal } from 'lucide-react'
-import Link from 'next/link'
+import { Layers, SlidersHorizontal } from 'lucide-react'
+import { ActiveLink } from '@/components/active-link'
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from '@/components/ui/sidebar'
-import { cn } from '@/lib/utils'
 
 const ITEMS = [
   {
     title: 'Links',
-    link: '/links',
-    icon: <Globe />,
+    icon: <Layers />,
+    link: {
+      href: '/links',
+      matcher: /^\/(links|link)/,
+    }
   },
   {
     title: 'Preferences',
-    link: '/settings',
     icon: <SlidersHorizontal />,
+    link: {
+      href: '/settings',
+      matcher: /^\/settings/,
+    }
   },
 ]
 
 export function MainMenu() {
-  const { state } = useSidebar()
-
   return (
     <SidebarMenu>
       {ITEMS.map((item) => (
@@ -33,12 +35,10 @@ export function MainMenu() {
           <SidebarMenuButton
             tooltip={item.title}
             render={
-              <Link
-                href={item.link}
-                className={cn(
-                  'flex items-center rounded-lg border border-transparent cursor-default px-2.5 transition-colors text-aoi-500 hover:text-aoi-200',
-                  state === 'collapsed' && '!dark:text-aoi-600',
-                )}
+              <ActiveLink
+                href={item.link.href}
+                matcher={item.link.matcher}
+                className="flex items-center rounded-lg border border-transparent cursor-default px-2.5 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
               />
             }
           >

@@ -6,7 +6,6 @@ import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -19,6 +18,14 @@ import type { schemas } from '@/generated/server'
 import { PersonalAccessTokenContext } from '@/providers/personal-access-tokens'
 import { service } from '@/utils/client'
 import { getQueryClient } from '@/utils/query'
+import {
+  ListView,
+  ListViewContent,
+  ListViewDescription,
+  ListViewDetails,
+  ListViewItem,
+  ListViewTitle,
+} from '../../_components/list-view'
 
 const PERMISSION_SUBJECTS = [
   { name: 'user', label: 'Profile' },
@@ -94,9 +101,9 @@ export default function CreatePersonalAccessToken() {
     <div className="flex flex-col mt-4 mb-8 mx-5.5 sm:mx-10 sm:my-16 items-center">
       <div className="w-full max-w-160 flex flex-col gap-8">
         <div className="px-4 flex flex-col gap-1">
-          <h1 className="text-2xl font-medium">Create a PAT</h1>
+          <h1 className="text-2xl font-medium text-white">Create a PAT</h1>
 
-          <p className="text-aoi-500 font-[450] text-sm">
+          <p className="text-[oklch(0.6674_0.003_271.37)] font-[450] text-sm">
             Use a PAT to automate workflows and connect external tools
           </p>
         </div>
@@ -105,52 +112,48 @@ export default function CreatePersonalAccessToken() {
           onSubmit={form.handleSubmit(handleSubmit)}
           className="flex flex-col gap-12"
         >
-          <div className="rounded-2xl bg-aoi-850 border border-aoi-700 bg-aoi-800">
-            <ul className="flex flex-col divide-aoi-700 divide-y">
+          <ListView>
+            <ListViewContent>
               <Controller
                 name="label"
                 control={form.control}
                 render={({ field }) => (
-                  <li className="p-4 flex flex-col gap-2 items-stretch sm:items-center sm:flex-row sm:gap-3">
-                    <div className="flex flex-col flex-1">
-                      <label
-                        htmlFor={field.name}
-                        className="text-sm font-medium"
-                      >
-                        Label
-                      </label>
+                  <ListViewItem className="flex flex-col gap-2 items-stretch sm:items-center sm:flex-row sm:gap-4">
+                    <ListViewDetails>
+                      <ListViewTitle
+                        render={<label htmlFor={field.name}>Label</label>}
+                      />
 
-                      <span className="text-xs font-[450] text-aoi-500">
+                      <ListViewDescription>
                         Choose a name that helps identify this token later
-                      </span>
-                    </div>
+                      </ListViewDescription>
+                    </ListViewDetails>
 
                     <Input
                       {...field}
                       id={field.name}
-                      className="sm:w-64"
+                      className="w-50 h-8 text-white text-[.8125rem] leading-[normal] border-[oklch(0.2974_0.0048_270.79)] bg-transparent py-1.5 rounded-lg placeholder:text-[oklch(0.4692_0.0036_271.21)]"
                       placeholder="Production API"
                     />
-                  </li>
+                  </ListViewItem>
                 )}
               />
 
               <Controller
                 name="lifetime"
                 render={({ field }) => (
-                  <li className="p-4 flex flex-col gap-2 items-stretch sm:items-center sm:flex-row sm:gap-3">
-                    <div className="flex flex-col flex-1">
-                      <label
-                        htmlFor="lifetime-select"
-                        className="text-sm font-medium"
-                      >
-                        Lifetime
-                      </label>
+                  <ListViewItem className="flex flex-col gap-2 items-stretch sm:items-center sm:flex-row sm:gap-4">
+                    <ListViewDetails>
+                      <ListViewTitle
+                        render={
+                          <label htmlFor="lifetime-select">Lifetime</label>
+                        }
+                      />
 
-                      <span className="text-xs font-[450] text-aoi-500">
+                      <ListViewDescription>
                         Choose how long this token should remain active
-                      </span>
-                    </div>
+                      </ListViewDescription>
+                    </ListViewDetails>
 
                     <Select
                       name={field.name}
@@ -176,31 +179,31 @@ export default function CreatePersonalAccessToken() {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                  </li>
+                  </ListViewItem>
                 )}
                 control={form.control}
               />
-            </ul>
-          </div>
+            </ListViewContent>
+          </ListView>
 
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-0.5 px-4">
-              <h2 className="text-sm font-medium">Permissions</h2>
+              <h2 className="text-sm font-medium text-white">Permissions</h2>
 
-              <p className="text-sm font-[450] text-aoi-500">
+              <p className="text-sm font-[450] text-[oklch(0.6674_0.003_271.37)]">
                 Choose the minimal permissions necessary for your needs
               </p>
             </div>
 
-            <div className="rounded-2xl bg-aoi-800 border border-aoi-700">
-              <ul className="flex flex-col divide-aoi-700 divide-y">
+            <ListView>
+              <ListViewContent>
                 {PERMISSION_SUBJECTS.map((sub) => (
                   <Controller
                     key={sub.name}
                     name={(sub.name + '_permission') as keyof FormSchema}
                     render={({ field }) => (
-                      <li className="py-4 px-2.5 sm:px-4 flex items-center justify-between">
-                        <Label>{sub.label}</Label>
+                      <ListViewItem className="justify-between">
+                        <ListViewTitle render={<label htmlFor={sub.name}>{sub.label}</label>} />
 
                         <Select
                           items={PERMISSION_SELECT_ITEMS}
@@ -220,13 +223,13 @@ export default function CreatePersonalAccessToken() {
                             ))}
                           </SelectContent>
                         </Select>
-                      </li>
+                      </ListViewItem>
                     )}
                     control={form.control}
                   />
                 ))}
-              </ul>
-            </div>
+              </ListViewContent>
+            </ListView>
           </div>
 
           <Button type="submit" size="sm" className="w-fit self-end">

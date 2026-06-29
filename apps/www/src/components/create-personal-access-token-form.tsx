@@ -71,7 +71,7 @@ export function CreatePersonalAccessTokenForm() {
     >
       <div className="flex flex-col gap-2">
         <Label>Label</Label>
-        <Input />
+        <Input className="w-50 h-8 text-white text-[.8125rem] leading-[normal] border-[oklch(0.2974_0.0048_270.79)] bg-transparent py-1.5 rounded-lg placeholder:text-[oklch(0.4692_0.0036_271.21)]" />
       </div>
 
       {PERMISSION_SUBJECTS.map((sub) => (

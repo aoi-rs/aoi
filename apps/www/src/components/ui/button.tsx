@@ -4,18 +4,18 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const button = cva(
-  'inline-flex items-center justify-center gap-2 rounded-full whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-3.5! [&_svg]:shrink-0',
+  'inline-flex items-center justify-center gap-2 rounded-full whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-3.5! [&_svg]:shrink-0 cursor-default',
   {
     variants: {
       variant: {
         default: 'bg-aoi-50 text-aoi-900 hover:bg-aoi-50/90',
-        outline: 'border border-aoi-700 bg-aoi-800 hover:bg-aoi-700',
-        ghost: 'hover:bg-aoi-700 text-white',
+        secondary: 'bg-[oklch(0.2269_0.0019_286.25)] hover:bg-[oklch(0.268_0.0024_247.91)]',
+        ghost: 'hover:bg-accent text-white',
         destructive: 'bg-red-600 hover:bg-red-500 text-white',
-        link: 'text-aoi-50 underline-offset-4 hover:underline',
+        link: 'underline-offset-2.5 hover:underline',
       },
       size: {
-        default: 'h-10 px-4 py-2',
+        default: 'h-10 px-4.5',
         sm: 'h-8 px-3',
         icon: 'size-6',
       },

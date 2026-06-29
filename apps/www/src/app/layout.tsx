@@ -25,7 +25,7 @@ export default async function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn('font-sans antialiased bg-aoi-950', fontSans.variable)}
+      className={cn('font-sans antialiased', fontSans.variable)}
     >
       <body>
         <AoiQueryClientProvider>

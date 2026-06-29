@@ -14,18 +14,18 @@ export default async function Settings() {
   return (
     <div className="flex flex-col mt-4 mb-8 mx-5.5 sm:mx-10 sm:my-16 items-center">
       <div className="w-full max-w-160 flex flex-col gap-8">
-        <h1 className="px-4 text-2xl font-medium">Profile</h1>
+        <h1 className="px-4 text-2xl font-medium text-white">Profile</h1>
 
         <div className="flex flex-col gap-9 sm:gap-12">
           <ProfileForm />
 
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-0.5 px-4">
-              <h2 className="text-sm font-medium">Sessions</h2>
+              <h2 className="text-sm font-medium text-white">Sessions</h2>
 
-              <p className="text-sm font-[450] text-aoi-500">
+              <span className="text-sm font-[450] text-[oklch(0.6674_0.003_271.37)]">
                 See devices logged into your account
-              </p>
+              </span>
             </div>
 
             <SessionList sessions={sessions} />
@@ -33,9 +33,9 @@ export default async function Settings() {
 
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-0.5 px-4">
-              <h2 className="text-sm font-medium">Personal access tokens</h2>
+              <h2 className="text-sm font-medium text-white">Personal access tokens</h2>
 
-              <p className="text-sm font-[450] text-aoi-500">
+              <p className="text-sm font-[450] text-[oklch(0.6674_0.003_271.37)]">
                 Use the REST API to build your own integrations
               </p>
             </div>

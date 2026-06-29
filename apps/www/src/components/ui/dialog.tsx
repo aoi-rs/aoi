@@ -49,7 +49,7 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          'fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-aoi-900 text-sm text-white ring-1 ring-aoi-700 duration-100 outline-none sm:max-w-120 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
+          'fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-popover text-sm text-white ring-1 ring-[oklch(0.2982_0.0048_270.79)] duration-100 outline-none sm:max-w-120 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
           className,
         )}
         {...props}
@@ -78,7 +78,7 @@ function DialogHeader({
         render={
           <Button
             variant="ghost"
-            className="absolute top-1/2 -translate-y-1/2 right-4 size-7"
+            className="absolute top-1/2 -translate-y-1/2 right-4 size-7 text-[oklch(0.6862_0.0036_271.33)] hover:text-white hover:bg-[oklch(0.2735_0.0025_271.15)]"
             size="icon"
           >
             <X />
@@ -118,7 +118,7 @@ function DialogDescription({
     <DialogPrimitive.Description
       data-slot="dialog-description"
       className={cn(
-        'text-sm leading-4 text-aoi-500 *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-white',
+        'text-sm leading-4 text-[oklch(0.6862_0.0036_271.33)] *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-white',
         className,
       )}
       {...props}

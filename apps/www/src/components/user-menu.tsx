@@ -1,13 +1,10 @@
 'use client'
 
-import {
-  BellIcon,
-  ChevronDown,
-  CircleUserRoundIcon,
-  CreditCardIcon,
-  LogOutIcon,
-} from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useContext } from 'react'
+import { toast } from 'sonner'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -15,6 +12,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
@@ -23,9 +21,22 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import { UserContext } from '@/providers/user'
+import { service } from '@/utils/client'
 
 export function UserMenu() {
   const { user } = useContext(UserContext)
+  const router = useRouter()
+
+  async function handleLogOut() {
+    const { error } = await service.DELETE('/v1/auth/logout')
+
+    if (error) {
+      toast.error('Something went wrong while logging out')
+      return
+    }
+
+    router.push('/login')
+  }
 
   return (
     <SidebarMenu>
@@ -33,41 +44,30 @@ export function UserMenu() {
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <SidebarMenuButton
-                size="sm"
-                className="w-fit rounded-full px-2"
-              />
+              <SidebarMenuButton className="w-fit rounded-full px-2 data-pressed:bg-sidebar-accent" />
             }
           >
             <Avatar className="size-5">
               <AvatarImage src="/preview-avatar.png" alt={user?.email} />
             </Avatar>
-            <span className="truncate font-medium text-sm leading-tight">
+            <span className="truncate font-medium text-sm text-white leading-tight">
               {user?.name ?? 'You'}
             </span>
-            <ChevronDown className="size-3! text-aoi-500" />
+            <ChevronDown className="size-3! text-sidebar-foreground" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="min-w-56" align="end" sideOffset={4}>
-            <DropdownMenuSeparator />
+          <DropdownMenuContent align="end">
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <CircleUserRoundIcon />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCardIcon />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BellIcon />
-                Notifications
+              <DropdownMenuItem render={<Link href="/settings" />}>
+                Preferences
+                <div className="ml-auto space-x-1">
+                  <DropdownMenuShortcut>G</DropdownMenuShortcut>
+                  <DropdownMenuShortcut>then</DropdownMenuShortcut>
+                  <DropdownMenuShortcut>S</DropdownMenuShortcut>
+                </div>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOutIcon />
-              Log out
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogOut}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

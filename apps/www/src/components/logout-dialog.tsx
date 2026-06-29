@@ -20,7 +20,7 @@ interface LogoutDialogProps extends ComponentProps<typeof AlertDialog> {}
 export function LogoutDialog(props: LogoutDialogProps) {
   const router = useRouter()
 
-  async function handleLogout() {
+  async function handleLogOut() {
     const { error } = await service.DELETE('/v1/auth/logout')
 
     if (error) {
@@ -28,7 +28,7 @@ export function LogoutDialog(props: LogoutDialogProps) {
       return
     }
 
-    router.push('/')
+    router.push('/login')
   }
 
   return (
@@ -45,7 +45,7 @@ export function LogoutDialog(props: LogoutDialogProps) {
 
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleLogout}>Log out</AlertDialogAction>
+          <AlertDialogAction onClick={handleLogOut}>Log out</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
