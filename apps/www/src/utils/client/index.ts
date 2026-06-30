@@ -13,21 +13,15 @@ export const createSSRClient = async (
   headers: NextRequest['headers'],
   cookies: ReadonlyRequestCookies,
 ): Promise<Client> => {
-  let _headers = {}
+  const _headers: Record<string, string> = {}
 
   const xForwardedFor = headers.get('X-Forwarded-For')
 
   if (xForwardedFor) {
-    _headers = {
-      ..._headers,
-      'X-Forwarded-For': xForwardedFor,
-    }
+    _headers['X-Forwarded-For'] = xForwardedFor
   }
 
-  _headers = {
-    ..._headers,
-    Cookie: cookies.toString(),
-  }
+  _headers.Cookie = cookies.toString()
 
   const client = createClient(CONFIG.API_BASE_URL, _headers)
 

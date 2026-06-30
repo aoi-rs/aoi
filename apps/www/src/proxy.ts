@@ -1,4 +1,5 @@
 import { RequestCookiesAdapter } from 'next/dist/server/web/spec-extension/adapters/request-cookies'
+import { ResponseCookies } from 'next/dist/server/web/spec-extension/cookies'
 import { type NextRequest, NextResponse } from 'next/server'
 import type { schemas } from '@/generated/server'
 import { createSSRClient } from '@/utils/client'
@@ -24,26 +25,45 @@ function createLoginResponse(request: NextRequest) {
 
 export async function proxy(request: NextRequest) {
   let user: schemas['UserSchema'] | undefined
+  let cookies: ResponseCookies | undefined
 
-  if (request.cookies.has(CONFIG.AOI_ACCESS_TOKEN_COOKIE_KEY)) {
-    const client = await createSSRClient(
+  if (
+    request.cookies.has(CONFIG.AOI_ACCESS_TOKEN_COOKIE_KEY) ||
+    request.cookies.has(CONFIG.AOI_REFRESH_TOKEN_COOKIE_KEY)
+  ) {
+    let client = await createSSRClient(
       request.headers,
       RequestCookiesAdapter.seal(request.cookies),
     )
 
-    const { data, response } = await client.GET('/v1/user', {
-      cache: 'no-cache',
-    })
+    if (request.cookies.has(CONFIG.AOI_REFRESH_TOKEN_COOKIE_KEY)) {
+      const { response } = await client.POST('/v1/sessions/refresh')
 
-    if (!response.ok && response.status !== 401) {
-      console.error('Failed to fetch authenticated user')
+      if (response.ok) {
+        cookies = new ResponseCookies(response.headers)
 
-      throw new Error(
-        'Unexpected response status when fetching authenticated user',
-      )
+        for (const cookie of cookies.getAll()) {
+          request.cookies.set(cookie)
+        }
+
+        client = await createSSRClient(
+          request.headers,
+          RequestCookiesAdapter.seal(request.cookies),
+        )
+      }
     }
 
-    user = data
+    if (request.cookies.has(CONFIG.AOI_ACCESS_TOKEN_COOKIE_KEY)) {
+      const { data, response } = await client.GET('/v1/user', {
+        cache: 'no-cache',
+      })
+
+      if (!response.ok && response.status !== 401) {
+        throw new Error('Failed to fetch authenticated user')
+      }
+
+      user = data
+    }
   }
 
   const requiresAuthentication = AUTHENTICATED_ROUTES.some((route) =>
@@ -61,6 +81,12 @@ export async function proxy(request: NextRequest) {
   }
 
   const response = NextResponse.next({ headers })
+
+  if (cookies) {
+    for (const cookie of cookies.getAll()) {
+      response.cookies.set(cookie)
+    }
+  }
 
   return response
 }

@@ -381,11 +381,6 @@ export interface components {
             /** Permissions */
             permissions?: components["schemas"]["Permission"][] | null;
         };
-        /** SessionRefresh */
-        SessionRefresh: {
-            /** Refresh Token */
-            refresh_token: string;
-        };
         /** SessionSchema */
         SessionSchema: {
             /**
@@ -915,11 +910,7 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SessionRefresh"];
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Session refreshed. */
             204: {
@@ -927,15 +918,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
             };
         };
     };
