@@ -18,8 +18,7 @@ from aoi.models import Session, User
 from aoi.config import settings
 from aoi.auth.models import AuthContext
 from aoi.sessions.repository import SessionRepository
-from aoi.sessions.schemas import SessionRefresh
-from aoi.exceptions import ResourceMissing, AoiError
+from aoi.exceptions import ResourceMissing, Unauthorized, AoiError
 from aoi.auth.service import auth as auth_service
 
 from aoi.kit.refresh_tokens import (
@@ -28,6 +27,11 @@ from aoi.kit.refresh_tokens import (
     RefreshTokenParseError,
     generate_refresh_token_hmac_key,
 )
+
+
+class RefreshTokenRequiredError(Unauthorized):
+    def __init__(self):
+        super().__init__("Refresh token is required")
 
 
 class SessionMissingError(ResourceMissing):
@@ -116,9 +120,12 @@ class SessionService:
 
         return (user_session, refresh_token_hmac_key)
 
-    async def refresh(
-        self, request: Request, session: AsyncSession, params: SessionRefresh
-    ):
+    async def refresh(self, request: Request, session: AsyncSession):
+        refresh_token_str = request.cookies.get(settings.REFRESH_TOKEN_COOKIE_KEY)
+
+        if not refresh_token_str:
+            raise RefreshTokenRequiredError()
+
         repository = SessionRepository.from_session(session)
 
         # A 5 second retry loop is used to make sure that refresh token
@@ -132,7 +139,7 @@ class SessionService:
             utc_now() - retry_start
         ).total_seconds() < SESSION_REFRESH_RETRY_LOOP_DURATION:
             try:
-                refresh_token = parse_refresh_token(params.refresh_token)
+                refresh_token = parse_refresh_token(refresh_token_str)
             except RefreshTokenParseError as e:
                 raise SessionMissingError() from e
 

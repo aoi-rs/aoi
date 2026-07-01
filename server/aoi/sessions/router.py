@@ -4,11 +4,12 @@ from pydantic import UUID7
 from aoi.kit.pagination import ListResource, PaginationParamsQuery
 from aoi.exceptions import ResourceMissing
 from aoi.postgres import AsyncSession, get_db_session
-from aoi.sessions.schemas import SessionSchema, SessionRefresh
+from aoi.sessions.schemas import SessionSchema
 from aoi.sessions.auth import SessionsRead, SessionsWrite
 from aoi.sessions.service import sessions
 from aoi.auth.dependencies import WebSession
 from aoi.auth.models import is_user_session
+
 
 router = APIRouter(prefix="/sessions")
 
@@ -95,11 +96,10 @@ async def revoke(
 )
 async def refresh(
     request: Request,
-    params: SessionRefresh,
     session: AsyncSession = Depends(get_db_session),
 ):
     """
     Refreshes a session.
     """
 
-    return await sessions.refresh(request, session, params)
+    return await sessions.refresh(request, session)

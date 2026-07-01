@@ -179,8 +179,6 @@ class RefreshToken:
             :REFRESH_TOKEN_SIGNATURE_LENGTH
         ]
 
-        print(f"{hmac_sha256_key} used to encode")
-
         result.extend(signature)
 
         checksum = hashlib.sha256(result).digest()[:REFRESH_TOKEN_CHECKSUM_LENGTH]
@@ -191,11 +189,11 @@ class RefreshToken:
         self.raw = bytes(result)
         self.signature = signature
 
-        return base64.urlsafe_b64encode(result).decode()
+        return base64.urlsafe_b64encode(result).decode().rstrip("=")
 
 
 def parse_refresh_token(refresh_token: str) -> RefreshToken:
-    bytes_ = base64.urlsafe_b64decode(refresh_token)
+    bytes_ = base64.urlsafe_b64decode(refresh_token + "===")
 
     if len(bytes_) < MIN_REFRESH_TOKEN_LENGTH:
         raise RefreshTokenLengthError()

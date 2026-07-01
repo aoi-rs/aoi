@@ -1,7 +1,7 @@
 from pydantic import UUID7
 from datetime import datetime
 
-from aoi.kit.schemas import IDSchema, TimestampedSchema, Schema
+from aoi.kit.schemas import IDSchema, TimestampedSchema
 
 
 class SessionSchema(IDSchema, TimestampedSchema):
@@ -11,7 +11,3 @@ class SessionSchema(IDSchema, TimestampedSchema):
     refreshed_at: datetime
     revoked: bool
     is_current_session: bool
-
-
-class SessionRefresh(Schema):
-    refresh_token: str
