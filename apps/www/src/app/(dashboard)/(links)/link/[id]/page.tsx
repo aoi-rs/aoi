@@ -34,7 +34,7 @@ export default async function _Link({ params }: LinkProps) {
             <SidebarTrigger className="group-data-[variant=panels]/links-layout:hidden" />
 
             <span className="text-[oklch(0.917_0.003_271.43)] text-sm font-medium text-ellipsis whitespace-nowrap overflow-hidden flex-1 ml-2.5 max-w-full group-data-[variant=normal]/links-layout:hidden">
-              {link.name}
+              {link.name ?? 'Untitled'}
             </span>
 
             <Breadcrumb className="group-data-[variant=panels]/links-layout:hidden ml-2.5">
@@ -48,7 +48,7 @@ export default async function _Link({ params }: LinkProps) {
                 <BreadcrumbSeparator />
 
                 <BreadcrumbItem>
-                  <BreadcrumbPage>{link.name}</BreadcrumbPage>
+                  <BreadcrumbPage>{link.name ?? 'Untitled'}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
