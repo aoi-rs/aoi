@@ -69,7 +69,7 @@ export function PersonalAccessTokenList() {
           {tokens.data.items.map((token) => (
             <ListViewItem key={token.id}>
               <ListViewClickable
-                render={<Link  href={'/settings/tokens/' + token.id} />}
+                render={<Link href={'/settings/tokens/' + token.id} />}
               />
 
               <ListViewFigure>
@@ -77,9 +77,7 @@ export function PersonalAccessTokenList() {
               </ListViewFigure>
 
               <ListViewDetails>
-                <ListViewTitle>
-                  {token.name}
-                </ListViewTitle>
+                <ListViewTitle>{token.name}</ListViewTitle>
 
                 <ListViewDescription>
                   Created{' '}

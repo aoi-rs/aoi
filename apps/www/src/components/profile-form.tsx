@@ -4,11 +4,18 @@ import { Avatar } from '@base-ui/react/avatar'
 import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import {
+  ListView,
+  ListViewContent,
+  ListViewDescription,
+  ListViewDetails,
+  ListViewItem,
+  ListViewTitle,
+} from '@/app/(dashboard)/settings/_components/list-view'
 import { Input } from '@/components/ui/input'
 import type { schemas } from '@/generated/server'
 import { UserContext } from '@/providers/user'
 import { service } from '@/utils/client'
-import { ListView, ListViewContent, ListViewDescription, ListViewDetails, ListViewItem, ListViewTitle } from '@/app/(dashboard)/settings/_components/list-view'
 
 export function ProfileForm() {
   const { user, setUser } = useContext(UserContext)
@@ -58,10 +65,7 @@ export function ProfileForm() {
           <ListViewItem>
             <ListViewDetails>
               <ListViewTitle>Picture</ListViewTitle>
-
-              <ListViewDescription>
-                Best viewed at 256x256
-              </ListViewDescription>
+              <ListViewDescription>Best viewed at 256x256</ListViewDescription>
             </ListViewDetails>
 
             <Avatar.Root className="group/avatar relative flex size-8 shrink-0 rounded-md select-none after:absolute after:inset-0 after:rounded-md after:border after:border-[oklch(0.2974_0.0048_270.79)] after:mix-blend-darken data-[size=lg]:size-10 data-[size=sm]:size-6 dark:after:mix-blend-lighten">

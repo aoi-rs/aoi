@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": false
+    "includes": ["**", "!src/generated/server/schema.ts"]
   },
   "formatter": {
     "enabled": true,

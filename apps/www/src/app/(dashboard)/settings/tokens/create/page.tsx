@@ -203,7 +203,9 @@ export default function CreatePersonalAccessToken() {
                     name={(sub.name + '_permission') as keyof FormSchema}
                     render={({ field }) => (
                       <ListViewItem className="justify-between">
-                        <ListViewTitle render={<label htmlFor={sub.name}>{sub.label}</label>} />
+                        <ListViewTitle
+                          render={<label htmlFor={sub.name}>{sub.label}</label>}
+                        />
 
                         <Select
                           items={PERMISSION_SELECT_ITEMS}

@@ -47,7 +47,10 @@ function BreadcrumbLink({
     defaultTagName: 'a',
     props: mergeProps<'a'>(
       {
-        className: cn('cursor-default transition-colors hover:text-white', className),
+        className: cn(
+          'cursor-default transition-colors hover:text-white',
+          className,
+        ),
       },
       props,
     ),

@@ -1,7 +1,6 @@
 'use client'
 
 import { OTPInput, OTPInputContext } from 'input-otp'
-import { Dot } from 'lucide-react'
 import { type ComponentProps, useContext } from 'react'
 
 import { cn } from '@/lib/utils'
@@ -66,15 +65,4 @@ function InputOTPSlot({
   )
 }
 
-function InputOTPSeparator({ ...props }: React.ComponentProps<'div'>) {
-  return (
-    // biome-ignore lint/a11y/useFocusableInteractive: ...
-    // biome-ignore lint/a11y/useSemanticElements: ...
-    // biome-ignore lint/a11y/useAriaPropsForRole: ...
-    <div data-slot="input-otp-separator" role="separator" {...props}>
-      <Dot />
-    </div>
-  )
-}
-
-export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot }
+export { InputOTP, InputOTPGroup, InputOTPSlot }

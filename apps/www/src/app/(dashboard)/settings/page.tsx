@@ -33,7 +33,9 @@ export default async function Settings() {
 
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-0.5 px-4">
-              <h2 className="text-sm font-medium text-white">Personal access tokens</h2>
+              <h2 className="text-sm font-medium text-white">
+                Personal access tokens
+              </h2>
 
               <p className="text-sm font-[450] text-[oklch(0.6674_0.003_271.37)]">
                 Use the REST API to build your own integrations

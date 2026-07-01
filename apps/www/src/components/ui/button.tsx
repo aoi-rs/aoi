@@ -9,7 +9,8 @@ const button = cva(
     variants: {
       variant: {
         default: 'bg-aoi-50 text-aoi-900 hover:bg-aoi-50/90',
-        secondary: 'bg-[oklch(0.2269_0.0019_286.25)] hover:bg-[oklch(0.268_0.0024_247.91)]',
+        secondary:
+          'bg-[oklch(0.2269_0.0019_286.25)] hover:bg-[oklch(0.268_0.0024_247.91)]',
         ghost: 'hover:bg-accent text-white',
         destructive: 'bg-red-600 hover:bg-red-500 text-white',
         link: 'underline-offset-2.5 hover:underline',

@@ -15,7 +15,7 @@ const ITEMS = [
     link: {
       href: '/links',
       matcher: /^\/(links|link)/,
-    }
+    },
   },
   {
     title: 'Preferences',
@@ -23,7 +23,7 @@ const ITEMS = [
     link: {
       href: '/settings',
       matcher: /^\/settings/,
-    }
+    },
   },
 ]
 

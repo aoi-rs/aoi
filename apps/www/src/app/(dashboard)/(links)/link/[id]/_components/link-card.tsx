@@ -74,7 +74,11 @@ export function LinkCard({ link }: LinkCardProps) {
             <DropdownMenuGroup>
               <DropdownMenuItem
                 render={
-                  <a href={link.destination_url} target='_blank' rel="noreferrer">
+                  <a
+                    href={link.destination_url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <ArrowUpRight />
                     Go to website
                   </a>

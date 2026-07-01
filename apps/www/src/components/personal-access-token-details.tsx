@@ -40,7 +40,9 @@ export function PersonalAccessTokenDetails({
       <div className="w-full max-w-160 flex flex-col gap-8">
         <div className="flex flex-col gap-1 px-4">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-medium flex-1 text-white">{token.name}</h1>
+            <h1 className="text-2xl font-medium flex-1 text-white">
+              {token.name}
+            </h1>
 
             <DropdownMenu>
               <DropdownMenuTrigger

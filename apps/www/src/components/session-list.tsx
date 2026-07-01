@@ -100,19 +100,15 @@ export function SessionList({ sessions: _sessions }: SessionListProps) {
 
           <ListViewContent>
             {others.map((session) => (
-              <ListViewItem
-                key={session.id}
-              >
+              <ListViewItem key={session.id}>
                 <ListViewClickable />
 
                 <ListViewFigure>
-                  <Globe  />
+                  <Globe />
                 </ListViewFigure>
 
                 <ListViewDetails>
-                  <ListViewTitle>
-                    {session.name}
-                  </ListViewTitle>
+                  <ListViewTitle>{session.name}</ListViewTitle>
 
                   <ListViewDescription>
                     Last seen{' '}

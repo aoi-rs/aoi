@@ -56,8 +56,6 @@ export function LinkLabelEditor({ link }: LinkLabelEditorProps) {
   }
 
   return (
-    // biome-ignore lint/a11y/useFocusableInteractive: contenteditable elements are natively focusable
-    // biome-ignore lint/a11y/useSemanticElements: This editor requires custom behavior that couldn't be achieved with more traditional elements like <input> and <textarea>. The element is exposed to assistive technologies through role="textbox" and related ARIA attributes
     <div
       ref={ref}
       data-empty-text="Untitled"

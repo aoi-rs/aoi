@@ -7,7 +7,10 @@ import { cn } from '@/lib/utils'
 function ListView({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
-      className={cn('rounded-2xl bg-[oklch(0.2041_0.002_271.15)] border border-[oklch(0.2415_0.0048_270.59)]', className)}
+      className={cn(
+        'rounded-2xl bg-[oklch(0.2041_0.002_271.15)] border border-[oklch(0.2415_0.0048_270.59)]',
+        className,
+      )}
       {...props}
     />
   )
@@ -116,7 +119,10 @@ function ListViewTitle({
 function ListViewDescription({ className, ...props }: ComponentProps<'span'>) {
   return (
     <span
-      className={cn('text-[oklch(0.6784_0.0036_271.33)] text-xs leading-4 font-[450]', className)}
+      className={cn(
+        'text-[oklch(0.6784_0.0036_271.33)] text-xs leading-4 font-[450]',
+        className,
+      )}
       {...props}
     />
   )
