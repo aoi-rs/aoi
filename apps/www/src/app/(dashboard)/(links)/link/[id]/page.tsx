@@ -1,6 +1,15 @@
-import { Clipboard, LayersPlus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { LayersPlus } from 'lucide-react'
+import Link from 'next/link'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
+import { SidebarTrigger } from '@/components/ui/sidebar'
 import { createSSRClient } from '@/utils/client/serverside'
 import { shortenCreationDate } from '@/utils/date'
 import { retrieveLink } from '@/utils/link'
@@ -11,7 +20,7 @@ interface LinkProps {
   params: Promise<{ id: string }>
 }
 
-export default async function Link({ params }: LinkProps) {
+export default async function _Link({ params }: LinkProps) {
   const { id } = await params
 
   const client = await createSSRClient()
@@ -19,11 +28,31 @@ export default async function Link({ params }: LinkProps) {
 
   return (
     <div className="flex flex-col h-full">
-      <header className="flex h-10.75 shrink-0 items-center gap-2 px-2 border-b border-[oklch(0.2143_0.0037_270.75)] transition-[width,height] ease-linear">
-        <div className="flex items-center justify-between gap-2 w-full">
-          <span className="text-[oklch(0.917_0.003_271.43)] text-sm font-medium text-ellipsis whitespace-nowrap overflow-hidden flex-1 ml-2.5 max-w-full">
-            {link.name}
-          </span>
+      <header className="flex h-10.75 shrink-0 items-center px-2 border-b border-[oklch(0.2143_0.0037_270.75)] transition-[width,height] ease-linear">
+        <div className="flex items-center flex-1 gap-1.5">
+          <div className="flex flex-1 items-center gap-0.5 sm:gap-1">
+            <SidebarTrigger className="group-data-[variant=panels]/links-layout:hidden" />
+
+            <span className="text-[oklch(0.917_0.003_271.43)] text-sm font-medium text-ellipsis whitespace-nowrap overflow-hidden flex-1 ml-2.5 max-w-full group-data-[variant=normal]/links-layout:hidden">
+              {link.name}
+            </span>
+
+            <Breadcrumb className="group-data-[variant=panels]/links-layout:hidden ml-2.5">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink render={<Link href="/links" />}>
+                    Links
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+
+                <BreadcrumbSeparator />
+
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{link.name}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
         </div>
       </header>
 

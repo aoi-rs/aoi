@@ -20,11 +20,11 @@ export function LinksHeader() {
   const [creating, setCreating] = useState(false)
 
   return (
-    <header className="flex h-10.75 shrink-0 items-center gap-2 px-2 border-b border-[oklch(0.2143_0.0037_270.75)] transition-[width,height] ease-linear">
+    <header className="flex h-10.75 shrink-0 items-center px-2 border-b border-[oklch(0.2143_0.0037_270.75)] transition-[width,height] ease-linear">
       <div className="flex items-center justify-between flex-1 gap-1.5">
-        <div className="flex flex-1 items-center gap-0.5">
+        <div className="flex flex-1 items-center gap-0.5 sm:gap-1">
           <SidebarTrigger className="lg:hidden" />
-          <h1 className="text-sm ml-2.5 font-medium text-[oklch(0.917_0.003_271.43)]">Links</h1>
+          <h1 className="text-sm ml-2.5 flex-1 font-medium text-[oklch(0.917_0.003_271.43)]">Links</h1>
         </div>
 
         <Dialog open={creating} onOpenChange={setCreating}>

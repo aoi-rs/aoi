@@ -1,6 +1,6 @@
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
-import { ChevronRightIcon, MoreHorizontalIcon } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import type * as React from 'react'
 import { cn } from '@/lib/utils'
 
@@ -20,7 +20,7 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {
     <ol
       data-slot="breadcrumb-list"
       className={cn(
-        'flex flex-wrap items-center gap-1.5 text-sm wrap-break-word text-muted-foreground sm:gap-2.5',
+        'flex flex-wrap items-center gap-1.5 text-sm font-medium wrap-break-word text-[oklch(0.917_0.003_271.43)]',
         className,
       )}
       {...props}
@@ -32,7 +32,7 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<'li'>) {
   return (
     <li
       data-slot="breadcrumb-item"
-      className={cn('inline-flex items-center gap-1.5', className)}
+      className={cn('inline-flex items-center gap-1', className)}
       {...props}
     />
   )
@@ -47,7 +47,7 @@ function BreadcrumbLink({
     defaultTagName: 'a',
     props: mergeProps<'a'>(
       {
-        className: cn('transition-colors hover:text-foreground', className),
+        className: cn('cursor-default transition-colors hover:text-white', className),
       },
       props,
     ),
@@ -60,14 +60,12 @@ function BreadcrumbLink({
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<'span'>) {
   return (
-    // biome-ignore lint/a11y/useSemanticElements: we're using `role="link"` instead
-    // biome-ignore lint/a11y/useFocusableInteractive: let's ignore this for now
     <span
       data-slot="breadcrumb-page"
       role="link"
       aria-disabled="true"
       aria-current="page"
-      className={cn('font-normal text-foreground', className)}
+      className={cn('text-white', className)}
       {...props}
     />
   )
@@ -83,38 +81,19 @@ function BreadcrumbSeparator({
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      className={cn('[&>svg]:size-3.5', className)}
-      {...props}
-    >
-      {children ?? <ChevronRightIcon />}
-    </li>
-  )
-}
-
-function BreadcrumbEllipsis({
-  className,
-  ...props
-}: React.ComponentProps<'span'>) {
-  return (
-    <span
-      data-slot="breadcrumb-ellipsis"
-      role="presentation"
-      aria-hidden="true"
       className={cn(
-        'flex size-5 items-center justify-center [&>svg]:size-4',
+        '[&>svg]:size-3 [&>svg]:text-[oklch(0.6674_0.003_271.37)]',
         className,
       )}
       {...props}
     >
-      <MoreHorizontalIcon />
-      <span className="sr-only">More</span>
-    </span>
+      {children ?? <ChevronRight />}
+    </li>
   )
 }
 
 export {
   Breadcrumb,
-  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
