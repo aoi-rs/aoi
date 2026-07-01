@@ -4,12 +4,14 @@ import { type KeyboardEvent, useRef } from 'react'
 import { toast } from 'sonner'
 import type { schemas } from '@/generated/server'
 import { service } from '@/utils/client'
+import { getQueryClient } from '@/utils/query'
 
 interface LinkLabelEditorProps {
   link: schemas['LinkSchema']
+  onSubmit: (name: string | null) => void
 }
 
-export function LinkLabelEditor({ link }: LinkLabelEditorProps) {
+export function LinkLabelEditor({ link, onSubmit }: LinkLabelEditorProps) {
   const ref = useRef<HTMLDivElement>(null)
 
   async function handleFlush(editable: HTMLDivElement) {
@@ -37,6 +39,10 @@ export function LinkLabelEditor({ link }: LinkLabelEditorProps) {
     if (content !== data.name) {
       editable.innerHTML = data.name ?? ''
     }
+
+    getQueryClient().invalidateQueries({ queryKey: ['links'] })
+
+    onSubmit(data.name)
 
     toast.success('The link was edited')
   }
