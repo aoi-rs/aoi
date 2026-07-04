@@ -16,7 +16,7 @@ const button = cva(
         link: 'underline-offset-2.5 hover:underline',
       },
       size: {
-        default: 'h-10 px-4.5',
+        default: 'h-11 px-4.5',
         sm: 'h-8 px-3',
         icon: 'size-6',
       },

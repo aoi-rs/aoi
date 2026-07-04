@@ -45,7 +45,7 @@ export default function Login() {
   const content = states[state]
 
   return (
-    <div className="min-h-screen flex pt-12 pb-12 bg-background text-foreground">
+    <div className="min-h-screen flex pt-12 pb-12 bg-linear-to-b from-[oklch(0.1689_0.0021_286.18)] to-[oklch(0.1221_0_0)] to-50% text-foreground">
       <div className="flex flex-col mt-36 w-full h-fit items-center gap-8 animate-in delay-200 duration-300 fade-in-0 fill-mode-both slide-in-from-top-[0.625rem]">
         <Logomark className="size-12" />
 
@@ -119,7 +119,7 @@ function EmailForm({
       </h1>
 
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        <Input ref={field} placeholder="alice@example.com" />
+        <Input ref={field} className='h-11' placeholder="alice@example.com" />
 
         <Button type="submit" variant="secondary" disabled={processing}>
           Continue with email
