@@ -107,6 +107,8 @@ class SessionService:
     ) -> tuple[Session, bytes]:
         refresh_token_hmac_key = generate_refresh_token_hmac_key()
 
+        print(request.headers.get("user-agent", "NONE"))
+
         user_session = Session(
             user=user,
             user_agent=request.headers.get("user-agent", ""),
@@ -278,7 +280,7 @@ class SessionService:
             assert issued_refresh_token is not None
 
             user_session.refreshed_at = utc_now()
-            user_session.user_agent = request.headers.get("user_agent", "")
+            user_session.user_agent = request.headers.get("user-agent", "")
 
             return await auth_service.create_login_response(
                 request,
