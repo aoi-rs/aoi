@@ -21,6 +21,12 @@ export const createSSRClient = async (
     _headers['X-Forwarded-For'] = xForwardedFor
   }
 
+  const userAgent = headers.get('User-Agent')
+
+  if (userAgent) {
+    _headers['User-Agent'] = userAgent
+  }
+
   _headers.Cookie = cookies.toString()
 
   const client = createClient(CONFIG.API_BASE_URL, _headers)
