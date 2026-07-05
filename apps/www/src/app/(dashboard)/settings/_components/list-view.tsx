@@ -7,8 +7,9 @@ import { cn } from '@/lib/utils'
 function ListView({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
+      data-slot="list-view"
       className={cn(
-        'rounded-2xl bg-[oklch(0.2041_0.002_271.15)] border border-[oklch(0.2415_0.0048_270.59)]',
+        'rounded-2xl bg-[oklch(0.2041_0.002_271.15)] border border-[oklch(0.2415_0.0048_270.59)] divide-y divide-[oklch(0.2415_0.0048_270.59)]',
         className,
       )}
       {...props}
@@ -19,8 +20,9 @@ function ListView({ className, ...props }: ComponentProps<'div'>) {
 function ListViewHeader({ className, ...props }: ComponentProps<'header'>) {
   return (
     <header
+      data-slot="list-view-header"
       className={cn(
-        'p-4 flex items-center justify-between border-b border-[oklch(0.2415_0.0048_270.59)] text-white text-sm font-medium **:data-[slot=button]:hover:bg-[oklch(0.2541_0.0025_271.11)]',
+        'p-4 flex items-center justify-between text-white text-sm font-medium **:data-[slot=button]:hover:bg-[oklch(0.2541_0.0025_271.11)]',
         className,
       )}
       {...props}

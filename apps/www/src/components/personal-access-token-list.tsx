@@ -8,6 +8,7 @@ import { useState } from 'react'
 import {
   ListView,
   ListViewClickable,
+  ListViewContent,
   ListViewDescription,
   ListViewDetails,
   ListViewFigure,
@@ -64,8 +65,8 @@ export function PersonalAccessTokenList() {
         </ListViewHeader>
       )}
 
-      {tokens.data && (
-        <ListView>
+      {tokens.data && tokens.data.pagination.total_count >= 1 && (
+        <ListViewContent>
           {tokens.data.items.map((token) => (
             <ListViewItem key={token.id}>
               <ListViewClickable
@@ -124,7 +125,7 @@ export function PersonalAccessTokenList() {
               </DropdownMenu>
             </ListViewItem>
           ))}
-        </ListView>
+        </ListViewContent>
       )}
 
       <RevokePersonalAccessTokenDialog
