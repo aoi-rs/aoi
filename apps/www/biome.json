@@ -23,6 +23,9 @@
         "noSvgWithoutTitle": "off",
         "useFocusableInteractive": "off",
         "useSemanticElements": "off"
+      },
+      "nursery": {
+        "useSortedClasses": "on"
       }
     }
   },

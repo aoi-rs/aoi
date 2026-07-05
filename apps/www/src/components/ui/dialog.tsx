@@ -30,7 +30,7 @@ function DialogOverlay({
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        'fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0',
+        'data-open:fade-in-0 data-closed:fade-out-0 fixed inset-0 isolate z-50 bg-black/10 duration-100 data-closed:animate-out data-open:animate-in supports-backdrop-filter:backdrop-blur-xs',
         className,
       )}
       {...props}
@@ -49,7 +49,7 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          'fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-popover text-sm text-white ring-1 ring-[oklch(0.2982_0.0048_270.79)] duration-100 outline-none sm:max-w-120 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
+          'data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-popover text-sm text-white outline-none ring-1 ring-[oklch(0.2982_0.0048_270.79)] duration-100 data-closed:animate-out data-open:animate-in sm:max-w-120',
           className,
         )}
         {...props}
@@ -68,7 +68,7 @@ function DialogHeader({
   return (
     <div
       data-slot="dialog-header"
-      className={cn('flex flex-col p-4 pr-12 gap-0.5 relative', className)}
+      className={cn('relative flex flex-col gap-0.5 p-4 pr-12', className)}
       {...props}
     >
       {children}
@@ -78,7 +78,7 @@ function DialogHeader({
         render={
           <Button
             variant="ghost"
-            className="absolute top-1/2 -translate-y-1/2 right-4 size-7 text-[oklch(0.6862_0.0036_271.33)] hover:text-white hover:bg-[oklch(0.2735_0.0025_271.15)]"
+            className="absolute top-1/2 right-4 size-7 -translate-y-1/2 text-[oklch(0.6862_0.0036_271.33)] hover:bg-[oklch(0.2735_0.0025_271.15)] hover:text-white"
             size="icon"
           >
             <X />
@@ -94,7 +94,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="dialog-footer"
-      className={cn('flex py-3 px-4 gap-3 justify-end', className)}
+      className={cn('flex justify-end gap-3 px-4 py-3', className)}
       {...props}
     />
   )
@@ -104,7 +104,7 @@ function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn('text-base font-medium', className)}
+      className={cn('font-medium text-base', className)}
       {...props}
     />
   )
@@ -118,7 +118,7 @@ function DialogDescription({
     <DialogPrimitive.Description
       data-slot="dialog-description"
       className={cn(
-        'text-sm leading-4 text-[oklch(0.6862_0.0036_271.33)] *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-white',
+        'text-[oklch(0.6862_0.0036_271.33)] text-sm leading-4 *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-white',
         className,
       )}
       {...props}

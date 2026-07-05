@@ -12,18 +12,18 @@ export default async function Settings() {
   )
 
   return (
-    <div className="flex flex-col mt-4 mb-8 mx-5.5 sm:mx-10 sm:my-16 items-center">
-      <div className="w-full max-w-160 flex flex-col gap-8">
-        <h1 className="px-4 text-2xl font-medium text-white">Profile</h1>
+    <div className="mx-5.5 mt-4 mb-8 flex flex-col items-center sm:mx-10 sm:my-16">
+      <div className="flex w-full max-w-160 flex-col gap-8">
+        <h1 className="px-4 font-medium text-2xl text-white">Profile</h1>
 
         <div className="flex flex-col gap-9 sm:gap-12">
           <ProfileForm />
 
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-0.5 px-4">
-              <h2 className="text-sm font-medium text-white">Sessions</h2>
+              <h2 className="font-medium text-sm text-white">Sessions</h2>
 
-              <span className="text-sm font-[450] text-[oklch(0.6674_0.003_271.37)]">
+              <span className="font-[450] text-[oklch(0.6674_0.003_271.37)] text-sm">
                 See devices logged into your account
               </span>
             </div>
@@ -33,11 +33,11 @@ export default async function Settings() {
 
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-0.5 px-4">
-              <h2 className="text-sm font-medium text-white">
+              <h2 className="font-medium text-sm text-white">
                 Personal access tokens
               </h2>
 
-              <p className="text-sm font-[450] text-[oklch(0.6674_0.003_271.37)]">
+              <p className="font-[450] text-[oklch(0.6674_0.003_271.37)] text-sm">
                 Use the REST API to build your own integrations
               </p>
             </div>

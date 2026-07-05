@@ -36,11 +36,11 @@ export function PersonalAccessTokenDetails({
   const [revoking, setRevoking] = useState(false)
 
   return (
-    <div className="flex flex-col mt-4 mb-8 mx-5.5 sm:mx-10 sm:my-16 items-center">
-      <div className="w-full max-w-160 flex flex-col gap-8">
+    <div className="mx-5.5 mt-4 mb-8 flex flex-col items-center sm:mx-10 sm:my-16">
+      <div className="flex w-full max-w-160 flex-col gap-8">
         <div className="flex flex-col gap-1 px-4">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-medium flex-1 text-white">
+            <h1 className="flex-1 font-medium text-2xl text-white">
               {token.name}
             </h1>
 
@@ -51,7 +51,7 @@ export function PersonalAccessTokenDetails({
                     size="icon"
                     variant="ghost"
                     data-slot="dropdown-menu-trigger"
-                    className="text-[oklch(0.6674_0.003_271.37)] hover:text-white hover:bg-[oklch(0.2269_0.0013_271.31)]"
+                    className="text-[oklch(0.6674_0.003_271.37)] hover:bg-[oklch(0.2269_0.0013_271.31)] hover:text-white"
                   >
                     <Ellipsis />
                   </Button>
@@ -76,7 +76,7 @@ export function PersonalAccessTokenDetails({
             </DropdownMenu>
           </div>
 
-          <p className="text-sm font-[450] text-[oklch(0.6674_0.003_271.37)]">
+          <p className="font-[450] text-[oklch(0.6674_0.003_271.37)] text-sm">
             Created {format(token.created_at, 'MMM d y')}
           </p>
         </div>
@@ -107,7 +107,7 @@ export function PersonalAccessTokenDetails({
                 <ListViewTitle>Permissions</ListViewTitle>
 
                 {permissions.read.length > 0 && (
-                  <div className="text-xs leading-[normal] py-1">
+                  <div className="py-1 text-xs leading-[normal]">
                     <span className="font-medium text-white">Read</span>
                     <span className="font-[450] text-[oklch(0.6784_0.0036_271.33)]">
                       {' '}
@@ -117,7 +117,7 @@ export function PersonalAccessTokenDetails({
                 )}
 
                 {permissions.write.length > 0 && (
-                  <div className="text-xs leading-[normal] py-1">
+                  <div className="py-1 text-xs leading-[normal]">
                     <span className="font-medium text-white">Read & write</span>
                     <span className="font-[450] text-[oklch(0.6784_0.0036_271.33)]">
                       {' '}

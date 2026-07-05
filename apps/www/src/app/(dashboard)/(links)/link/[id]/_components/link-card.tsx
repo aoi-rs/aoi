@@ -38,32 +38,32 @@ export function LinkCard({ link }: LinkCardProps) {
   }
 
   return (
-    <div className="px-2.5 h-11 border border-[oklch(0.2415_0.0048_270.59)] flex items-center gap-2 rounded-lg bg-[oklch(0.2041_0.002_271.15)]">
+    <div className="flex h-11 items-center gap-2 rounded-lg border border-[oklch(0.2415_0.0048_270.59)] bg-[oklch(0.2041_0.002_271.15)] px-2.5">
       <Logomark className="size-4" />
 
-      <div className="flex-1 flex overflow-hidden gap-2">
-        <div className="shrink-0 max-w-3/5 flex overflow-hidden">
-          <span className="whitespace-nowrap text-ellipsis leading-6 font-medium text-white overflow-hidden text-sm">
+      <div className="flex flex-1 gap-2 overflow-hidden">
+        <div className="flex max-w-3/5 shrink-0 overflow-hidden">
+          <span className="overflow-hidden text-ellipsis whitespace-nowrap font-medium text-sm text-white leading-6">
             Previews coming soon
           </span>
         </div>
 
         <div className="flex overflow-hidden">
-          <span className="whitespace-nowrap text-ellipsis leading-6 font-[450] text-sm text-[oklch(0.6784_0.0036_271.33)] overflow-hidden">
+          <span className="overflow-hidden text-ellipsis whitespace-nowrap font-[450] text-[oklch(0.6784_0.0036_271.33)] text-sm leading-6">
             Rich previews for destination links will be available in a future
             version.
           </span>
         </div>
       </div>
 
-      <div className="shrink-0 flex items-center">
+      <div className="flex shrink-0 items-center">
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
               <Button
                 size="icon"
                 variant="ghost"
-                className="text-[oklch(0.6784_0.0036_271.33)] hover:text-white hover:bg-[oklch(0.2541_0.0025_271.11)]"
+                className="text-[oklch(0.6784_0.0036_271.33)] hover:bg-[oklch(0.2541_0.0025_271.11)] hover:text-white"
               >
                 <Ellipsis />
               </Button>

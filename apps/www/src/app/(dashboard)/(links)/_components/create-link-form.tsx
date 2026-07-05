@@ -55,7 +55,7 @@ export function CreateLinkForm({ onCreate }: CreateLinkFormProps) {
   return (
     <form
       id={FORM_ID}
-      className="px-4 py-3 flex flex-col gap-6"
+      className="flex flex-col gap-6 px-4 py-3"
       onSubmit={form.handleSubmit(handleSubmit)}
     >
       <Controller
@@ -68,7 +68,7 @@ export function CreateLinkForm({ onCreate }: CreateLinkFormProps) {
               {...field}
               id={FORM_ID + '-label'}
               placeholder="Course materials"
-              className="bg-transparent border h-8 text-white border-[oklch(0.2881_0.006_270.55)] rounded-lg py-1.5 px-3 placeholder:text-[oklch(0.4822_0.0036_271.22)]"
+              className="h-8 rounded-lg border border-[oklch(0.2881_0.006_270.55)] bg-transparent px-3 py-1.5 text-white placeholder:text-[oklch(0.4822_0.0036_271.22)]"
             />
           </div>
         )}
@@ -85,7 +85,7 @@ export function CreateLinkForm({ onCreate }: CreateLinkFormProps) {
               {...field}
               id={FORM_ID + '-destination-url'}
               placeholder="https://"
-              className="bg-transparent border h-8 text-white border-[oklch(0.2881_0.006_270.55)] rounded-lg py-1.5 px-3 placeholder:text-[oklch(0.4822_0.0036_271.22)]"
+              className="h-8 rounded-lg border border-[oklch(0.2881_0.006_270.55)] bg-transparent px-3 py-1.5 text-white placeholder:text-[oklch(0.4822_0.0036_271.22)]"
             />
           </div>
         )}

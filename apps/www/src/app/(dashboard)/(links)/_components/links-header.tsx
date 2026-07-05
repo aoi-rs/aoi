@@ -20,11 +20,11 @@ export function LinksHeader() {
   const [creating, setCreating] = useState(false)
 
   return (
-    <header className="flex h-10.75 shrink-0 items-center px-2 border-b border-[oklch(0.2143_0.0037_270.75)] transition-[width,height] ease-linear">
-      <div className="flex items-center justify-between flex-1 gap-1.5">
+    <header className="flex h-10.75 shrink-0 items-center border-[oklch(0.2143_0.0037_270.75)] border-b px-2 transition-[width,height] ease-linear">
+      <div className="flex flex-1 items-center justify-between gap-1.5">
         <div className="flex flex-1 items-center gap-0.5 sm:gap-1">
           <SidebarTrigger className="lg:hidden" />
-          <h1 className="text-sm ml-2.5 flex-1 font-medium text-[oklch(0.917_0.003_271.43)]">
+          <h1 className="ml-2.5 flex-1 font-medium text-[oklch(0.917_0.003_271.43)] text-sm">
             Links
           </h1>
         </div>
@@ -35,7 +35,7 @@ export function LinksHeader() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-[oklch(0.6674_0.003_271.37)] hover:text-white hover:bg-[oklch(0.2269_0.0013_271.31)] size-7"
+                className="size-7 text-[oklch(0.6674_0.003_271.37)] hover:bg-[oklch(0.2269_0.0013_271.31)] hover:text-white"
               >
                 <Plus />
               </Button>

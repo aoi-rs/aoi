@@ -38,7 +38,7 @@ export function MainMenu() {
               <ActiveLink
                 href={item.link.href}
                 matcher={item.link.matcher}
-                className="flex items-center rounded-lg border border-transparent cursor-default px-2.5 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
+                className="flex cursor-default items-center rounded-lg border border-transparent px-2.5 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
               />
             }
           >
@@ -46,7 +46,7 @@ export function MainMenu() {
               {item.icon}
             </span>
 
-            <span className="text-[0.8125rem] font-medium">{item.title}</span>
+            <span className="font-medium text-[0.8125rem]">{item.title}</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}

@@ -9,7 +9,7 @@ function ListView({ className, ...props }: ComponentProps<'div'>) {
     <div
       data-slot="list-view"
       className={cn(
-        'rounded-2xl bg-[oklch(0.2041_0.002_271.15)] border border-[oklch(0.2415_0.0048_270.59)] divide-y divide-[oklch(0.2415_0.0048_270.59)]',
+        'divide-y divide-[oklch(0.2415_0.0048_270.59)] rounded-2xl border border-[oklch(0.2415_0.0048_270.59)] bg-[oklch(0.2041_0.002_271.15)]',
         className,
       )}
       {...props}
@@ -22,7 +22,7 @@ function ListViewHeader({ className, ...props }: ComponentProps<'header'>) {
     <header
       data-slot="list-view-header"
       className={cn(
-        'p-4 flex items-center justify-between text-white text-sm font-medium **:data-[slot=button]:hover:bg-[oklch(0.2541_0.0025_271.11)]',
+        'flex items-center justify-between p-4 font-medium text-sm text-white **:data-[slot=button]:hover:bg-[oklch(0.2541_0.0025_271.11)]',
         className,
       )}
       {...props}
@@ -34,7 +34,7 @@ function ListViewContent({ className, ...props }: ComponentProps<'ul'>) {
   return (
     <ul
       data-slot="list-view-content"
-      className="flex flex-col divide-[oklch(0.2415_0.0048_270.59)] divide-y group/content"
+      className="group/content flex flex-col divide-y divide-[oklch(0.2415_0.0048_270.59)]"
       {...props}
     />
   )
@@ -44,7 +44,7 @@ function ListViewItem({ children, className, ...props }: ComponentProps<'li'>) {
   return (
     <li
       className={cn(
-        'p-4 relative has-data-[slot=list-view-clickable]:hover:bg-[oklch(0.2275_0.0032_270.9)] group/item group-first/content:first:rounded-t-2xl flex gap-4 items-center **:data-[slot=button]:z-10 **:data-[slot=button]:opacity-0 hover:**:data-[slot=button]:opacity-100 **:data-[slot=button]:hover:bg-[oklch(0.2541_0.0025_271.11)] last:rounded-b-2xl',
+        'group/item relative flex items-center gap-4 p-4 last:rounded-b-2xl group-first/content:first:rounded-t-2xl has-data-[slot=list-view-clickable]:hover:bg-[oklch(0.2275_0.0032_270.9)] **:data-[slot=button]:z-10 **:data-[slot=button]:opacity-0 **:data-[slot=button]:hover:bg-[oklch(0.2541_0.0025_271.11)] hover:**:data-[slot=button]:opacity-100',
         className,
       )}
       {...props}
@@ -81,7 +81,7 @@ function ListViewFigure({ className, ...props }: ComponentProps<'figure'>) {
   return (
     <figure
       className={cn(
-        "size-8 bg-[oklch(0.2432_0.0068_270.2)] grid place-content-center rounded-md text-[oklch(0.6784_0.0036_271.33)] [&_svg:not([class*='size-'])]:size-4",
+        "grid size-8 place-content-center rounded-md bg-[oklch(0.2432_0.0068_270.2)] text-[oklch(0.6784_0.0036_271.33)] [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -91,7 +91,7 @@ function ListViewFigure({ className, ...props }: ComponentProps<'figure'>) {
 
 function ListViewDetails({ className, ...props }: ComponentProps<'div'>) {
   return (
-    <div className={cn('flex flex-col flex-1 gap-0.5', className)} {...props} />
+    <div className={cn('flex flex-1 flex-col gap-0.5', className)} {...props} />
   )
 }
 
@@ -122,7 +122,7 @@ function ListViewDescription({ className, ...props }: ComponentProps<'span'>) {
   return (
     <span
       className={cn(
-        'text-[oklch(0.6784_0.0036_271.33)] text-xs leading-4 font-[450]',
+        'font-[450] text-[oklch(0.6784_0.0036_271.33)] text-xs leading-4',
         className,
       )}
       {...props}

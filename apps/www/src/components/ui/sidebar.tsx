@@ -164,7 +164,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="data-[side=left]:w-(--sidebar-width) bg-sidebar p-2 text-sidebar-foreground [&>button]:hidden border-[oklch(0.2516_0.0036_270.88)]"
+          className="border-[oklch(0.2516_0.0036_270.88)] bg-sidebar p-2 text-sidebar-foreground data-[side=left]:w-(--sidebar-width) [&>button]:hidden"
           style={
             {
               '--sidebar-width': SIDEBAR_WIDTH_MOBILE,
@@ -204,7 +204,7 @@ function Sidebar({
         data-slot="sidebar-container"
         data-side={side}
         className={cn(
-          'fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear data-[side=left]:left-0 data-[side=left]:group-data-[collapsible=offcanvas]:-left-(--sidebar-width) data-[side=right]:right-0 data-[side=right]:group-data-[collapsible=offcanvas]:-right-(--sidebar-width) lg:flex',
+          'fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear data-[side=right]:right-0 data-[side=left]:left-0 data-[side=right]:group-data-[collapsible=offcanvas]:-right-(--sidebar-width) data-[side=left]:group-data-[collapsible=offcanvas]:-left-(--sidebar-width) lg:flex',
           // Adjust the padding for floating and inset variants.
           side === 'left'
             ? 'left-0 group-data-[collapsible=offcanvas]:-left-(--sidebar-width)'
@@ -219,7 +219,7 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="flex size-full flex-col bg-aoi-950 group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:border group-data-[variant=floating]:border-aoi-700"
+          className="flex size-full flex-col bg-aoi-950 group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-aoi-700 group-data-[variant=floating]:shadow-sm"
         >
           {children}
         </div>
@@ -243,7 +243,7 @@ function SidebarTrigger({
       size="icon"
       aria-label="Menu"
       className={cn(
-        'size-7 hover:bg-[oklch(0.1711_0.0011_271.29)] text-[oklch(0.6674_0.003_271.37)] hover:text-white',
+        'size-7 text-[oklch(0.6674_0.003_271.37)] hover:bg-[oklch(0.1711_0.0011_271.29)] hover:text-white',
         className,
       )}
       onClick={(event) => {
@@ -270,10 +270,10 @@ function SidebarRail({ className, ...props }: React.ComponentProps<'button'>) {
       onClick={toggleSidebar}
       title="Toggle Sidebar"
       className={cn(
-        'absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:inset-s-1/2 after:w-0.5 hover:after:bg-aoi-700 sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2',
+        'absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear after:absolute after:inset-s-1/2 after:inset-y-0 after:w-0.5 hover:after:bg-aoi-700 group-data-[side=left]:-right-4 group-data-[side=right]:left-0 sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2',
         'in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize',
         '[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize',
-        'group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full hover:group-data-[collapsible=offcanvas]:bg-aoi-950',
+        'group-data-[collapsible=offcanvas]:translate-x-0 hover:group-data-[collapsible=offcanvas]:bg-aoi-950 group-data-[collapsible=offcanvas]:after:left-full',
         '[[data-side=left][data-collapsible=offcanvas]_&]:-right-2',
         '[[data-side=right][data-collapsible=offcanvas]_&]:-left-2',
         className,
@@ -288,7 +288,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<'main'>) {
     <main
       data-slot="sidebar-inset"
       className={cn(
-        'relative flex w-full flex-1 flex-col border border-[oklch(0.2143_0.0037_270.75)] bg-[oklch(0.1711_0.0011_271.29)] lg:peer-data-[variant=inset]:m-2 lg:peer-data-[variant=inset]:ml-0 lg:peer-data-[variant=inset]:rounded-xl lg:peer-data-[variant=inset]:shadow-sm lg:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2',
+        'relative flex w-full flex-1 flex-col border border-[oklch(0.2143_0.0037_270.75)] bg-[oklch(0.1711_0.0011_271.29)] lg:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2 lg:peer-data-[variant=inset]:m-2 lg:peer-data-[variant=inset]:ml-0 lg:peer-data-[variant=inset]:rounded-xl lg:peer-data-[variant=inset]:shadow-sm',
         className,
       )}
       {...props}
@@ -304,7 +304,7 @@ function SidebarHeader({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="sidebar-header"
       data-sidebar="header"
       className={cn(
-        'flex gap-2 h-11 px-1 items-center justify-between',
+        'flex h-11 items-center justify-between gap-2 px-1',
         state === 'collapsed' &&
           'gap-y-4 lg:flex-col lg:items-start lg:justify-start',
         className,
@@ -320,7 +320,7 @@ function SidebarContent({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="sidebar-content"
       data-sidebar="content"
       className={cn(
-        'flex min-h-0 flex-1 flex-col gap-4 px-1 mt-2 mb-1 overflow-auto group-data-[collapsible=icon]:overflow-hidden',
+        'mt-2 mb-1 flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-1 group-data-[collapsible=icon]:overflow-hidden',
         className,
       )}
       {...props}

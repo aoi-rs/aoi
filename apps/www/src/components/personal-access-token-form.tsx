@@ -118,12 +118,12 @@ export default function PersonalAccessTokenForm({
   }
 
   return (
-    <div className="flex flex-col mt-4 mb-8 mx-5.5 sm:mx-10 sm:my-16 items-center">
-      <div className="w-full max-w-160 flex flex-col gap-8">
-        <div className="px-4 flex flex-col gap-1">
-          <h1 className="text-2xl font-medium">Edit PAT</h1>
+    <div className="mx-5.5 mt-4 mb-8 flex flex-col items-center sm:mx-10 sm:my-16">
+      <div className="flex w-full max-w-160 flex-col gap-8">
+        <div className="flex flex-col gap-1 px-4">
+          <h1 className="font-medium text-2xl">Edit PAT</h1>
 
-          <p className="text-[oklch(0.6674_0.003_271.37)] font-[450] text-sm">
+          <p className="font-[450] text-[oklch(0.6674_0.003_271.37)] text-sm">
             Use a PAT to automate workflows and connect external tools
           </p>
         </div>
@@ -138,7 +138,7 @@ export default function PersonalAccessTokenForm({
                 name="label"
                 control={form.control}
                 render={({ field }) => (
-                  <ListViewItem className="flex flex-col gap-2 items-stretch sm:items-center sm:flex-row sm:gap-4">
+                  <ListViewItem className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-4">
                     <ListViewDetails>
                       <ListViewTitle
                         render={<label htmlFor={field.name}>Label</label>}
@@ -154,7 +154,7 @@ export default function PersonalAccessTokenForm({
                     <Input
                       {...field}
                       id={field.name}
-                      className="w-50 h-8 text-white text-[.8125rem] leading-[normal] border-[oklch(0.2974_0.0048_270.79)] bg-transparent py-1.5 rounded-lg placeholder:text-[oklch(0.4692_0.0036_271.21)]"
+                      className="h-8 w-50 rounded-lg border-[oklch(0.2974_0.0048_270.79)] bg-transparent py-1.5 text-[.8125rem] text-white leading-[normal] placeholder:text-[oklch(0.4692_0.0036_271.21)]"
                       placeholder="Production API"
                     />
                   </ListViewItem>
@@ -165,9 +165,9 @@ export default function PersonalAccessTokenForm({
 
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-0.5 px-4">
-              <h2 className="text-sm font-medium">Permissions</h2>
+              <h2 className="font-medium text-sm">Permissions</h2>
 
-              <p className="text-sm font-[450] text-[oklch(0.6674_0.003_271.37)]">
+              <p className="font-[450] text-[oklch(0.6674_0.003_271.37)] text-sm">
                 Choose the minimal permissions necessary for your needs
               </p>
             </div>
@@ -211,7 +211,7 @@ export default function PersonalAccessTokenForm({
             </ListView>
           </div>
 
-          <div className="flex items-center gap-3 justify-end">
+          <div className="flex items-center justify-end gap-3">
             <Button
               type="button"
               size="sm"

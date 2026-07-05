@@ -66,16 +66,16 @@ export function CreatePersonalAccessTokenForm() {
   return (
     <form
       id={FORM_ID}
-      className="px-4 flex flex-col gap-4"
+      className="flex flex-col gap-4 px-4"
       onSubmit={form.handleSubmit(handleSubmit)}
     >
       <div className="flex flex-col gap-2">
         <Label>Label</Label>
-        <Input className="w-50 h-8 text-white text-[.8125rem] leading-[normal] border-[oklch(0.2974_0.0048_270.79)] bg-transparent py-1.5 rounded-lg placeholder:text-[oklch(0.4692_0.0036_271.21)]" />
+        <Input className="h-8 w-50 rounded-lg border-[oklch(0.2974_0.0048_270.79)] bg-transparent py-1.5 text-[.8125rem] text-white leading-[normal] placeholder:text-[oklch(0.4692_0.0036_271.21)]" />
       </div>
 
       {PERMISSION_SUBJECTS.map((sub) => (
-        <div className="flex justify-between items-center" key={sub.name}>
+        <div className="flex items-center justify-between" key={sub.name}>
           <span className="font-medium">{sub.label}</span>
 
           <Select defaultValue="Disabled" items={PERMISSION_SELECT_ITEMS}>

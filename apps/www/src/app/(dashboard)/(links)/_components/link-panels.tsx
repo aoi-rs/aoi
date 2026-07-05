@@ -26,7 +26,7 @@ export function LinkPanels({ links, children }: LinkPanelsProps) {
       return (
         <div
           data-variant="normal"
-          className="flex flex-col size-full group/links-layout"
+          className="group/links-layout flex size-full flex-col"
         >
           <LinksHeader />
           <LinkList links={links} />
@@ -35,7 +35,7 @@ export function LinkPanels({ links, children }: LinkPanelsProps) {
     }
 
     return (
-      <div data-variant="normal" className="size-full group/links-layout">
+      <div data-variant="normal" className="group/links-layout size-full">
         {children}
       </div>
     )
@@ -44,11 +44,11 @@ export function LinkPanels({ links, children }: LinkPanelsProps) {
   return (
     <div
       data-variant="panels"
-      className="flex-1 flex flex-col group/links-layout"
+      className="group/links-layout flex flex-1 flex-col"
     >
       <ResizablePanelGroup orientation="horizontal">
         <ResizablePanel minSize={300} maxSize="50%">
-          <div className="flex flex-col size-full">
+          <div className="flex size-full flex-col">
             <LinksHeader />
             <LinkList links={links} />
           </div>

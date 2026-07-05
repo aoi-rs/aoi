@@ -26,7 +26,7 @@ export function LinkList({ links: _links }: LinkListProps) {
   })
 
   return (
-    <ul className="flex-1 flex flex-col pt-2">
+    <ul className="flex flex-1 flex-col pt-2">
       {links.items.map((link) => (
         <li key={link.id}>
           <ActiveLink
@@ -34,20 +34,20 @@ export function LinkList({ links: _links }: LinkListProps) {
             href={'/link/' + link.id}
             matcher={'/link/' + link.id}
           >
-            <div className="mx-2 px-2 items-start hover:bg-[oklch(0.2_0.0021_271.12)] rounded-lg flex gap-3 group-data-[active=true]/link:bg-[oklch(0.2275_0.0032_270.9)]!">
-              <div className="pt-3 min-w-6 shrink-0 flex **:after:border-0">
+            <div className="mx-2 flex items-start gap-3 rounded-lg px-2 hover:bg-[oklch(0.2_0.0021_271.12)] group-data-[active=true]/link:bg-[oklch(0.2275_0.0032_270.9)]!">
+              <div className="flex min-w-6 shrink-0 pt-3 **:after:border-0">
                 <Avatar variant="rounded">
                   <AvatarImage src="/icon.svg" />
                 </Avatar>
               </div>
 
-              <div className="flex flex-col gap-0.5 flex-1 py-2.5">
-                <span className="text-sm text-[oklch(0.6674_0.003_271.37)] font-medium leading-[normal] group-data-[active=true]/link:text-[oklch(0.9221_0.0042_271.37)]">
+              <div className="flex flex-1 flex-col gap-0.5 py-2.5">
+                <span className="font-medium text-[oklch(0.6674_0.003_271.37)] text-sm leading-[normal] group-data-[active=true]/link:text-[oklch(0.9221_0.0042_271.37)]">
                   {link.name ?? 'Untitled'}
                 </span>
 
-                <div className="h-4 flex gap-1.5">
-                  <span className="text-xs text-[oklch(0.6674_0.003_271.37)] font-[450] leading-[normal] flex-1 group-data-[active=true]/link:text-[oklch(0.6878_0.0042_271.29)]">
+                <div className="flex h-4 gap-1.5">
+                  <span className="flex-1 font-[450] text-[oklch(0.6674_0.003_271.37)] text-xs leading-[normal] group-data-[active=true]/link:text-[oklch(0.6878_0.0042_271.29)]">
                     Redirects to {new URL(link.destination_url).hostname}
                   </span>
 

@@ -45,12 +45,12 @@ export default function Login() {
   const content = states[state]
 
   return (
-    <div className="min-h-screen flex pt-12 pb-12 bg-linear-to-b from-[oklch(0.1689_0.0021_286.18)] to-[oklch(0.1221_0_0)] to-50% text-foreground">
-      <div className="flex flex-col mt-36 w-full h-fit items-center gap-8 animate-in delay-200 duration-300 fade-in-0 fill-mode-both slide-in-from-top-[0.625rem]">
+    <div className="flex min-h-screen bg-linear-to-b from-[oklch(0.1689_0.0021_286.18)] to-50% to-[oklch(0.1221_0_0)] pt-12 pb-12 text-foreground">
+      <div className="fade-in-0 slide-in-from-top-[0.625rem] mt-36 flex h-fit w-full animate-in flex-col items-center gap-8 fill-mode-both delay-200 duration-300">
         <Logomark className="size-12" />
 
         <div
-          className="animate-in duration-200 ease-in-out fade-in-0 fill-mode-backwards zoom-in-98"
+          className="fade-in-0 zoom-in-98 animate-in fill-mode-backwards duration-200 ease-in-out"
           key={state}
         >
           {content}
@@ -63,7 +63,7 @@ export default function Login() {
 function Start({ onStateChange }: StateProps) {
   return (
     <div className="flex w-72 flex-col gap-6">
-      <h1 className="self-center text-center text-lg font-medium">
+      <h1 className="self-center text-center font-medium text-lg">
         Log in to your account
       </h1>
 
@@ -114,12 +114,12 @@ function EmailForm({
 
   return (
     <div className="flex w-72 flex-col gap-6">
-      <h1 className="self-center text-center text-lg font-medium">
+      <h1 className="self-center text-center font-medium text-lg">
         Enter your email address
       </h1>
 
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        <Input ref={field} className='h-11' placeholder="alice@example.com" />
+        <Input ref={field} className="h-11" placeholder="alice@example.com" />
 
         <Button type="submit" variant="secondary" disabled={processing}>
           Continue with email
@@ -127,7 +127,7 @@ function EmailForm({
 
         <button
           type="button"
-          className="hover:underline-offset-3 hover:underline text-sm"
+          className="text-sm hover:underline hover:underline-offset-3"
           onClick={() => onStateChange(State.DEFAULT)}
         >
           Back to login
@@ -155,16 +155,16 @@ function EmailSent({ onStateChange, email }: StateProps & { email: string }) {
   return (
     <div className="flex w-2xs flex-col gap-10">
       <div className="flex flex-col items-center gap-6">
-        <h1 className="text-center text-lg font-medium">Check your inbox</h1>
+        <h1 className="text-center font-medium text-lg">Check your inbox</h1>
 
-        <p className="text-center text-sm font-[450] text-[oklch(0.6663_0.0032_264.54)]">
+        <p className="text-center font-[450] text-[oklch(0.6663_0.0032_264.54)] text-sm">
           We&apos;ve sent you a temporary login link. Please check your inbox at{' '}
           <span className="text-foreground">{email}</span>.
         </p>
       </div>
 
       <div
-        className="animate-in duration-200 ease-in-out fade-in-0 fill-mode-backwards zoom-in-98"
+        className="fade-in-0 zoom-in-98 animate-in fill-mode-backwards duration-200 ease-in-out"
         key={method}
       >
         {method === 'default' && (
@@ -175,7 +175,7 @@ function EmailSent({ onStateChange, email }: StateProps & { email: string }) {
 
             <button
               type="button"
-              className="hover:underline-offset-3 hover:underline text-sm"
+              className="text-sm hover:underline hover:underline-offset-3"
               onClick={() => onStateChange(State.DEFAULT)}
             >
               Back to login
@@ -224,7 +224,7 @@ function EmailSent({ onStateChange, email }: StateProps & { email: string }) {
 
             <button
               type="button"
-              className="hover:underline-offset-3 hover:underline text-sm"
+              className="text-sm hover:underline hover:underline-offset-3"
               onClick={() => onStateChange(State.DEFAULT)}
             >
               Back to login

@@ -68,7 +68,7 @@ export function ProfileForm() {
               <ListViewDescription>Best viewed at 256x256</ListViewDescription>
             </ListViewDetails>
 
-            <Avatar.Root className="group/avatar relative flex size-8 shrink-0 rounded-md select-none after:absolute after:inset-0 after:rounded-md after:border after:border-[oklch(0.2974_0.0048_270.79)] after:mix-blend-darken data-[size=lg]:size-10 data-[size=sm]:size-6 dark:after:mix-blend-lighten">
+            <Avatar.Root className="group/avatar relative flex size-8 shrink-0 select-none rounded-md after:absolute after:inset-0 after:rounded-md after:border after:border-[oklch(0.2974_0.0048_270.79)] after:mix-blend-darken data-[size=lg]:size-10 data-[size=sm]:size-6 dark:after:mix-blend-lighten">
               <Avatar.Image
                 className="rounded-md"
                 src="/preview-avatar.png"
@@ -87,7 +87,7 @@ export function ProfileForm() {
             </ListViewDetails>
 
             <Input
-              className="w-50 h-8 text-white text-[.8125rem] leading-[normal] border-[oklch(0.2974_0.0048_270.79)] bg-transparent py-1.5 rounded-lg placeholder:text-[oklch(0.4692_0.0036_271.21)]"
+              className="h-8 w-50 rounded-lg border-[oklch(0.2974_0.0048_270.79)] bg-transparent py-1.5 text-[.8125rem] text-white leading-[normal] placeholder:text-[oklch(0.4692_0.0036_271.21)]"
               placeholder="Your name"
               {...form.register('name', { onBlur: submit })}
             />
