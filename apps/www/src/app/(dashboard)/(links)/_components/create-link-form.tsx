@@ -59,23 +59,6 @@ export function CreateLinkForm({ onCreate }: CreateLinkFormProps) {
       onSubmit={form.handleSubmit(handleSubmit)}
     >
       <Controller
-        name="name"
-        render={({ field }) => (
-          <div className="flex flex-col gap-1">
-            <Label htmlFor={FORM_ID + '-label'}>Label</Label>
-
-            <Input
-              {...field}
-              id={FORM_ID + '-label'}
-              placeholder="Course materials"
-              className="h-8 rounded-lg border border-[oklch(0.2881_0.006_270.55)] bg-transparent px-3 py-1.5 text-white placeholder:text-[oklch(0.4822_0.0036_271.22)]"
-            />
-          </div>
-        )}
-        control={form.control}
-      />
-
-      <Controller
         name="destination_url"
         render={({ field }) => (
           <div className="flex flex-col gap-1">
@@ -84,8 +67,25 @@ export function CreateLinkForm({ onCreate }: CreateLinkFormProps) {
             <Input
               {...field}
               id={FORM_ID + '-destination-url'}
-              placeholder="https://"
-              className="h-8 rounded-lg border border-[oklch(0.2881_0.006_270.55)] bg-transparent px-3 py-1.5 text-white placeholder:text-[oklch(0.4822_0.0036_271.22)]"
+              placeholder="Paste the URL to redirect to"
+              className="h-11 rounded-[.625rem] border border-[oklch(0.3168_0.0048_270.84)] bg-transparent p-3 text-white placeholder:text-[oklch(0.4822_0.0036_271.22)]"
+            />
+          </div>
+        )}
+        control={form.control}
+      />
+
+      <Controller
+        name="name"
+        render={({ field }) => (
+          <div className="flex flex-col gap-1">
+            <Label htmlFor={FORM_ID + '-label'}>Label</Label>
+
+            <Input
+              {...field}
+              id={FORM_ID + '-label'}
+              placeholder="Give this link a name"
+              className="h-11 rounded-[.625rem] border border-[oklch(0.3168_0.0048_270.84)] bg-transparent p-3 text-white placeholder:text-[oklch(0.4822_0.0036_271.22)]"
             />
           </div>
         )}
