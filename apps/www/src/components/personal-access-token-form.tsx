@@ -190,7 +190,7 @@ export default function PersonalAccessTokenForm({
                           value={field.value}
                           onValueChange={field.onChange}
                         >
-                          <SelectTrigger className="w-32" size="sm">
+                          <SelectTrigger size="sm">
                             <SelectValue />
                           </SelectTrigger>
 
