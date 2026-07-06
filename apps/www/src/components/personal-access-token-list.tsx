@@ -7,11 +7,11 @@ import Link from 'next/link'
 import { useState } from 'react'
 import {
   ListView,
+  ListViewBadge,
   ListViewClickable,
   ListViewContent,
   ListViewDescription,
   ListViewDetails,
-  ListViewFigure,
   ListViewHeader,
   ListViewItem,
   ListViewTitle,
@@ -73,9 +73,9 @@ export function PersonalAccessTokenList() {
                 render={<Link href={'/settings/tokens/' + token.id} />}
               />
 
-              <ListViewFigure>
+              <ListViewBadge>
                 <Key />
-              </ListViewFigure>
+              </ListViewBadge>
 
               <ListViewDetails>
                 <ListViewTitle>{token.name}</ListViewTitle>

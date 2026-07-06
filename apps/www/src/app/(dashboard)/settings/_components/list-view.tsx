@@ -44,7 +44,7 @@ function ListViewItem({ children, className, ...props }: ComponentProps<'li'>) {
   return (
     <li
       className={cn(
-        'group/item relative flex items-center gap-4 p-4 last:rounded-b-2xl group-first/content:first:rounded-t-2xl has-data-[slot=list-view-clickable]:hover:bg-[oklch(0.2275_0.0032_270.9)] **:data-[slot=button]:z-10 **:data-[slot=button]:opacity-0 **:data-[slot=button]:hover:bg-[oklch(0.2541_0.0025_271.11)] hover:**:data-[slot=button]:opacity-100',
+        'group/item relative flex items-center gap-3 p-4 last:rounded-b-2xl group-first/content:first:rounded-t-2xl has-data-[slot=list-view-clickable]:hover:bg-[oklch(0.2275_0.0032_270.9)] **:data-[slot=button]:z-10 **:data-[slot=button]:opacity-0 **:data-[slot=button]:hover:bg-[oklch(0.2541_0.0025_271.11)] hover:**:data-[slot=button]:opacity-100',
         className,
       )}
       {...props}
@@ -77,7 +77,7 @@ function ListViewClickable({
   })
 }
 
-function ListViewFigure({ className, ...props }: ComponentProps<'figure'>) {
+function ListViewBadge({ className, ...props }: ComponentProps<'figure'>) {
   return (
     <figure
       className={cn(
@@ -91,7 +91,7 @@ function ListViewFigure({ className, ...props }: ComponentProps<'figure'>) {
 
 function ListViewDetails({ className, ...props }: ComponentProps<'div'>) {
   return (
-    <div className={cn('flex flex-1 flex-col gap-0.5', className)} {...props} />
+    <div className={cn('flex w-full flex-col gap-0.5', className)} {...props} />
   )
 }
 
@@ -132,11 +132,11 @@ function ListViewDescription({ className, ...props }: ComponentProps<'span'>) {
 
 export {
   ListView,
+  ListViewBadge,
   ListViewClickable,
   ListViewContent,
   ListViewDescription,
   ListViewDetails,
-  ListViewFigure,
   ListViewHeader,
   ListViewItem,
   ListViewTitle,

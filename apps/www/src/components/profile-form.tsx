@@ -62,7 +62,7 @@ export function ProfileForm() {
     <form onSubmit={form.handleSubmit(handleSubmit)}>
       <ListView>
         <ListViewContent>
-          <ListViewItem>
+          <ListViewItem className='flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3'>
             <ListViewDetails>
               <ListViewTitle>Picture</ListViewTitle>
               <ListViewDescription>Best viewed at 256x256</ListViewDescription>
@@ -77,7 +77,7 @@ export function ProfileForm() {
             </Avatar.Root>
           </ListViewItem>
 
-          <ListViewItem>
+          <ListViewItem className="flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
             <ListViewDetails>
               <ListViewTitle>Full name</ListViewTitle>
 
@@ -87,7 +87,7 @@ export function ProfileForm() {
             </ListViewDetails>
 
             <Input
-              className="h-8 w-50 rounded-lg border-[oklch(0.2974_0.0048_270.79)] bg-transparent py-1.5 text-[.8125rem] text-white leading-[normal] placeholder:text-[oklch(0.4692_0.0036_271.21)]"
+              className="h-8 min-w-50 max-w-85 rounded-lg border-[oklch(0.2974_0.0048_270.79)] bg-transparent py-1.5 text-[.8125rem] text-white leading-[normal] placeholder:text-[oklch(0.4692_0.0036_271.21)] sm:w-min"
               placeholder="Your name"
               {...form.register('name', { onBlur: submit })}
             />

@@ -6,11 +6,11 @@ import { Globe } from 'lucide-react'
 import { useState } from 'react'
 import {
   ListView,
+  ListViewBadge,
   ListViewClickable,
   ListViewContent,
   ListViewDescription,
   ListViewDetails,
-  ListViewFigure,
   ListViewHeader,
   ListViewItem,
   ListViewTitle,
@@ -61,9 +61,9 @@ export function SessionList({ sessions: _sessions }: SessionListProps) {
           <ListViewItem>
             <ListViewClickable />
 
-            <ListViewFigure>
+            <ListViewBadge>
               <Globe />
-            </ListViewFigure>
+            </ListViewBadge>
 
             <ListViewDetails>
               <ListViewTitle>{current.name}</ListViewTitle>
@@ -103,9 +103,9 @@ export function SessionList({ sessions: _sessions }: SessionListProps) {
               <ListViewItem key={session.id}>
                 <ListViewClickable />
 
-                <ListViewFigure>
+                <ListViewBadge>
                   <Globe />
-                </ListViewFigure>
+                </ListViewBadge>
 
                 <ListViewDetails>
                   <ListViewTitle>{session.name}</ListViewTitle>
