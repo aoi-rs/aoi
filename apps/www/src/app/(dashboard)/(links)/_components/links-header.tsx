@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -54,20 +53,8 @@ export function LinksHeader() {
             <CreateLinkForm onCreate={() => setCreating(false)} />
 
             <DialogFooter>
-              <DialogClose
-                render={
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="bg-[oklch(0.2768_0.0025_271.15)] hover:bg-[oklch(0.3167_0.0035_271.05)]"
-                  >
-                    Cancel
-                  </Button>
-                }
-              />
-
               <Button size="sm" type="submit" form={FORM_ID}>
-                Create
+                Create link
               </Button>
             </DialogFooter>
           </DialogContent>
