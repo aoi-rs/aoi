@@ -81,7 +81,7 @@ function ListViewBadge({ className, ...props }: ComponentProps<'figure'>) {
   return (
     <figure
       className={cn(
-        "grid size-8 place-content-center rounded-md bg-[oklch(0.2432_0.0068_270.2)] text-[oklch(0.6784_0.0036_271.33)] [&_svg:not([class*='size-'])]:size-4",
+        "mr-1 grid size-8 shrink-0 place-content-center rounded-md bg-[oklch(0.2432_0.0068_270.2)] text-[oklch(0.6784_0.0036_271.33)] [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
