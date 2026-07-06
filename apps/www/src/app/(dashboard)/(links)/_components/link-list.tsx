@@ -34,14 +34,12 @@ export function LinkList({ links: _links }: LinkListProps) {
             href={'/link/' + link.id}
             matcher={'/link/' + link.id}
           >
-            <div className="mx-2 flex items-start gap-3 rounded-lg px-2 hover:bg-[oklch(0.2_0.0021_271.12)] group-data-[active=true]/link:bg-[oklch(0.2275_0.0032_270.9)]!">
-              <div className="flex min-w-6 shrink-0 pt-3 **:after:border-0">
-                <Avatar variant="rounded">
-                  <AvatarImage src="/icon.svg" />
-                </Avatar>
-              </div>
+            <div className="mx-2 flex h-13.75 items-center gap-3 rounded-lg px-2 hover:bg-[oklch(0.2_0.0021_271.12)] group-data-[active=true]/link:bg-[oklch(0.2275_0.0032_270.9)]!">
+              <Avatar variant="rounded" className="shrink-0">
+                <AvatarImage src="/preview-avatar.png" />
+              </Avatar>
 
-              <div className="flex flex-1 flex-col gap-0.5 py-2.5">
+              <div className="flex flex-1 flex-col gap-0.5">
                 <span className="font-medium text-[oklch(0.6674_0.003_271.37)] text-sm leading-[normal] group-data-[active=true]/link:text-[oklch(0.9221_0.0042_271.37)]">
                   {link.name ?? 'Untitled'}
                 </span>
