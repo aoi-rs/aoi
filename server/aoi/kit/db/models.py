@@ -6,7 +6,7 @@ from alembic_utils.replaceable_entity import register_entities
 from sqlalchemy import (
     TIMESTAMP,
     MetaData,
-    Uuid,
+    UUID as SQLUUID,
     inspect,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -48,7 +48,7 @@ class TimestampedModel(Model):
 class IDModel(Model):
     __abstract__ = True
 
-    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=generate_uuid)
+    id: Mapped[UUID] = mapped_column(SQLUUID, primary_key=True, default=generate_uuid)
 
     def __eq__(self, __value: object) -> bool:
         return isinstance(__value, self.__class__) and self.id == __value.id

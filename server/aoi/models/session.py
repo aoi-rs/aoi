@@ -1,6 +1,6 @@
 from datetime import datetime
 from uuid import UUID
-from sqlalchemy import Text, Boolean, TIMESTAMP, Uuid, ForeignKey, BIGINT
+from sqlalchemy import Text, Boolean, TIMESTAMP, UUID as SQLUUID, ForeignKey, BIGINT
 from sqlalchemy.orm import Mapped, mapped_column, relationship, declared_attr
 from functools import cached_property
 from ua_parser import parse
@@ -23,7 +23,7 @@ class Session(RecordModel):
     )
     revoked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     user_id: Mapped[UUID] = mapped_column(
-        Uuid, ForeignKey("users.id", ondelete="cascade"), nullable=False
+        SQLUUID, ForeignKey("users.id", ondelete="cascade"), nullable=False
     )
 
     @declared_attr
