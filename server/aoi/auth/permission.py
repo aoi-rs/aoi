@@ -13,3 +13,5 @@ class Permission(StrEnum):
 
     links_read = "links_read"
     links_write = "links_write"
+
+    state_read = "state_read"

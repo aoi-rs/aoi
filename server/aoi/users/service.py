@@ -18,7 +18,7 @@ class UserService:
         repository = UserRepository.from_session(session)
         user = await repository.get_by_email(email)
 
-        if user is None:
+        if not user:
             user = await self.create(session, email)
 
         return user

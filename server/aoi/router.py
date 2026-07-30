@@ -6,6 +6,7 @@ from .users.router import router as user_router
 from .auth.router import router as auth_router
 from .links.router import router as link_router
 from .personal_access_tokens.router import router as personal_access_token_router
+from .state.router import router as state_router
 
 router = APIRouter(prefix="/v1")
 
@@ -26,3 +27,6 @@ router.include_router(link_router)
 
 # /personal_access_tokens
 router.include_router(personal_access_token_router)
+
+# /state
+router.include_router(state_router)
