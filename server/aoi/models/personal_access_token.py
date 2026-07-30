@@ -4,12 +4,12 @@ from datetime import datetime
 from sqlalchemy import UUID as SQLUUID, CHAR, ARRAY, Enum, Text, TIMESTAMP, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, declared_attr, relationship
 
-from aoi.kit.db.models import RecordModel
+from aoi.kit.db.models import RecordModel, RevisionModel
 from aoi.auth.permission import Permission
 from aoi.models import User
 
 
-class PersonalAccessToken(RecordModel):
+class PersonalAccessToken(RecordModel, RevisionModel):
     __tablename__ = "personal_access_tokens"
 
     token_hash: Mapped[str] = mapped_column(CHAR(64), unique=True, nullable=False)

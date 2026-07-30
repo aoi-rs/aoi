@@ -14,4 +14,8 @@ class Metadata(Schema):
     last_revision: int
 
 
+class StateDeletion(Schema):
+    _model: Literal["session"]
+
+
 DownloadedState = DownloadedUser | Metadata

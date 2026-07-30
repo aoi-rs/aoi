@@ -5,7 +5,9 @@ from alembic_utils.pg_extension import PGExtension
 from alembic_utils.replaceable_entity import register_entities
 from sqlalchemy import (
     TIMESTAMP,
+    BIGINT,
     MetaData,
+    Sequence,
     UUID as SQLUUID,
     inspect,
 )
@@ -13,7 +15,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from aoi.kit.utils import generate_uuid, utc_now
 
-hz_metadata = MetaData(
+aoi_metadata = MetaData(
     naming_convention={
         "ix": "ix_%(column_0_N_label)s",
         "uq": "%(table_name)s_%(column_0_N_name)s_key",
@@ -27,7 +29,7 @@ hz_metadata = MetaData(
 class Model(DeclarativeBase):
     __abstract__ = True
 
-    metadata = hz_metadata
+    metadata = aoi_metadata
 
 
 class TimestampedModel(Model):
@@ -43,6 +45,20 @@ class TimestampedModel(Model):
 
     def set_modified_at(self) -> None:
         self.modified_at = utc_now()
+
+
+revision_number = Sequence("revision_number", start=1, increment=1)
+
+
+class RevisionModel(Model):
+    __abstract__ = True
+
+    revision: Mapped[int] = mapped_column(
+        BIGINT,
+        nullable=False,
+        onupdate=revision_number.next_value(),
+        server_default=revision_number.next_value(),
+    )
 
 
 class IDModel(Model):

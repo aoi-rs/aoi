@@ -5,13 +5,12 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, declared_attr
 from functools import cached_property
 from ua_parser import parse
 
-from aoi.kit.db.models import RecordModel
+from aoi.kit.db.models import RecordModel, RevisionModel
 from aoi.models import User
-from aoi.models.user import revision_number
 from aoi.kit.utils import utc_now
 
 
-class Session(RecordModel):
+class Session(RecordModel, RevisionModel):
     __tablename__ = "sessions"
 
     user_agent: Mapped[str] = mapped_column(Text, nullable=False)
@@ -23,12 +22,6 @@ class Session(RecordModel):
         BIGINT, nullable=False, default=0
     )
     revoked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    revision: Mapped[int] = mapped_column(
-        BIGINT,
-        nullable=False,
-        onupdate=revision_number.next_value(),
-        server_default=revision_number.next_value(),
-    )
     user_id: Mapped[UUID] = mapped_column(
         SQLUUID, ForeignKey("users.id", ondelete="cascade"), nullable=False
     )
