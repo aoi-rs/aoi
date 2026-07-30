@@ -32,8 +32,7 @@ class StateService:
 
         if user.revision > from_revision:
             downloaded_state.append(DownloadedUser.model_validate(user))
-
-        downloaded_state.append(Metadata(last_revision=user.revision))
+            downloaded_state.append(Metadata(last_revision=user.revision))
 
         return downloaded_state
 

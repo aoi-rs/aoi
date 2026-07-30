@@ -7,6 +7,7 @@ from ua_parser import parse
 
 from aoi.kit.db.models import RecordModel
 from aoi.models import User
+from aoi.models.user import revision_number
 from aoi.kit.utils import utc_now
 
 
@@ -19,9 +20,15 @@ class Session(RecordModel):
     )
     refresh_token_hmac_key: Mapped[str] = mapped_column(Text, nullable=False)
     refresh_token_counter: Mapped[int] = mapped_column(
-        BIGINT(), nullable=False, default=0
+        BIGINT, nullable=False, default=0
     )
     revoked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    revision: Mapped[int] = mapped_column(
+        BIGINT,
+        nullable=False,
+        onupdate=revision_number.next_value(),
+        server_default=revision_number.next_value(),
+    )
     user_id: Mapped[UUID] = mapped_column(
         SQLUUID, ForeignKey("users.id", ondelete="cascade"), nullable=False
     )
