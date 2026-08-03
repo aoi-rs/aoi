@@ -161,10 +161,7 @@ export default function CreatePersonalAccessToken() {
                       onValueChange={field.onChange}
                       items={LIFETIME_SELECT_ITEMS}
                     >
-                      <SelectTrigger
-                        id="lifetime-select"
-                        size="sm"
-                      >
+                      <SelectTrigger id="lifetime-select" size="sm">
                         <SelectValue />
                       </SelectTrigger>
 

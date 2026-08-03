@@ -62,7 +62,7 @@ export function ProfileForm() {
     <form onSubmit={form.handleSubmit(handleSubmit)}>
       <ListView>
         <ListViewContent>
-          <ListViewItem className='flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3'>
+          <ListViewItem className="flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
             <ListViewDetails>
               <ListViewTitle>Picture</ListViewTitle>
               <ListViewDescription>Best viewed at 256x256</ListViewDescription>

@@ -214,6 +214,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/state/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Reconcile */
+        get: operations["reconcile_v1_state__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/user": {
         parameters: {
             query?: never;
@@ -327,7 +344,7 @@ export interface components {
          * Permission
          * @enum {string}
          */
-        Permission: "user_read" | "user_write" | "sessions_read" | "sessions_write" | "personal_access_tokens_read" | "personal_access_tokens_write" | "links_read" | "links_write";
+        Permission: "user_read" | "user_write" | "sessions_read" | "sessions_write" | "personal_access_tokens_read" | "personal_access_tokens_write" | "links_read" | "links_write" | "state_read";
         /** PersonalAccessTokenCreate */
         PersonalAccessTokenCreate: {
             /** Expires In */
@@ -950,6 +967,37 @@ export interface operations {
             };
         };
     };
+    reconcile_v1_state__get: {
+        parameters: {
+            query?: {
+                from_revision?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/x-ndjson": string;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     authenticated_user_v1_user_get: {
         parameters: {
             query?: never;
@@ -1012,4 +1060,4 @@ type ReadonlyArray<T> = [
 ] extends [
     unknown[]
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
-export const permissionValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["Permission"]> = ["user_read", "user_write", "sessions_read", "sessions_write", "personal_access_tokens_read", "personal_access_tokens_write", "links_read", "links_write"];
+export const permissionValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["Permission"]> = ["user_read", "user_write", "sessions_read", "sessions_write", "personal_access_tokens_read", "personal_access_tokens_write", "links_read", "links_write", "state_read"];
