@@ -1,14 +1,29 @@
-from aoi.postgres import AsyncSession
-from aoi.auth.dependencies import AuthContext
+from typing import Any, AsyncGenerator
 
-from sqlalchemy import text
-from typing import AsyncGenerator, Any
+from sqlalchemy import Row, text
+
+from aoi.auth.dependencies import AuthContext
+from aoi.postgres import AsyncSession
+from aoi.state.schemas import (
+    Delta,
+    Metadata,
+    MetadataFields,
+    PersonalAccessTokenDelta,
+    SessionDelta,
+    UserDelta,
+)
+
+MODEL_SCHEMAS: dict[str, type[Delta]] = {
+    "user": UserDelta,
+    "session": SessionDelta,
+    "personal_access_token": PersonalAccessTokenDelta,
+}
 
 
 class StateService:
     async def download(
         self, session: AsyncSession, auth_context: AuthContext
-    ) -> AsyncGenerator[Any]:
+    ) -> AsyncGenerator[Delta]:
         result = await session.stream(
             text("""
                 SELECT
@@ -61,15 +76,17 @@ class StateService:
 
         async for row in result:
             last_revision = max(last_revision, row.revision)
-
-            yield {
-                "id": str(row.id),
-                "_model": str(row.model),
-                **row.data,
-            }
+            yield self._row_to_delta(row)
 
         if last_revision > 0:
-            yield {"_metadata": {"last_revision": last_revision}}
+            metadata_fields = MetadataFields(last_revision=last_revision)
+            metadata = Metadata(_metadata=metadata_fields)
+
+            yield metadata
+
+    def _row_to_delta(self, row: Row[Any]) -> Delta:
+        schema = MODEL_SCHEMAS[row.model]
+        return schema(**row.data)
 
     async def refresh(
         self, session: AsyncSession, auth_context: AuthContext, from_revision: int
