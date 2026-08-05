@@ -4,6 +4,7 @@ from .user import User
 from .login_token import LoginToken
 from .session import Session
 from .personal_access_token import PersonalAccessToken
+from .deletion import Deletion
 
 __all__ = [
     "Model",
@@ -12,4 +13,5 @@ __all__ = [
     "LoginToken",
     "Session",
     "PersonalAccessToken",
+    "Deletion",
 ]

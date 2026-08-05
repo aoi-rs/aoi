@@ -1,6 +1,8 @@
 from uuid import UUID
 from datetime import datetime
 
+from alembic_utils.pg_trigger import PGTrigger
+from alembic_utils.replaceable_entity import register_entities
 from sqlalchemy import UUID as SQLUUID, CHAR, ARRAY, Enum, Text, TIMESTAMP, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, declared_attr, relationship
 
@@ -23,10 +25,22 @@ class PersonalAccessToken(RecordModel, RevisionModel):
     user_id: Mapped[UUID] = mapped_column(
         SQLUUID, ForeignKey("users.id", ondelete="cascade"), nullable=False, index=True
     )
-    revoked_at: Mapped[datetime | None] = mapped_column(
-        TIMESTAMP(timezone=True), nullable=True, default=None, index=True
-    )
 
     @declared_attr
     def user(cls) -> Mapped["User"]:
         return relationship(User, lazy="raise")
+
+
+personal_access_token_deletion_trigger = PGTrigger(
+    schema="public",
+    signature="personal_access_token_deletions",
+    on_entity="personal_access_tokens",
+    definition="""
+    AFTER DELETE ON personal_access_tokens
+    REFERENCING OLD TABLE AS deleted_rows
+    FOR EACH STATEMENT
+    EXECUTE FUNCTION record_deletions('personal_access_token')
+    """,
+)
+
+register_entities((personal_access_token_deletion_trigger,))

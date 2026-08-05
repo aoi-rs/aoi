@@ -6,6 +6,7 @@ from aoi.auth.dependencies import AuthContext
 from aoi.models.session import session_name_from_user_agent
 from aoi.postgres import AsyncSession
 from aoi.state.schemas import (
+    DeletionDelta,
     Delta,
     Metadata,
     MetadataFields,
@@ -55,7 +56,6 @@ class StateService:
                     ) AS data
                 FROM sessions s
                 WHERE s.user_id = :user_id
-                AND s.revoked = false
 
                 UNION ALL
 
@@ -89,6 +89,9 @@ class StateService:
             yield metadata
 
     def _row_to_delta(self, row: Row[Any]) -> Delta:
+        if "deleted" in row.data:
+            return DeletionDelta(_model=row.model, id=row.id)
+
         schema = MODEL_SCHEMAS[row.model]
         fields = {"id": row.id} | row.data
 
@@ -130,7 +133,6 @@ class StateService:
                     ) AS data
                 FROM sessions s
                 WHERE s.user_id = :user_id
-                AND s.revoked = false
                 AND s.revision > :from_revision
 
                 UNION ALL
@@ -148,8 +150,18 @@ class StateService:
                     ) AS data
                 FROM personal_access_tokens t
                 WHERE t.user_id = :user_id 
-                AND t.revoked_at is null
                 AND t.revision > :from_revision
+
+                UNION ALL
+
+                SELECT
+                d.model_id AS id,
+                d.model_name::text AS model,
+                d.revision,
+                jsonb_build_object(
+                    'deleted', true
+                ) AS data
+                FROM deletions d
             """),
             {
                 "user_id": auth_context.user.id,

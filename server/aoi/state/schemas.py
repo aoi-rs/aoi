@@ -38,8 +38,9 @@ class Metadata(Schema):
     metadata: MetadataFields = Field(..., alias="_metadata")
 
 
-class DeletionDelta(Schema):
+class DeletionDelta(IDSchema):
     model: Literal["session", "personal_access_token"] = Field(..., alias="_model")
+    deleted: Literal[True] = True
 
 
 Delta = UserDelta | SessionDelta | PersonalAccessTokenDelta | DeletionDelta | Metadata

@@ -5,7 +5,6 @@ import asyncio
 import random
 
 from fastapi import Request
-from sqlalchemy import select
 from sqlalchemy.exc import DBAPIError
 from collections.abc import Sequence
 from jwt.exceptions import InvalidTokenError
@@ -39,11 +38,6 @@ class SessionMissingError(ResourceMissing):
         super().__init__("This session could not be found")
 
 
-class SessionRevokedError(AoiError):
-    def __init__(self):
-        super().__init__("This session was revoked", status_code=400)
-
-
 class TooManyConcurrentRefreshesError(AoiError):
     def __init__(self):
         super().__init__(
@@ -68,10 +62,7 @@ class SessionService:
         pagination: PaginationParams,
     ) -> tuple[Sequence[Session], int]:
         repository = SessionRepository.from_session(session)
-
-        statement = select(Session).where(
-            Session.user_id == auth_context.user.id, Session.revoked.is_(False)
-        )
+        statement = repository.get_readable_statement(auth_context)
 
         items, count = await repository.paginate(statement, limit=pagination.limit)
 
@@ -87,9 +78,8 @@ class SessionService:
 
         return await repository.get_one_or_none(statement)
 
-    async def revoke(self, session: AsyncSession, user_session: Session) -> Session:
-        repository = SessionRepository.from_session(session)
-        return await repository.update(user_session, update_dict={"revoked": True})
+    async def revoke(self, session: AsyncSession, user_session: Session):
+        await session.delete(user_session)
 
     async def revoke_others(self, session: AsyncSession, auth_context: AuthContext):
         repository = SessionRepository.from_session(session)
@@ -100,14 +90,12 @@ class SessionService:
 
     async def revoke_current(self, session: AsyncSession, auth_context: AuthContext):
         repository = SessionRepository.from_session(session)
-        return await repository.revoke(auth_context.session.id)
+        await repository.revoke(auth_context.session.id)
 
     async def create(
         self, request: Request, session: AsyncSession, user: User
     ) -> tuple[Session, bytes]:
         refresh_token_hmac_key = generate_refresh_token_hmac_key()
-
-        print(request.headers.get("user-agent", "NONE"))
 
         user_session = Session(
             user=user,
@@ -159,9 +147,6 @@ class SessionService:
 
             if not refresh_token.check_signature(refresh_token_hmac_key):
                 raise SessionMissingError()
-
-            if user_session.revoked:
-                raise SessionRevokedError()
 
             # Basic checks above passed, now we need to serialize access
             # to the session in a transaction so that there's no
@@ -260,7 +245,8 @@ class SessionService:
                     # client with any refresh and
                     # access token for this
                     # session from being used.
-                    locked_user_session.revoked = True
+
+                    await session.delete(locked_user_session)
 
                     await session.flush()
                     await session.commit()

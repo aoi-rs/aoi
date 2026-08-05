@@ -34,7 +34,6 @@ async def list(
                 user_agent=item.user_agent,
                 name=item.name,
                 refreshed_at=item.refreshed_at,
-                revoked=item.revoked,
                 is_current_session=item.id == auth_context.session.id
                 if is_user_session(auth_context.session)
                 else False,

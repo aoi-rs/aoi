@@ -2,6 +2,8 @@ from datetime import datetime
 from uuid import UUID
 
 from alembic_utils.pg_extension import PGExtension
+from alembic_utils.pg_function import PGFunction
+from alembic_utils.pg_trigger import PGTrigger
 from alembic_utils.replaceable_entity import register_entities
 from sqlalchemy import (
     TIMESTAMP,
@@ -93,4 +95,5 @@ class RecordModel(IDModel, TimestampedModel):
 
 
 citext = PGExtension(schema="public", signature="citext")
-register_entities((citext,))
+
+register_entities((citext,), entity_types=(PGExtension, PGFunction, PGTrigger))

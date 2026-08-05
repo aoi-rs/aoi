@@ -91,11 +91,7 @@ class PersonalAccessTokenService:
     async def revoke(
         self, session: AsyncSession, personal_access_token: PersonalAccessToken
     ):
-        repository = PersonalAccessTokenRepository.from_session(session)
-
-        return await repository.update(
-            personal_access_token, update_dict={"revoked_at": utc_now()}
-        )
+        await session.delete(personal_access_token)
 
 
 personal_access_tokens = PersonalAccessTokenService()

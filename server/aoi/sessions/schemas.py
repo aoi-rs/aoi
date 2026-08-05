@@ -9,5 +9,4 @@ class SessionSchema(IDSchema, TimestampedSchema):
     user_agent: str
     name: str
     refreshed_at: datetime
-    revoked: bool
     is_current_session: bool

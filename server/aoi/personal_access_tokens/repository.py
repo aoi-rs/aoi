@@ -1,8 +1,6 @@
-from sqlalchemy import select, Select
+from sqlalchemy import Select
 
-from aoi.kit.repository import (
-    RepositoryBase,
-)
+from aoi.kit.repository import RepositoryBase
 from aoi.models import PersonalAccessToken
 from aoi.auth.models import AuthContext
 
@@ -11,16 +9,6 @@ class PersonalAccessTokenRepository(
     RepositoryBase[PersonalAccessToken],
 ):
     model = PersonalAccessToken
-
-    def get_base_statement(
-        self, *, include_revoked: bool = False
-    ) -> Select[tuple[PersonalAccessToken]]:
-        statement = select(self.model)
-
-        if not include_revoked:
-            statement = statement.where(self.model.revoked_at.is_(None))
-
-        return statement
 
     def get_readable_statement(
         self, context: AuthContext
