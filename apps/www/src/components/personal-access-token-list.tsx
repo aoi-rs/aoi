@@ -1,6 +1,5 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { Ellipsis, Key, SlidersVertical, X } from 'lucide-react'
 import Link from 'next/link'
@@ -24,33 +23,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { unwrap } from '@/generated/server'
-import { service } from '@/utils/client'
-import { defaultRetry } from '@/utils/retry'
+import { observer } from 'mobx-react-lite'
+import { useStore } from '@/providers/store'
 
-export function PersonalAccessTokenList() {
-  const [revoking, setRevoking] = useState<string | null>(null)
+export const PersonalAccessTokenList = observer(() => {
+  const [willRevoke, setWillRevoke] = useState<string | null>(null)
 
-  const tokens = useQuery({
-    queryKey: ['personal_access_tokens'],
-    queryFn: () =>
-      unwrap(
-        service.GET('/v1/personal_access_tokens/', {
-          params: { query: { limit: 100 } },
-        }),
-      ),
-    retry: defaultRetry,
-  })
+  const { tokens } = useStore()
 
   return (
     <ListView>
-      {tokens.data && (
         <ListViewHeader>
           <span>
-            {tokens.data.pagination.total_count > 0
-              ? tokens.data.pagination.total_count +
+            {tokens.length > 0
+              ? tokens.length +
                 ' PAT' +
-                (tokens.data.pagination.total_count > 1 ? 's' : '')
+                (tokens.length > 1 ? 's' : '')
               : "You don't have tokens registered"}
           </span>
 
@@ -63,11 +51,10 @@ export function PersonalAccessTokenList() {
             Create token
           </Button>
         </ListViewHeader>
-      )}
 
-      {tokens.data && tokens.data.pagination.total_count >= 1 && (
+      {tokens.length >= 1 && (
         <ListViewContent>
-          {tokens.data.items.map((token) => (
+          {tokens.map((token) => (
             <ListViewItem key={token.id}>
               <ListViewClickable
                 render={<Link href={'/settings/tokens/' + token.id} />}
@@ -117,7 +104,7 @@ export function PersonalAccessTokenList() {
                     Edit token
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem onClick={() => setRevoking(token.id)}>
+                  <DropdownMenuItem onClick={() => setWillRevoke(token.id)}>
                     <X />
                     Revoke token
                   </DropdownMenuItem>
@@ -129,14 +116,14 @@ export function PersonalAccessTokenList() {
       )}
 
       <RevokePersonalAccessTokenDialog
-        id={revoking as string}
-        open={!!revoking}
+        id={willRevoke as string}
+        open={!!willRevoke}
         onOpenChange={(open) => {
           if (!open) {
-            setRevoking(null)
+            setWillRevoke(null)
           }
         }}
       />
     </ListView>
   )
-}
+})

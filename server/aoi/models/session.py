@@ -10,6 +10,15 @@ from aoi.models import User
 from aoi.kit.utils import utc_now
 
 
+def session_name_from_user_agent(user_agent: str) -> str:
+    ua = parse(user_agent)
+
+    browser = ua.user_agent.family if ua.user_agent else "Unknown browser"
+    os = ua.os.family if ua.os else "unknown OS"
+
+    return f"{browser} on {os}"
+
+
 class Session(RecordModel, RevisionModel):
     __tablename__ = "sessions"
 
@@ -32,9 +41,4 @@ class Session(RecordModel, RevisionModel):
 
     @cached_property
     def name(self) -> str:
-        ua = parse(self.user_agent)
-
-        browser = ua.user_agent.family if ua.user_agent else "Unknown browser"
-        os = ua.os.family if ua.os else "unknown OS"
-
-        return f"{browser} on {os}"
+        return session_name_from_user_agent(self.user_agent)

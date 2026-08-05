@@ -24,4 +24,4 @@ async def reconcile(
     )
 
     async for delta in stream:
-        yield delta.model_dump_json() + "\n"
+        yield delta.model_dump_json(by_alias=True) + "\n"

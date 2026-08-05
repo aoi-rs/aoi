@@ -1,9 +1,9 @@
 'use client'
 
 import { ChevronDown } from 'lucide-react'
+import { observer } from 'mobx-react-lite'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useContext } from 'react'
 import { toast } from 'sonner'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -20,11 +20,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { UserContext } from '@/providers/user'
+import { useStore } from '@/providers/store'
 import { service } from '@/utils/client'
 
-export function UserMenu() {
-  const { user } = useContext(UserContext)
+export const UserMenu = observer(() => {
+  const { user } = useStore()
   const router = useRouter()
 
   async function handleLogOut() {
@@ -73,4 +73,4 @@ export function UserMenu() {
       </SidebarMenuItem>
     </SidebarMenu>
   )
-}
+})

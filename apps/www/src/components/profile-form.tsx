@@ -1,7 +1,7 @@
 'use client'
 
 import { Avatar } from '@base-ui/react/avatar'
-import { useContext } from 'react'
+import { observer } from 'mobx-react-lite'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import {
@@ -13,12 +13,11 @@ import {
   ListViewTitle,
 } from '@/app/(dashboard)/settings/_components/list-view'
 import { Input } from '@/components/ui/input'
-import type { schemas } from '@/generated/server'
-import { UserContext } from '@/providers/user'
+import { useStore } from '@/providers/store'
 import { service } from '@/utils/client'
 
-export function ProfileForm() {
-  const { user, setUser } = useContext(UserContext)
+export const ProfileForm = observer(() => {
+  const { user } = useStore()
 
   const form = useForm({
     defaultValues: {
@@ -42,14 +41,15 @@ export function ProfileForm() {
       return
     }
 
-    setUser((u) => ({ ...u, name }))
+    user!.name = name
+
     toast.success('Profile details saved')
 
     const { error } = await service.PATCH('/v1/user', { body: { name } })
 
     if (error) {
       toast.error('Something went wrong while updating your profile')
-      setUser(user as schemas['UserSchema'])
+      // setState(user as schemas['UserSchema'])
     }
   }
 
@@ -96,4 +96,4 @@ export function ProfileForm() {
       </ListView>
     </form>
   )
-}
+})

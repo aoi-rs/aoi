@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { AoiQueryClientProvider } from '@/providers/query'
+import { Loader, StoreProvider } from '@/providers/store'
 import { UserProvider } from '@/providers/user'
 import { resolveAuthenticatedUser } from '@/utils/user'
 
@@ -28,13 +29,17 @@ export default async function RootLayout({
       className={cn('font-sans antialiased', fontSans.variable)}
     >
       <body>
-        <AoiQueryClientProvider>
-          <ThemeProvider forcedTheme="dark">
-            <TooltipProvider>
-              <UserProvider user={user}>{children}</UserProvider>
-            </TooltipProvider>
-          </ThemeProvider>
-        </AoiQueryClientProvider>
+        <StoreProvider>
+          <Loader>
+            <AoiQueryClientProvider>
+              <ThemeProvider forcedTheme="dark">
+                <TooltipProvider>
+                  <UserProvider user={user}>{children}</UserProvider>
+                </TooltipProvider>
+              </ThemeProvider>
+            </AoiQueryClientProvider>
+          </Loader>
+        </StoreProvider>
         <Toaster />
       </body>
     </html>
