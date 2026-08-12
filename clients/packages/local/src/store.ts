@@ -35,21 +35,18 @@ export class Store {
 
   constructor({ server }: StoreParams) {
     this.server = server
-
     this.db = new Database()
     this.transactions = new TransactionService(this.db, server)
 
-    makeObservable(this, {
+    makeObservable<this, 'succeed' | 'fail'>(this, {
       success: observable,
       user: observable,
       sessions: observable,
       tokens: observable,
       add: action,
       remove: action,
-
-      // TODO: is there a better fix? No, I guess, right?
-      ['succeed' as keyof this]: action,
-      ['fail' as keyof this]: action,
+      succeed: action,
+      fail: action,
     })
 
     void this.init()

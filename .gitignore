@@ -1,4 +1,4 @@
 # environment variable files
-.env
-.env.*
 !.env.template
+config.bat
+node_modules

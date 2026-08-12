@@ -5,9 +5,9 @@
   "private": true,
   "scripts": {
     "generate": "uv run --directory ../../server/ -m scripts.generate_openapi | openapi-typescript --enum-values -o src/generated/server/schema.ts",
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node init && next dev --turbopack",
+    "build": "node init && next build",
+    "start": "node init && next start",
     "lint": "biome check",
     "lint:fix": "biome check --write",
     "typecheck": "tsc --noEmit"
