@@ -13,7 +13,7 @@ export interface ModelMetadata {
 
 export const MODEL_REGISTRY: Record<string, ModelMetadata> = {}
 
-export function model(mclass: string, routes: RouteMetadata) {
+export function model(mclass: string, routes: RouteMetadata = {}) {
   return (ctor: ModelConstructor, context: ClassDecoratorContext) => {
     const fields = (context.metadata.fields ?? []) as FieldMetadata[]
 

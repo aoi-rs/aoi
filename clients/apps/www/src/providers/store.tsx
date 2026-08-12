@@ -17,7 +17,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [store, setStore] = useState<Store | null>(null)
 
   useEffect(() => {
-    setStore(new Store({ serviceURL: CONFIG.API_BASE_URL }))
+    setStore(new Store({ server: CONFIG.API_BASE_URL }))
   }, [])
 
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
@@ -38,7 +38,13 @@ export function useStore() {
 export const Loader = observer(({ children }: { children: ReactNode }) => {
   const store = useContext(StoreContext)
 
-  if (!store || store.loading) {
+  if (!store || store.success === null) {
+    // TODO: add a loader screen
+    return null
+  }
+
+  if (store.success === false) {
+    // TODO: add a error screen
     return null
   }
 

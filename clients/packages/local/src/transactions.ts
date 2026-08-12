@@ -1,5 +1,6 @@
 import type { Database } from '@/database'
-import { MODEL_REGISTRY } from './decorators'
+import { MODEL_REGISTRY } from '@/decorators'
+import { route } from '@/utils'
 
 export type Transaction =
   | {
@@ -50,22 +51,16 @@ class TransactionAfterDeleteError extends Error {
 }
 
 export class TransactionService {
-  private db: Database
-  private executor: TransactionExecutor
-
   private readiness: Promise<void>
-
   private recovered: Transaction[]
   private scheduled: Set<number>
 
-  constructor(db: Database, executor: TransactionExecutor) {
+  constructor(private db: Database, private server: string) {
     this.db = db
-    this.executor = executor
-
     this.recovered = []
     this.scheduled = new Set()
 
-    this.readiness = this.db._transactions.all().then((transactions) => {
+    this.readiness = this.db._transactions.list().then((transactions) => {
       this.recovered = transactions
       this.scheduled = new Set(transactions.map((t) => t.id))
 
@@ -78,9 +73,8 @@ export class TransactionService {
   private async flush() {
     for (const id of this.scheduled) {
       navigator.locks.request(`transaction:${id}`, async () => {
-        const data = (await this.db._transactions.get(id)) as Transaction
-
-        await this.executor.execute(data)
+        const transaction = (await this.db._transactions.get(id)) as Transaction
+        await this.execute(transaction)
 
         await this.db._transactions.delete(id)
         this.scheduled.delete(id)
@@ -101,17 +95,6 @@ export class TransactionService {
     transaction: Exclude<TransactionSchedule, { action: 'add' }>,
   ): Promise<null>
 
-  /**
-   * Adds a transaction to the schedule.
-   *
-   * @param transaction - The transaction to schedule.
-   *
-   * @returns A promise that resolves to the ID of the transaction that was
-   * added or modified in the schedule, or `null` if the transaction was coalesced and removed.
-   *
-   * @throws {TransactionAfterDeleteError} If an attempt is made to add or modify a transaction
-   * for a model that has already been scheduled for deletion.
-   */
   async add<T extends TransactionSchedule>(
     transaction: T,
   ): Promise<TransactionMeta | null> {
@@ -212,27 +195,24 @@ export class TransactionService {
 
     return r as Extract<Transaction, { action: 'del' }>
   }
-}
 
-export class TransactionExecutor {
-  constructor(private baseURL: string) {}
-
-  async execute(transaction: Transaction) {
+  private async execute(transaction: Transaction) {
     const metadata = MODEL_REGISTRY[transaction.model_class]
 
     if (!metadata) {
-      throw new Error(`unknown model ${transaction.model_class}`)
+      throw new Error(`[aoi.rs] unknown model ${transaction.model_class}`)
     }
 
     switch (transaction.action) {
       case 'set': {
         if (!metadata.routes.PATCH) {
           throw new Error(
-            `missed PATCH route for model '${transaction.model_class}'`,
+            `[aoi.rs] missed PATCH route for model '${transaction.model_class}'`,
           )
         }
 
-        const route = this.route(
+        const address = route(
+          this.server,
           metadata.routes.PATCH.replace(
             '{id}',
             encodeURIComponent(transaction.model_id),
@@ -245,7 +225,7 @@ export class TransactionExecutor {
           content[field] = transaction.data[field].to
         }
 
-        const response = await fetch(route, {
+        const response = await fetch(address, {
           method: 'PATCH',
           body: JSON.stringify(content),
           credentials: 'include',
@@ -256,7 +236,7 @@ export class TransactionExecutor {
         })
 
         if (!response.ok) {
-          throw new Error('failed to execute transaction')
+          throw new Error(`[aoi.rs] failed to execute transaction for model '${transaction.model_class}'`)
         }
 
         break
@@ -265,24 +245,25 @@ export class TransactionExecutor {
       case 'del': {
         if (!metadata.routes.DELETE) {
           throw new Error(
-            `missed DELETE route for model '${transaction.model_class}'`,
+            `[aoi.rs] missed DELETE route for model '${transaction.model_class}'`,
           )
         }
 
-        const route = this.route(
+        const address = route(
+          this.server,
           metadata.routes.DELETE.replace(
             '{id}',
             encodeURIComponent(transaction.model_id),
           ),
         )
 
-        const response = await fetch(route, {
+        const response = await fetch(address, {
           method: 'DELETE',
           credentials: 'include',
         })
 
         if (!response.ok) {
-          throw new Error('failed to execute transaction')
+          throw new Error(`[aoi.rs] failed to execute transaction for model '${transaction.model_class}'`)
         }
 
         break
@@ -291,13 +272,13 @@ export class TransactionExecutor {
       case 'add': {
         if (!metadata.routes.POST) {
           throw new Error(
-            `missed PATCH route for model '${transaction.model_class}'`,
+            `[aoi.rs] missed POST route for model '${transaction.model_class}'`,
           )
         }
 
-        const route = this.route(metadata.routes.POST)
+        const address = route(this.server, metadata.routes.POST)
 
-        const response = await fetch(route, {
+        const response = await fetch(address, {
           method: 'POST',
           body: JSON.stringify(transaction.data),
           credentials: 'include',
@@ -308,15 +289,11 @@ export class TransactionExecutor {
         })
 
         if (!response.ok) {
-          throw new Error('failed to execute transaction')
+          throw new Error(`[aoi.rs] failed to execute transaction for model '${transaction.model_class}'`)
         }
 
         break
       }
     }
-  }
-
-  private route(s: string): URL {
-    return new URL(s, this.baseURL)
   }
 }

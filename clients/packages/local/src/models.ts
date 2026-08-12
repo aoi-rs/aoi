@@ -21,7 +21,7 @@ export class Profile extends Model {
   modified_at!: string | null
 }
 
-@model('session', { DELETE: '/v1/sessions/{id}' })
+@model('session')
 export class Session extends Model {
   @field()
   user_agent!: string
@@ -42,11 +42,7 @@ export class Session extends Model {
   modified_at!: string | null
 }
 
-@model('personal_access_token', {
-  POST: '/v1/personal_access_tokens',
-  PATCH: '/v1/personal_access_tokens/{id}',
-  DELETE: '/v1/personal_access_tokens/{id}',
-})
+@model('personal_access_token')
 export class PersonalAccessToken extends Model {
   @field({ mutable: true })
   name!: string

@@ -1,9 +1,10 @@
-import { action, makeObservable, observable, runInAction } from 'mobx'
+import { action, makeObservable, observable } from 'mobx'
 import { Database } from '@/database'
 import type { Model } from '@/model'
 import { PersonalAccessToken, Profile, Session } from '@/models'
 import { readNDJSON } from '@/stream'
-import { TransactionExecutor, TransactionService } from '@/transactions'
+import { TransactionService } from '@/transactions'
+import { route } from '@/utils'
 
 interface MetadataDelta {
   _metadata: { last_revision: number }
@@ -18,89 +19,86 @@ interface ModelDelta {
 type Delta = MetadataDelta | ModelDelta
 
 interface StoreParams {
-  serviceURL: string
+  server: string
 }
 
 export class Store {
-  private serviceURL: string
-
   private db: Database
+  private server: string
 
-  private executor: TransactionExecutor
   transactions: TransactionService
 
-  loading = true
-
+  success: boolean | null = null
   user: Profile | null = null
   sessions: Session[] = []
   tokens: PersonalAccessToken[] = []
 
-  constructor({ serviceURL }: StoreParams) {
-    this.serviceURL = serviceURL
+  constructor({ server }: StoreParams) {
+    this.server = server
 
     this.db = new Database()
-    this.executor = new TransactionExecutor(serviceURL)
-    this.transactions = new TransactionService(this.db, this.executor)
+    this.transactions = new TransactionService(this.db, server)
 
     makeObservable(this, {
-      loading: observable,
+      success: observable,
       user: observable,
       sessions: observable,
       tokens: observable,
-      initialize: action,
-      reconcile: action,
-      hydrate: action,
+      succeed: action,
+      fail: action,
     })
 
-    void this.initialize()
+    void this.init()
   }
 
-  async initialize() {
-    await this.reconcile()
-    await this.hydrate()
+  async init() {
+    await this.refresh()
+    await this.load()
+  }
 
-    runInAction(() => {
-      this.loading = false
-    })
+  succeed(user: Record<string, unknown>, sessions: Record<string, unknown>[], tokens: Record<string, unknown>[]) {
+    this.success = true
+    this.user = new Profile(user, this.transactions)
+    this.sessions = sessions.map((s) => new Session(s, this.transactions))
+    this.tokens = tokens.map((t) => new PersonalAccessToken(t, this.transactions))
+  }
+
+  fail() {
+    this.success = false
   }
 
   async clear() {
     await this.db.delete()
   }
 
-  async hydrate() {
-    const transactions = await this.transactions.list()
+  async load() {
+    const [transactions, user, sessions, tokens] = await Promise.all([
+      this.transactions.list(),
+      this.db.users.get('@me'),
+      this.db.sessions.list(),
+      this.db.personal_access_tokens.list(),
+    ])
 
-    const user = await this.db.users.get('@me')
-    const sessions = await this.db.sessions.orderBy(':id').reverse().toArray()
-
-    const tokens = await this.db.personal_access_tokens
-      .orderBy(':id')
-      .reverse()
-      .toArray()
+    if (!user) {
+      throw new Error('[aoi.rs] user not found in local database')
+    }
 
     for (const transaction of transactions) {
       if (transaction.model_class === 'user' && transaction.action === 'set') {
         for (const field in transaction.data) {
-          user![field] = transaction.data[field].to
+          user[field] = transaction.data[field].to
         }
       }
     }
 
-    runInAction(() => {
-      this.user = user ? new Profile(user, this.transactions) : null
-      this.sessions = sessions.map((s) => new Session(s, this.transactions))
-      this.tokens = tokens.map(
-        (t) => new PersonalAccessToken(t, this.transactions),
-      )
-    })
+    this.succeed(user, sessions, tokens)
   }
 
-  async reconcile() {
+  async refresh() {
     const metadata = await this.db._meta.get('meta')
     const revision = metadata?.last_revision
 
-    const address = new URL('/v1/state/', this.serviceURL)
+    const address = route(this.server, '/v1/state/')
 
     if (revision) {
       address.searchParams.set('from_revision', `${revision}`)
@@ -112,11 +110,7 @@ export class Store {
     })
 
     if (!response.ok) {
-      runInAction(() => {
-        this.loading = false
-      })
-
-      return
+      return this.fail()
     }
 
     for await (const delta of readNDJSON<Delta>(
@@ -142,7 +136,7 @@ export class Store {
               await this.db.personal_access_tokens.delete(delta.id as string)
               continue
             }
-            
+
             await this.db.personal_access_tokens.set(delta)
             continue
         }
