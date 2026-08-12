@@ -44,34 +44,34 @@ export class Store {
       user: observable,
       sessions: observable,
       tokens: observable,
-      succeed: action,
-      fail: action,
+      add: action,
+      remove: action,
+
+      // TODO: is there a better fix? No, I guess, right?
+      ['succeed' as keyof this]: action,
+      ['fail' as keyof this]: action,
     })
 
     void this.init()
   }
 
-  async init() {
+  private async init() {
     await this.refresh()
     await this.load()
   }
 
-  succeed(user: Record<string, unknown>, sessions: Record<string, unknown>[], tokens: Record<string, unknown>[]) {
+  private succeed(user: Record<string, unknown>, sessions: Record<string, unknown>[], tokens: Record<string, unknown>[]) {
     this.success = true
     this.user = new Profile(user, this.transactions)
     this.sessions = sessions.map((s) => new Session(s, this.transactions))
     this.tokens = tokens.map((t) => new PersonalAccessToken(t, this.transactions))
   }
 
-  fail() {
+  private fail() {
     this.success = false
   }
 
-  async clear() {
-    await this.db.delete()
-  }
-
-  async load() {
+  private async load() {
     const [transactions, user, sessions, tokens] = await Promise.all([
       this.transactions.list(),
       this.db.users.get('@me'),
@@ -94,7 +94,7 @@ export class Store {
     this.succeed(user, sessions, tokens)
   }
 
-  async refresh() {
+  private async refresh() {
     const metadata = await this.db._meta.get('meta')
     const revision = metadata?.last_revision
 
@@ -175,5 +175,9 @@ export class Store {
     if (index !== -1) {
       collection.splice(index, 1)
     }
+  }
+
+  clear() {
+    return this.db.delete()
   }
 }
