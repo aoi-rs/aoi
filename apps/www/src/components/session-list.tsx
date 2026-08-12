@@ -1,8 +1,8 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { Globe } from 'lucide-react'
+import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import {
   ListView,
@@ -20,9 +20,8 @@ import { RevokeOtherSessionsDialog } from '@/components/revoke-other-sessions-di
 import { RevokeSessionDialog } from '@/components/revoke-session-dialog'
 import { Button } from '@/components/ui/button'
 import type { schemas } from '@/generated/server'
-import { unwrap } from '@/generated/server'
-import { service } from '@/utils/client'
-import { defaultRetry } from '@/utils/retry'
+import { useStore } from '@/providers/store'
+import { Session } from '@/utils/db'
 
 interface SessionListProps {
   sessions: {
@@ -31,129 +30,121 @@ interface SessionListProps {
   }
 }
 
-export function SessionList({ sessions: _sessions }: SessionListProps) {
-  const [revokingOthers, setRevokingOthers] = useState(false)
-  const [loggingOut, setLoggingOut] = useState(false)
-  const [revoking, setRevoking] = useState<string | null>(null)
+export const SessionList = observer(
+  ({ sessions: _sessions }: SessionListProps) => {
+    const [willRevoke, setWillRevoke] = useState<Session | '@others' | null>(
+      null,
+    )
 
-  const sessions = useQuery({
-    queryKey: ['sessions'],
-    queryFn: () =>
-      unwrap(
-        service.GET('/v1/sessions/', {
-          params: { query: { limit: 100 } },
-        }),
-      ),
-    retry: defaultRetry,
-    initialData: _sessions,
-  })
+    const { sessions } = useStore()
+    const { current, others } = detachCurrentSession(sessions)
 
-  if (!sessions.data) {
-    return null
-  }
-
-  const { current, others } = detachCurrentSession(sessions.data.items)
-
-  return (
-    <div className="flex flex-col gap-3">
-      <ListView>
-        <ListViewContent>
-          <ListViewItem>
-            <ListViewClickable />
-
-            <ListViewBadge>
-              <Globe />
-            </ListViewBadge>
-
-            <ListViewDetails>
-              <ListViewTitle>{current.name}</ListViewTitle>
-              <ListViewDescription>Your current session</ListViewDescription>
-            </ListViewDetails>
-
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => setLoggingOut(true)}
-            >
-              Log out
-            </Button>
-          </ListViewItem>
-        </ListViewContent>
-      </ListView>
-
-      {sessions.data.pagination.total_count > 1 && (
+    return (
+      <div className="flex flex-col gap-3">
         <ListView>
-          <ListViewHeader>
-            <span>
-              {sessions.data.pagination.total_count - 1} other session
-              {sessions.data.pagination.total_count > 2 && 's'}
-            </span>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setRevokingOthers(true)}
-            >
-              Revoke all
-            </Button>
-          </ListViewHeader>
-
           <ListViewContent>
-            {others.map((session) => (
-              <ListViewItem key={session.id}>
-                <ListViewClickable />
+            <ListViewItem>
+              <ListViewClickable />
 
-                <ListViewBadge>
-                  <Globe />
-                </ListViewBadge>
+              <ListViewBadge>
+                <Globe />
+              </ListViewBadge>
 
-                <ListViewDetails>
-                  <ListViewTitle>{session.name}</ListViewTitle>
+              <ListViewDetails>
+                <ListViewTitle>{current.name}</ListViewTitle>
+                <ListViewDescription>Your current session</ListViewDescription>
+              </ListViewDetails>
 
-                  <ListViewDescription>
-                    Last seen{' '}
-                    {formatDistanceToNow(session.refreshed_at, {
-                      addSuffix: true,
-                    })}
-                  </ListViewDescription>
-                </ListViewDetails>
-
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setRevoking(session.id)}
-                >
-                  Revoke
-                </Button>
-              </ListViewItem>
-            ))}
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setWillRevoke(current)}
+              >
+                Log out
+              </Button>
+            </ListViewItem>
           </ListViewContent>
         </ListView>
-      )}
 
-      <LogoutDialog open={loggingOut} onOpenChange={setLoggingOut} />
+        {sessions.length > 1 && (
+          <ListView>
+            <ListViewHeader>
+              <span>
+                {sessions.length - 1} other session
+                {sessions.length > 2 && 's'}
+              </span>
 
-      <RevokeOtherSessionsDialog
-        open={revokingOthers}
-        onOpenChange={setRevokingOthers}
-      />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setWillRevoke('@others')}
+              >
+                Revoke all
+              </Button>
+            </ListViewHeader>
 
-      <RevokeSessionDialog
-        session={revoking as string}
-        open={!!revoking}
-        onOpenChange={(open) => {
-          if (!open) {
-            setRevoking(null)
-          }
-        }}
-      />
-    </div>
-  )
-}
+            <ListViewContent>
+              {others.map((session) => (
+                <ListViewItem key={session.id}>
+                  <ListViewClickable />
 
-function detachCurrentSession(sessions: schemas['SessionSchema'][]) {
-  let current!: schemas['SessionSchema']
-  const others: schemas['SessionSchema'][] = []
+                  <ListViewBadge>
+                    <Globe />
+                  </ListViewBadge>
+
+                  <ListViewDetails>
+                    <ListViewTitle>{session.name}</ListViewTitle>
+
+                    <ListViewDescription>
+                      Last seen{' '}
+                      {formatDistanceToNow(session.refreshed_at, {
+                        addSuffix: true,
+                      })}
+                    </ListViewDescription>
+                  </ListViewDetails>
+
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setWillRevoke(session)}
+                  >
+                    Revoke
+                  </Button>
+                </ListViewItem>
+              ))}
+            </ListViewContent>
+          </ListView>
+        )}
+
+        <LogoutDialog
+          open={willRevoke instanceof Session && willRevoke.is_current_session}
+          onOpenChange={() => setWillRevoke(null)}
+        />
+
+        <RevokeOtherSessionsDialog
+          open={willRevoke === '@others'}
+          onOpenChange={() => setWillRevoke(null)}
+        />
+
+        <RevokeSessionDialog
+          session={willRevoke as Session}
+          open={willRevoke instanceof Session && !willRevoke.is_current_session}
+          onOpenChange={(o) => {
+            if (!o) {
+              setWillRevoke(null)
+            }
+          }}
+        />
+      </div>
+    )
+  },
+)
+
+function detachCurrentSession(sessions: Session[]) {
+  console.log('@SESSIONS', sessions)
+
+  let current!: Session
+  const others: Session[] = []
 
   for (const session of sessions) {
     if (session.is_current_session) {

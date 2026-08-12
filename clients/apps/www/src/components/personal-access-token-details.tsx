@@ -1,0 +1,207 @@
+'use client'
+
+import { format } from 'date-fns'
+import { Ellipsis, SlidersVertical, X } from 'lucide-react'
+import Link from 'next/link'
+import { useState } from 'react'
+import {
+  ListView,
+  ListViewContent,
+  ListViewDescription,
+  ListViewDetails,
+  ListViewItem,
+  ListViewTitle,
+} from '@/app/(dashboard)/settings/_components/list-view'
+import { RevokePersonalAccessTokenDialog } from '@/components/revoke-personal-access-token-dialog'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import type { schemas } from '@/generated/server'
+import { useStore } from '@/providers/store'
+
+interface PersonalAccessTokenDetailsProps {
+  id: string
+}
+
+const LIST_FORMATTER = new Intl.ListFormat('en', { style: 'long' })
+
+export function PersonalAccessTokenDetails({ id }: PersonalAccessTokenDetailsProps) {
+  const { tokens } = useStore()
+  
+  const [willRevoke, setWillRevoke] = useState(false)
+
+  const token = tokens.find((t) => t.id === id)
+
+  if (!token) {
+    // TODO: make a better not found state
+    return null
+  }
+
+  const permissions = parsePermissions(token.permissions as schemas['Permission'][])
+
+  return (
+    <div className="mx-5.5 mt-4 mb-8 flex flex-col items-center sm:mx-10 sm:my-16">
+      <div className="flex w-full max-w-160 flex-col gap-8">
+        <div className="flex flex-col gap-1 px-4">
+          <div className="flex items-center gap-3">
+            <h1 className="flex-1 font-medium text-2xl text-white">
+              {token.name}
+            </h1>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    data-slot="dropdown-menu-trigger"
+                    className="text-[oklch(0.6674_0.003_271.37)] hover:bg-[oklch(0.2269_0.0013_271.31)] hover:text-white"
+                  >
+                    <Ellipsis />
+                  </Button>
+                }
+              />
+
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  render={
+                    <Link href={'/settings/tokens/' + token.id + '/edit'} />
+                  }
+                >
+                  <SlidersVertical />
+                  Edit token
+                </DropdownMenuItem>
+
+                <DropdownMenuItem onClick={() => setWillRevoke(true)}>
+                  <X />
+                  Revoke token
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <p className="font-[450] text-[oklch(0.6674_0.003_271.37)] text-sm">
+            Created {format(token.created_at, 'MMM d y')}
+          </p>
+        </div>
+
+        <ListView>
+          <ListViewContent>
+            <ListViewItem>
+              <ListViewDetails>
+                <ListViewTitle>PAT name</ListViewTitle>
+                <ListViewDescription>{token.name}</ListViewDescription>
+              </ListViewDetails>
+            </ListViewItem>
+
+            <ListViewItem>
+              <ListViewDetails>
+                <ListViewTitle>Lifetime</ListViewTitle>
+
+                <ListViewDescription>
+                  {token.expires_at
+                    ? 'Ends on ' + format(token.expires_at, 'MMM d y')
+                    : 'Unlimited'}
+                </ListViewDescription>
+              </ListViewDetails>
+            </ListViewItem>
+
+            <ListViewItem>
+              <div className="flex flex-col gap-0.75">
+                <ListViewTitle>Permissions</ListViewTitle>
+
+                {permissions.read.length > 0 && (
+                  <div className="py-1 text-xs leading-[normal]">
+                    <span className="font-medium text-white">Read</span>
+                    <span className="font-[450] text-[oklch(0.6784_0.0036_271.33)]">
+                      {' '}
+                      access to {LIST_FORMATTER.format(permissions.read)}
+                    </span>
+                  </div>
+                )}
+
+                {permissions.write.length > 0 && (
+                  <div className="py-1 text-xs leading-[normal]">
+                    <span className="font-medium text-white">Read & write</span>
+                    <span className="font-[450] text-[oklch(0.6784_0.0036_271.33)]">
+                      {' '}
+                      access to {LIST_FORMATTER.format(permissions.write)}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </ListViewItem>
+          </ListViewContent>
+        </ListView>
+      </div>
+
+      <RevokePersonalAccessTokenDialog
+        token={token}
+        open={willRevoke}
+        onOpenChange={setWillRevoke}
+      />
+    </div>
+  )
+}
+
+const PERMISSION_RESOURCE_LABELS: Record<string, string> = {
+  user: 'profile',
+  sessions: 'sessions',
+  personal_access_tokens: 'PATs',
+  links: 'links',
+}
+
+const MAX_PERMISSIONS = 8
+
+function parsePermissions(permissions: schemas['Permission'][]) {
+  if (permissions.length === 0) {
+    return { read: [], write: [] }
+  }
+
+  if (permissions.length === MAX_PERMISSIONS) {
+    return { read: [], write: ['profile', 'sessions', 'PATs', 'links'] }
+  }
+
+  const hash: Record<string, 'read' | 'write' | null> = {
+    user: null,
+    sessions: null,
+    personal_access_tokens: null,
+    links: null,
+  }
+
+  for (const permission of permissions) {
+    const separator = permission.lastIndexOf('_')
+
+    const resource = permission.slice(0, separator)
+    const level = permission.slice(separator + 1)
+
+    if (level === 'write' || hash[resource] !== 'write') {
+      hash[resource] = level as 'read' | 'write'
+    }
+  }
+
+  const lists = { read: [] as string[], write: [] as string[] }
+
+  for (const [resource, level] of entries(hash)) {
+    if (!level) {
+      continue
+    }
+
+    const label = PERMISSION_RESOURCE_LABELS[resource]
+    const list = lists[level]
+
+    list.push(label)
+  }
+
+  return lists
+}
+
+function entries<K extends string | number | symbol, V>(
+  dict: Record<K, V>,
+): [K, V][] {
+  return Object.entries(dict) as [K, V][]
+}

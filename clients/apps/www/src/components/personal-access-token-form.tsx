@@ -1,0 +1,281 @@
+'use client'
+
+import { useRouter } from 'next/navigation'
+import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import {
+  ListView,
+  ListViewContent,
+  ListViewDescription,
+  ListViewDetails,
+  ListViewItem,
+  ListViewTitle,
+} from '@/app/(dashboard)/settings/_components/list-view'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import type { schemas } from '@/generated/server'
+import { service } from '@/utils/client'
+import { useStore } from '@/providers/store'
+
+const PERMISSION_SUBJECTS = [
+  { name: 'user', label: 'Profile' },
+  { name: 'sessions', label: 'Sessions' },
+  { name: 'personal_access_tokens', label: 'PATs' },
+  { name: 'links', label: 'Links' },
+]
+
+const PERMISSION_SELECT_ITEMS = [
+  { label: 'Disabled', value: 'none' },
+  { label: 'Read-only', value: 'read' },
+  { label: 'Read & Write', value: 'write' },
+]
+
+interface FormSchema {
+  label: string
+  user_permission: 'none' | 'read' | 'write'
+  sessions_permission: 'none' | 'read' | 'write'
+  personal_access_tokens_permission: 'none' | 'read' | 'write'
+  links_permission: 'none' | 'read' | 'write'
+}
+
+interface PersonalAccessTokenFormProps {
+  id: string
+}
+
+export function PersonalAccessTokenForm({ id }: PersonalAccessTokenFormProps) {
+  const store = useStore()
+  const token = store.tokens.find((t) => t.id === id)
+
+  const defaults: FormSchema = {
+    label: token?.name || '',
+    user_permission: 'none',
+    sessions_permission: 'none',
+    links_permission: 'none',
+    personal_access_tokens_permission: 'none',
+  }
+
+  for (const permission of token?.permissions || []) {
+    const separator = permission.lastIndexOf('_')
+
+    const resource = permission.slice(0, separator)
+    const level = permission.slice(separator + 1)
+
+    const key = (resource + '_permission') as keyof typeof defaults
+
+    if (defaults[key] === 'none' || defaults[key] === 'read') {
+      defaults[key] = level as 'read' | 'write'
+    }
+  }
+
+  const form = useForm<FormSchema>({
+    defaultValues: defaults,
+  })
+
+  const router = useRouter()
+
+  function handleCancel() {
+    if (window.history.length > 1) {
+      router.back()
+      return
+    }
+
+    router.replace('/settings/tokens/' + token!.id)
+  }
+
+  async function handleSubmit(details: FormSchema) {
+    const { data, error } = await service.PATCH(
+      '/v1/personal_access_tokens/{id}',
+      {
+        params: {
+          path: {
+            id: token!.id,
+          },
+        },
+        body: {
+          name: details.label,
+          permissions: buildPermissionList(details),
+        },
+      },
+    )
+
+    if (error) {
+      toast.error('Something went wrong while saving the PAT')
+      return
+    }
+
+    token!.name = data.name
+    token!.permissions = data.permissions
+    token!.expires_at = data.expires_at
+
+    toast.success('The PAT has been saved')
+    router.push('/settings/tokens/' + data.id)
+  }
+
+  if (!token) {
+    // TODO: make a better not found state
+    return null
+  }
+
+  return (
+    <div className="mx-5.5 mt-4 mb-8 flex flex-col items-center sm:mx-10 sm:my-16">
+      <div className="flex w-full max-w-160 flex-col gap-8">
+        <div className="flex flex-col gap-1 px-4">
+          <h1 className="font-medium text-2xl">Edit PAT</h1>
+
+          <p className="font-[450] text-[oklch(0.6674_0.003_271.37)] text-sm">
+            Use a PAT to automate workflows and connect external tools
+          </p>
+        </div>
+
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="flex flex-col gap-12"
+        >
+          <ListView>
+            <ListViewContent>
+              <Controller
+                name="label"
+                control={form.control}
+                render={({ field }) => (
+                  <ListViewItem className="flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
+                    <ListViewDetails>
+                      <ListViewTitle
+                        render={<label htmlFor={field.name}>Label</label>}
+                      >
+                        Label
+                      </ListViewTitle>
+
+                      <ListViewDescription>
+                        Choose a name that helps identify this token later
+                      </ListViewDescription>
+                    </ListViewDetails>
+
+                    <Input
+                      {...field}
+                      id={field.name}
+                      className="h-8 min-w-50 max-w-85 rounded-lg border-[oklch(0.2974_0.0048_270.79)] bg-transparent py-1.5 text-[.8125rem] text-white leading-[normal] placeholder:text-[oklch(0.4692_0.0036_271.21)] sm:w-min"
+                      placeholder="Production API"
+                    />
+                  </ListViewItem>
+                )}
+              />
+            </ListViewContent>
+          </ListView>
+
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-0.5 px-4">
+              <h2 className="font-medium text-sm">Permissions</h2>
+
+              <p className="font-[450] text-[oklch(0.6674_0.003_271.37)] text-sm">
+                Choose the minimal permissions necessary for your needs
+              </p>
+            </div>
+
+            <ListView>
+              <ListViewContent>
+                {PERMISSION_SUBJECTS.map((sub) => (
+                  <Controller
+                    key={sub.name}
+                    name={(sub.name + '_permission') as keyof typeof defaults}
+                    render={({ field }) => (
+                      <ListViewItem className="justify-between">
+                        <ListViewTitle
+                          render={<label htmlFor={sub.name}>{sub.label}</label>}
+                        />
+
+                        <Select
+                          items={PERMISSION_SELECT_ITEMS}
+                          name={field.name}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger size="sm">
+                            <SelectValue />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {PERMISSION_SELECT_ITEMS.map((item) => (
+                              <SelectItem key={item.value} value={item.value}>
+                                {item.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </ListViewItem>
+                    )}
+                    control={form.control}
+                  />
+                ))}
+              </ListViewContent>
+            </ListView>
+          </div>
+
+          <div className="flex items-center justify-end gap-3">
+            <Button
+              type="button"
+              size="sm"
+              variant="secondary"
+              onClick={handleCancel}
+            >
+              Cancel
+            </Button>
+
+            <Button type="submit" size="sm" className="w-fit self-end">
+              Save
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+function buildPermissionList({
+  user_permission,
+  sessions_permission,
+  personal_access_tokens_permission,
+  links_permission,
+}: FormSchema) {
+  const permissions: schemas['Permission'][] = []
+
+  if (user_permission !== 'none') {
+    permissions.push('user_read')
+
+    if (user_permission === 'write') {
+      permissions.push('user_write')
+    }
+  }
+
+  if (sessions_permission !== 'none') {
+    permissions.push('sessions_read')
+
+    if (sessions_permission === 'write') {
+      permissions.push('sessions_write')
+    }
+  }
+
+  if (personal_access_tokens_permission !== 'none') {
+    permissions.push('personal_access_tokens_read')
+
+    if (personal_access_tokens_permission === 'write') {
+      permissions.push('personal_access_tokens_write')
+    }
+  }
+
+  if (links_permission !== 'none') {
+    permissions.push('links_read')
+
+    if (links_permission === 'write') {
+      permissions.push('links_write')
+    }
+  }
+
+  return permissions
+}

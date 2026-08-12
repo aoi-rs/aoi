@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import Literal, Any
+from typing import Literal
 
 from fastapi.responses import StreamingResponse
-from pydantic import model_validator
+from pydantic import Field
 
 from aoi.auth.permission import Permission
 from aoi.kit.schemas import IDSchema, Schema, TimestampedSchema
@@ -10,18 +10,21 @@ from aoi.users.schemas import UserSchema
 
 
 class UserDelta(UserSchema):
-    _model: Literal["user"] = "user"
+    model: Literal["user"] = Field("user", alias="_model")
 
 
 class SessionDelta(IDSchema, TimestampedSchema):
-    _model: Literal["session"] = "session"
+    model: Literal["session"] = Field("session", alias="_model")
     user_agent: str
     name: str
     refreshed_at: datetime
+    is_current_session: bool
 
 
 class PersonalAccessTokenDelta(IDSchema, TimestampedSchema):
-    _model: Literal["personal_access_token"] = "personal_access_token"
+    model: Literal["personal_access_token"] = Field(
+        "personal_access_token", alias="_model"
+    )
     permissions: list[Permission]
     name: str
     expires_at: datetime | None
@@ -32,21 +35,12 @@ class MetadataFields(Schema):
 
 
 class Metadata(Schema):
-    _metadata: MetadataFields
-
-    @model_validator(mode="before")
-    @classmethod
-    def initialize(cls, data: Any) -> Metadata:
-        if "last_revision" in data:
-            return Metadata(
-                _metadata=MetadataFields(last_revision=data["last_revision"])
-            )
-
-        return data
+    metadata: MetadataFields = Field(..., alias="_metadata")
 
 
-class DeletionDelta(Schema):
-    _model: Literal["session", "personal_access_token"]
+class DeletionDelta(IDSchema):
+    model: Literal["session", "personal_access_token"] = Field(..., alias="_model")
+    deleted: Literal[True] = True
 
 
 Delta = UserDelta | SessionDelta | PersonalAccessTokenDelta | DeletionDelta | Metadata
