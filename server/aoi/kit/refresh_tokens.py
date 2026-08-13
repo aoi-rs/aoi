@@ -156,8 +156,6 @@ class RefreshToken:
             : -REFRESH_TOKEN_SIGNATURE_LENGTH - REFRESH_TOKEN_CHECKSUM_LENGTH
         ]
 
-        print(f"{hmac_sha256_key} used to check signature")
-
         signature = hmac.new(hmac_sha256_key, bytes_, hashlib.sha256).digest()[
             :REFRESH_TOKEN_SIGNATURE_LENGTH
         ]
