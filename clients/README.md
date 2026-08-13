@@ -1,21 +1,50 @@
 # Clients
 
-A monorepo powered by [Turborepo](https://turborepo.dev) for client applications and packages.
+Client applications and shared libraries. This workspace is managed with [Bun workspaces](https://bun.com/docs/pm/workspaces) and [Turborepo](https://turborepo.dev).
 
 ## Contents
 
-- `apps/www`: (account.aoi.rs)[https://account.aoi.rs] — built with [NextJS](https://nextjs.org)
-- `packages/local`: Provides local-first state management and reconciliation with the API
+The workspace is split into deployable applications under `apps/**` and reusable packages under `packages/**`. Everything is written in TypeScript.
 
-## Commands
+- `apps/www`: [`account.aoi.rs`](https://account.aoi.rs) — built with [NextJS](https://nextjs.org)
+- `packages/local`: local-first state management and reconciliation with the remote API
+
+## Get Started
+
+First install the workspace dependencies:
 
 ```sh
-# installs all dependencies
 bun install
+```
 
-# builds apps and packages
-bun run build
+Then use the root scripts to run tasks across the monorepo:
 
-# start development server
+```sh
 bun run dev
 ```
+
+Starts each workspace's development task through Turborepo. For `apps/www`, this runs the NextJS development server with Turbopack. For `packages/local`, it starts the package build in watch mode.
+
+```sh
+bun run build
+```
+
+Builds all workspaces through Turborepo, including dependency packages before the applications that use them.
+
+```sh
+bun run typecheck
+```
+
+Runs TypeScript checks.
+
+```sh
+bun run lint
+```
+
+Uses Biome to check formatting and lint all workspaces.
+
+```sh
+bun run lint:fix
+```
+
+Uses Biome to format and automatically fix lint issues in all workspaces.
