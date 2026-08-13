@@ -2,7 +2,6 @@
 
 import type { PersonalAccessToken } from '@aoi-rs/local'
 import { useRouter } from 'next/navigation'
-import type { ComponentProps } from 'react'
 import { toast } from 'sonner'
 import {
   AlertDialog,
@@ -17,8 +16,9 @@ import {
 import { useStore } from '@/providers/store'
 import { service } from '@/utils/client'
 
-interface RevokePersonalAccessTokenDialogProps
-  extends ComponentProps<typeof AlertDialog> {
+interface RevokePersonalAccessTokenDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
   token: PersonalAccessToken
 }
 
@@ -39,10 +39,11 @@ export function RevokePersonalAccessTokenDialog({
       return
     }
 
+    toast.success('The PAT has been revoked')
     store.remove(token)
 
-    toast.success('The PAT has been revoked')
     router.push('/settings')
+    props.onOpenChange(false)
   }
 
   return (

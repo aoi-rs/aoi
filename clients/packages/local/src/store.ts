@@ -1,9 +1,9 @@
 import { action, makeObservable, observable } from 'mobx'
-import { Database } from '@/database'
-import type { Model } from '@/model'
+import { Database, type RawModel } from '@/database'
+import { Model, ModelRuntime } from '@/model'
 import { PersonalAccessToken, Profile, Session } from '@/models'
 import { readNDJSON } from '@/stream'
-import { TransactionService } from '@/transactions'
+import { TransactionScheduler } from '@/transactions'
 import { route } from '@/utils'
 
 interface MetadataDelta {
@@ -26,8 +26,6 @@ export class Store {
   private db: Database
   private server: string
 
-  transactions: TransactionService
-
   success: boolean | null = null
   user: Profile | null = null
   sessions: Session[] = []
@@ -36,7 +34,6 @@ export class Store {
   constructor({ server }: StoreParams) {
     this.server = server
     this.db = new Database()
-    this.transactions = new TransactionService(this.db, server)
 
     makeObservable<this, 'succeed' | 'fail'>(this, {
       success: observable,
@@ -57,17 +54,11 @@ export class Store {
     await this.load()
   }
 
-  private succeed(
-    user: Record<string, unknown>,
-    sessions: Record<string, unknown>[],
-    tokens: Record<string, unknown>[],
-  ) {
+  private succeed(user: RawModel, sessions: RawModel[], tokens: RawModel[]) {
     this.success = true
-    this.user = new Profile(user, this.transactions)
-    this.sessions = sessions.map((s) => new Session(s, this.transactions))
-    this.tokens = tokens.map(
-      (t) => new PersonalAccessToken(t, this.transactions),
-    )
+    this.user = new Profile(user)
+    this.sessions = sessions.map((s) => new Session(s))
+    this.tokens = tokens.map((t) => new PersonalAccessToken(t))
   }
 
   private fail() {
@@ -76,7 +67,7 @@ export class Store {
 
   private async load() {
     const [transactions, user, sessions, tokens] = await Promise.all([
-      this.transactions.list(),
+      this.db._transactions.list(),
       this.db.users.get('@me'),
       this.db.sessions.list(),
       this.db.personal_access_tokens.list(),
@@ -85,6 +76,14 @@ export class Store {
     if (!user) {
       throw new Error('[aoi.rs] user not found in local database')
     }
+
+    const scheduler = new TransactionScheduler({
+      db: this.db,
+      server: this.server,
+      transactions,
+    })
+
+    Model.runtime = new ModelRuntime(scheduler)
 
     for (const transaction of transactions) {
       if (transaction.model_class === 'user' && transaction.action === 'set') {

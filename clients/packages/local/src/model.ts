@@ -1,6 +1,6 @@
 import { type AnnotationsMap, flow, makeObservable, observable } from 'mobx'
 import { MODEL_REGISTRY, type ModelMetadata } from '@/decorators'
-import type { TransactionService } from '@/transactions'
+import type { TransactionScheduler } from '@/transactions'
 
 export interface FieldMetadata {
   name: string
@@ -9,19 +9,24 @@ export interface FieldMetadata {
 
 export interface ModelConstructor {
   mclass: string
+  runtime: ModelRuntime
+}
+
+export interface ModelDiff {
+  [k: string]: {
+    from: unknown
+    to: unknown
+  }
 }
 
 export abstract class Model {
   static mclass: string
+  static runtime: ModelRuntime
+
   readonly id!: string
-
   private state: Record<string, unknown>
-  private transactions: TransactionService
 
-  constructor(
-    source: Record<string, unknown>,
-    transactions: TransactionService,
-  ) {
+  constructor(source: Record<string, unknown>) {
     const meta = this.meta()
     const self = this as Record<string, unknown>
 
@@ -37,7 +42,6 @@ export abstract class Model {
     }
 
     this.state = { ...source }
-    this.transactions = transactions
 
     makeObservable(this, annotations)
   }
@@ -52,17 +56,11 @@ export abstract class Model {
     return MODEL_REGISTRY[mclass]
   }
 
-  diff() {
+  diff(): ModelDiff | null {
     const meta = this.meta()
     const current = this as Record<string, unknown>
 
-    let deltas: Record<
-      string,
-      {
-        from: unknown
-        to: unknown
-      }
-    > | null = null
+    let deltas: ModelDiff | null = null
 
     for (const field of meta.fields) {
       if (!field.mutable) {
@@ -85,21 +83,29 @@ export abstract class Model {
   }
 
   *commit() {
-    const deltas = this.diff()
+    const diff = this.diff()
 
-    if (!deltas) {
+    if (!diff) {
       return
     }
 
-    yield this.transactions.add({
-      action: 'set',
-      model_class: this.mclass(),
-      model_id: this.id,
-      data: deltas,
-    })
+    yield Model.runtime.commit(this, diff)
 
-    for (const field in deltas) {
-      this.state[field] = deltas[field].to
+    for (const field in diff) {
+      this.state[field] = diff[field].to
     }
+  }
+}
+
+export class ModelRuntime {
+  constructor(private transactions: TransactionScheduler) {}
+
+  commit(model: Model, diff: ModelDiff) {
+    return this.transactions.schedule({
+      action: 'set',
+      data: diff,
+      model_class: model.mclass(),
+      model_id: model.id,
+    })
   }
 }

@@ -89,10 +89,7 @@ export default function CreatePersonalAccessToken() {
       return
     }
 
-    const model = new PersonalAccessToken(
-      data.personal_access_token,
-      store.transactions,
-    )
+    const model = new PersonalAccessToken(data.personal_access_token)
 
     store.add(model)
     setGenerated(data.token)

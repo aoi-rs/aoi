@@ -50,27 +50,26 @@ class TransactionAfterDeleteError extends Error {
   }
 }
 
-export class TransactionService {
-  private readiness: Promise<void>
-  private recovered: Transaction[]
-  private scheduled: Set<number>
+interface TransactionSchedulerParams {
+  server: string
+  db: Database
+  transactions: Transaction[]
+}
 
-  constructor(
-    private db: Database,
-    private server: string,
-  ) {
-    this.db = db
-    this.recovered = []
-    this.scheduled = new Set()
+export class TransactionScheduler {
+  private db: Database
+  private server: string
+  private scheduled: Set<number> = new Set()
 
-    this.readiness = this.db._transactions.list().then((transactions) => {
-      this.recovered = transactions
-      this.scheduled = new Set(transactions.map((t) => t.id))
+  constructor(params: TransactionSchedulerParams) {
+    this.db = params.db
+    this.server = params.server
 
-      if (this.scheduled.size > 0) {
-        void this.flush()
-      }
-    })
+    for (const transaction of params.transactions) {
+      this.scheduled.add(transaction.id)
+    }
+
+    this.schedule = this.schedule.bind(this)
   }
 
   private async flush() {
@@ -85,29 +84,24 @@ export class TransactionService {
     }
   }
 
-  async list(): Promise<ReadonlyArray<Transaction>> {
-    await this.readiness
-    return this.recovered
-  }
-
-  async add(
+  async schedule(
     transaction: Extract<TransactionSchedule, { action: 'add' }>,
   ): Promise<TransactionMeta>
 
-  async add(
+  async schedule(
     transaction: Exclude<TransactionSchedule, { action: 'add' }>,
   ): Promise<null>
 
-  async add<T extends TransactionSchedule>(
+  async schedule<T extends TransactionSchedule>(
     transaction: T,
   ): Promise<TransactionMeta | null> {
-    const meta = await this._add(transaction)
+    const meta = await this._schedule(transaction)
     await this.flush()
 
     return meta
   }
 
-  private async _add<T extends TransactionSchedule>(
+  private async _schedule<T extends TransactionSchedule>(
     transaction: T,
   ): Promise<TransactionMeta | null> {
     if (transaction.action === 'add') {

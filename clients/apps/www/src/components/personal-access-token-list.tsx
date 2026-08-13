@@ -1,5 +1,6 @@
 'use client'
 
+import type { PersonalAccessToken } from '@aoi-rs/local'
 import { formatDistanceToNow } from 'date-fns'
 import { Ellipsis, Key, SlidersVertical, X } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
@@ -27,7 +28,7 @@ import {
 import { useStore } from '@/providers/store'
 
 export const PersonalAccessTokenList = observer(() => {
-  const [willRevoke, setWillRevoke] = useState<string | null>(null)
+  const [willRevoke, setWillRevoke] = useState<PersonalAccessToken | null>(null)
 
   const { tokens } = useStore()
 
@@ -102,7 +103,7 @@ export const PersonalAccessTokenList = observer(() => {
                     Edit token
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem onClick={() => setWillRevoke(token.id)}>
+                  <DropdownMenuItem onClick={() => setWillRevoke(token)}>
                     <X />
                     Revoke token
                   </DropdownMenuItem>
@@ -114,7 +115,7 @@ export const PersonalAccessTokenList = observer(() => {
       )}
 
       <RevokePersonalAccessTokenDialog
-        id={willRevoke as string}
+        token={willRevoke as PersonalAccessToken}
         open={!!willRevoke}
         onOpenChange={(open) => {
           if (!open) {
