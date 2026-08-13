@@ -55,7 +55,10 @@ export class TransactionService {
   private recovered: Transaction[]
   private scheduled: Set<number>
 
-  constructor(private db: Database, private server: string) {
+  constructor(
+    private db: Database,
+    private server: string,
+  ) {
     this.db = db
     this.recovered = []
     this.scheduled = new Set()
@@ -236,7 +239,9 @@ export class TransactionService {
         })
 
         if (!response.ok) {
-          throw new Error(`[aoi.rs] failed to execute transaction for model '${transaction.model_class}'`)
+          throw new Error(
+            `[aoi.rs] failed to execute transaction for model '${transaction.model_class}'`,
+          )
         }
 
         break
@@ -263,7 +268,9 @@ export class TransactionService {
         })
 
         if (!response.ok) {
-          throw new Error(`[aoi.rs] failed to execute transaction for model '${transaction.model_class}'`)
+          throw new Error(
+            `[aoi.rs] failed to execute transaction for model '${transaction.model_class}'`,
+          )
         }
 
         break
@@ -289,7 +296,9 @@ export class TransactionService {
         })
 
         if (!response.ok) {
-          throw new Error(`[aoi.rs] failed to execute transaction for model '${transaction.model_class}'`)
+          throw new Error(
+            `[aoi.rs] failed to execute transaction for model '${transaction.model_class}'`,
+          )
         }
 
         break

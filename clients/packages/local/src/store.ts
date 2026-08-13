@@ -57,11 +57,17 @@ export class Store {
     await this.load()
   }
 
-  private succeed(user: Record<string, unknown>, sessions: Record<string, unknown>[], tokens: Record<string, unknown>[]) {
+  private succeed(
+    user: Record<string, unknown>,
+    sessions: Record<string, unknown>[],
+    tokens: Record<string, unknown>[],
+  ) {
     this.success = true
     this.user = new Profile(user, this.transactions)
     this.sessions = sessions.map((s) => new Session(s, this.transactions))
-    this.tokens = tokens.map((t) => new PersonalAccessToken(t, this.transactions))
+    this.tokens = tokens.map(
+      (t) => new PersonalAccessToken(t, this.transactions),
+    )
   }
 
   private fail() {
@@ -174,7 +180,7 @@ export class Store {
     }
   }
 
-  clear() {
+  discard() {
     return this.db.delete()
   }
 }

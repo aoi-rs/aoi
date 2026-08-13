@@ -29,9 +29,11 @@ interface PersonalAccessTokenDetailsProps {
 
 const LIST_FORMATTER = new Intl.ListFormat('en', { style: 'long' })
 
-export function PersonalAccessTokenDetails({ id }: PersonalAccessTokenDetailsProps) {
+export function PersonalAccessTokenDetails({
+  id,
+}: PersonalAccessTokenDetailsProps) {
   const { tokens } = useStore()
-  
+
   const [willRevoke, setWillRevoke] = useState(false)
 
   const token = tokens.find((t) => t.id === id)
@@ -41,7 +43,9 @@ export function PersonalAccessTokenDetails({ id }: PersonalAccessTokenDetailsPro
     return null
   }
 
-  const permissions = parsePermissions(token.permissions as schemas['Permission'][])
+  const permissions = parsePermissions(
+    token.permissions as schemas['Permission'][],
+  )
 
   return (
     <div className="mx-5.5 mt-4 mb-8 flex flex-col items-center sm:mx-10 sm:my-16">

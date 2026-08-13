@@ -23,7 +23,7 @@ export function LogoutDialog(props: LogoutDialogProps) {
   const store = useStore()
 
   async function handleLogOut() {
-    await store.clear()
+    await store.discard()
 
     const { error } = await service.DELETE('/v1/auth/logout')
 

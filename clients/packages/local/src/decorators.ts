@@ -41,7 +41,7 @@ export function field(params: FieldParams = {}) {
       mutable: params.mutable ?? false,
     })
 
-    return function f(this: Model) {
+    return function bound(this: Model) {
       // @ts-expect-error: because models set declared fields at runtime
       return this[context.name]
     }

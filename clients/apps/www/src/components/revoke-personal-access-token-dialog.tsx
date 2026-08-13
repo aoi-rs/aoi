@@ -1,5 +1,6 @@
 'use client'
 
+import type { PersonalAccessToken } from '@aoi-rs/local'
 import { useRouter } from 'next/navigation'
 import type { ComponentProps } from 'react'
 import { toast } from 'sonner'
@@ -13,9 +14,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { service } from '@/utils/client'
 import { useStore } from '@/providers/store'
-import type { PersonalAccessToken } from '@aoi-rs/local'
+import { service } from '@/utils/client'
 
 interface RevokePersonalAccessTokenDialogProps
   extends ComponentProps<typeof AlertDialog> {

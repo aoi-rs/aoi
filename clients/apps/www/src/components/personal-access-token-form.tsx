@@ -21,8 +21,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { schemas } from '@/generated/server'
-import { service } from '@/utils/client'
 import { useStore } from '@/providers/store'
+import { service } from '@/utils/client'
 
 const PERMISSION_SUBJECTS = [
   { name: 'user', label: 'Profile' },
