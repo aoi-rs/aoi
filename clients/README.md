@@ -5,7 +5,7 @@ A monorepo powered by [Turborepo](https://turborepo.dev) for client applications
 ## Contents
 
 - `apps/www`: (account.aoi.rs)[https://account.aoi.rs] — built with [NextJS](https://nextjs.org)
-- `packages/local`: Provides utilities for interacting with local-first data
+- `packages/local`: Provides local-first state management and reconciliation with the API
 
 ## Commands
 
