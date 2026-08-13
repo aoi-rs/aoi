@@ -69,15 +69,24 @@ export class TransactionScheduler {
       this.scheduled.add(transaction.id)
     }
 
+    if (this.scheduled.size > 0) {
+      this.flush()
+    }
+
     this.schedule = this.schedule.bind(this)
   }
 
-  private async flush() {
+  private flush() {
     for (const id of this.scheduled) {
       navigator.locks.request(`transaction:${id}`, async () => {
-        const transaction = (await this.db._transactions.get(id)) as Transaction
-        await this.execute(transaction)
+        const transaction = (await this.db._transactions.get(id))
 
+        if (!transaction) {
+          return
+        }
+
+        await this.execute(transaction)
+        
         await this.db._transactions.delete(id)
         this.scheduled.delete(id)
       })
@@ -96,7 +105,7 @@ export class TransactionScheduler {
     transaction: T,
   ): Promise<TransactionMeta | null> {
     const meta = await this._schedule(transaction)
-    await this.flush()
+    this.flush()
 
     return meta
   }
