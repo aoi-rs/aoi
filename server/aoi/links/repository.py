@@ -17,7 +17,11 @@ class UpdateDict(TypedDict):
 
 class LinkRepository:
     def create(self, schema: LinkSchema):
-        table.put_item(Item=self._encode(schema))
+        table.put_item(
+            Item=self._encode(schema),
+            ConditionExpression="attribute_not_exists(#u)",
+            ExpressionAttributeNames={"#u": "u"},
+        )
 
     def update(
         self, auth_context: AuthContext, id: UUID, *, name: str | None

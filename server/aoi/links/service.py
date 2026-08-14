@@ -37,7 +37,14 @@ class LinkService:
             created_at=created_at,
         )
 
-        link_repository.create(link)
+        try:
+            link_repository.create(link)
+        except ClientError as e:
+            if self._is_conditional_check_failed_error(e):
+                # TODO: report unexpected UUID collisions to the logging service.
+                ...
+
+            raise
 
         return link
 
