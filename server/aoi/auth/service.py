@@ -3,7 +3,7 @@ from fastapi.responses import RedirectResponse
 from datetime import datetime, timedelta
 from typing import TypeVar
 from uuid import UUID
-from jwt import encode, decode, DecodeError
+from jwt import encode, decode, InvalidTokenError
 
 from aoi.models import User, Session
 from aoi.kit.utils import utc_now
@@ -86,16 +86,27 @@ class AuthService:
     def authenticate(self, request: Request) -> SessionRef | None:
         token = request.cookies.get(settings.ACCESS_TOKEN_COOKIE_KEY)
 
-        if token is None:
+        if not token:
             return None
 
         try:
-            claims = decode(token, settings.JWT_PRIVATE_KEY, algorithms=["HS256"])
-        except DecodeError:
-            return None
+            claims = decode(
+                token,
+                settings.JWT_PRIVATE_KEY,
+                algorithms=["HS256"],
+                options={"require": ["exp", "sub", "session_id"]},
+            )
 
-        user_id = UUID(claims["sub"])
-        session_id = UUID(claims["session_id"])
+            if not isinstance(claims["sub"], str):
+                return None
+
+            if not isinstance(claims["session_id"], str):
+                return None
+
+            user_id = UUID(claims["sub"])
+            session_id = UUID(claims["session_id"])
+        except InvalidTokenError, ValueError:
+            return None
 
         return SessionRef(session_id, user_id)
 

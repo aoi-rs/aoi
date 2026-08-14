@@ -33,6 +33,11 @@ class RefreshTokenRequiredError(Unauthorized):
         super().__init__("Refresh token is required")
 
 
+class RefreshTokenMalformedError(AoiError):
+    def __init__(self):
+        super().__init__("Refresh token is malformed", status_code=400)
+
+
 class SessionMissingError(ResourceMissing):
     def __init__(self):
         super().__init__("This session could not be found")
@@ -131,14 +136,15 @@ class SessionService:
             try:
                 refresh_token = parse_refresh_token(refresh_token_str)
             except RefreshTokenParseError as e:
-                raise SessionMissingError() from e
+                raise RefreshTokenMalformedError() from e
 
             statement = repository.get_base_statement().where(
                 Session.id == refresh_token.session_id
             )
+
             user_session = await repository.get_one_or_none(statement)
 
-            if user_session is None:
+            if not user_session:
                 raise SessionMissingError()
 
             refresh_token_hmac_key = base64.urlsafe_b64decode(

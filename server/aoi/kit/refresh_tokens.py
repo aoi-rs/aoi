@@ -28,6 +28,11 @@ MAX_REFRESH_TOKEN_LENGTH = MIN_REFRESH_TOKEN_LENGTH + 8
 class RefreshTokenParseError(Exception): ...
 
 
+class MalformedRefreshTokenError(RefreshTokenParseError):
+    def __init__(self):
+        super().__init__("refresh token is malformed")
+
+
 class RefreshTokenLengthError(RefreshTokenParseError):
     def __init__(self):
         super().__init__("refresh token length is not valid")
@@ -191,7 +196,10 @@ class RefreshToken:
 
 
 def parse_refresh_token(refresh_token: str) -> RefreshToken:
-    bytes_ = base64.urlsafe_b64decode(refresh_token + "===")
+    try:
+        bytes_ = base64.urlsafe_b64decode(refresh_token + "===")
+    except ValueError as exc:
+        raise MalformedRefreshTokenError() from exc
 
     if len(bytes_) < MIN_REFRESH_TOKEN_LENGTH:
         raise RefreshTokenLengthError()
