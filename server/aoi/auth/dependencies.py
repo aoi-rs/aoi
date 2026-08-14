@@ -3,6 +3,7 @@ from fastapi.security.utils import get_authorization_scheme_param
 from typing import Annotated
 
 from aoi.exceptions import Unauthorized, Forbidden
+from aoi.kit.utils import utc_now
 from aoi.postgres import AsyncSession, get_db_session
 
 from aoi.personal_access_tokens.service import (
@@ -68,6 +69,12 @@ class Authenticator:
                 personal_access_token = await get_personal_access_token(session, token)
 
                 if not personal_access_token:
+                    raise BadCredentialsError()
+
+                if (
+                    personal_access_token.expires_at
+                    and personal_access_token.expires_at <= utc_now()
+                ):
                     raise BadCredentialsError()
 
                 if self.forbid_bearer_tokens:
