@@ -21,5 +21,5 @@ async def logout(
 ):
     await session_service.revoke_current(session, auth_context)
 
-    response.delete_cookie(settings.ACCESS_TOKEN_COOKIE_KEY)
-    response.delete_cookie(settings.REFRESH_TOKEN_COOKIE_KEY)
+    for cookie in (settings.ACCESS_TOKEN_COOKIE_KEY, settings.REFRESH_TOKEN_COOKIE_KEY):
+        response.delete_cookie(cookie, path="/", domain=settings.SESSION_COOKIE_DOMAIN)
