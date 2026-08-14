@@ -1,4 +1,4 @@
-from sqlalchemy import Select, delete
+from sqlalchemy import Select, delete, select
 from uuid import UUID
 
 from aoi.kit.repository import RepositoryBase, Options
@@ -29,9 +29,16 @@ class SessionRepository(RepositoryBase[Session]):
 
         return await self.session.execute(statement)
 
+    async def get_refresh_token_hmac_key(self, session_id: UUID) -> str | None:
+        statement = select(self.model.refresh_token_hmac_key).where(
+            self.model.id == session_id
+        )
+
+        return await self.session.scalar(statement)
+
     async def get_by_id_for_update(
         self, session_id: UUID, *, nowait: bool = True, options: Options = ()
-    ) -> Session:
+    ) -> Session | None:
         """
         Get session by ID with FOR UPDATE lock.
 
@@ -48,4 +55,4 @@ class SessionRepository(RepositoryBase[Session]):
             .with_for_update(nowait=nowait, of=Session)
         )
 
-        return await self.get_one(statement)
+        return await self.get_one_or_none(statement)

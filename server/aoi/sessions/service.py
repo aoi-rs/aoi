@@ -123,6 +123,25 @@ class SessionService:
 
         repository = SessionRepository.from_session(session)
 
+        try:
+            refresh_token = parse_refresh_token(refresh_token_str)
+        except RefreshTokenParseError as e:
+            raise RefreshTokenMalformedError() from e
+
+        refresh_token_hmac_key_encoded = await repository.get_refresh_token_hmac_key(
+            refresh_token.session_id
+        )
+
+        if not refresh_token_hmac_key_encoded:
+            raise SessionMissingError()
+
+        refresh_token_hmac_key = base64.urlsafe_b64decode(
+            refresh_token_hmac_key_encoded
+        )
+
+        if not refresh_token.check_signature(refresh_token_hmac_key):
+            raise SessionMissingError()
+
         # A 5 second retry loop is used to make sure that refresh token
         # requests do not waste database connections waiting for each other.
         # Instead of waiting at the database level, they're waiting at the API
@@ -133,47 +152,28 @@ class SessionService:
         while (
             utc_now() - retry_start
         ).total_seconds() < SESSION_REFRESH_RETRY_LOOP_DURATION:
-            try:
-                refresh_token = parse_refresh_token(refresh_token_str)
-            except RefreshTokenParseError as e:
-                raise RefreshTokenMalformedError() from e
-
-            statement = repository.get_base_statement().where(
-                Session.id == refresh_token.session_id
-            )
-
-            user_session = await repository.get_one_or_none(statement)
-
-            if not user_session:
-                raise SessionMissingError()
-
-            refresh_token_hmac_key = base64.urlsafe_b64decode(
-                user_session.refresh_token_hmac_key
-            )
-
-            if not refresh_token.check_signature(refresh_token_hmac_key):
-                raise SessionMissingError()
-
             # Basic checks above passed, now we need to serialize access
             # to the session in a transaction so that there's no
             # concurrent modification. In the event that the session's
             # row is locked, the transaction is closed and the whole
             # process will be retried a bit later so that the connection
             # pool does not get exhausted.
-
-            locked_user_session: Session | None = None
-
             try:
                 locked_user_session = await repository.get_by_id_for_update(
-                    user_session.id,
+                    refresh_token.session_id,
                     nowait=True,
                 )
-            except DBAPIError as e:
-                if is_lock_not_available_error(e):
-                    await asyncio.sleep(random.uniform(0.01, 0.03))
-                    continue
 
-            assert locked_user_session is not None
+                if not locked_user_session:
+                    raise SessionMissingError()
+            except DBAPIError as e:
+                if not is_lock_not_available_error(e):
+                    raise
+
+                await session.rollback()
+                await asyncio.sleep(random.uniform(0.01, 0.03))
+
+                continue
 
             counter_difference = (
                 locked_user_session.refresh_token_counter - refresh_token.counter
@@ -220,7 +220,9 @@ class SessionService:
                 # refresh the session at once using
                 # refresh token.
                 likely_concurrent_refreshes = (
-                    abs((retry_start - user_session.refreshed_at).total_seconds())
+                    abs(
+                        (retry_start - locked_user_session.refreshed_at).total_seconds()
+                    )
                     < settings.REFRESH_TOKEN_REUSE_INTERVAL_SECONDS
                 )
 
@@ -271,13 +273,13 @@ class SessionService:
 
             assert issued_refresh_token is not None
 
-            user_session.refreshed_at = utc_now()
-            user_session.user_agent = request.headers.get("user-agent", "")
+            locked_user_session.refreshed_at = utc_now()
+            locked_user_session.user_agent = request.headers.get("user-agent", "")
 
             return await auth_service.create_login_response(
                 request,
-                user=user_session.user,
-                user_session=user_session,
+                user=locked_user_session.user,
+                user_session=locked_user_session,
                 refresh_token=issued_refresh_token,
                 redirect=False,
             )
