@@ -22,7 +22,7 @@ def list(
 
 
 @router.get("/{id}", summary="Get a link", response_model=LinkSchema)
-def get(id: UUID7, auth_context: LinksWrite) -> LinkSchema:
+def get(id: UUID7, auth_context: LinksRead) -> LinkSchema:
     link = links.get(auth_context, id)
 
     if not link:
