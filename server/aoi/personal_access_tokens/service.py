@@ -58,7 +58,9 @@ class PersonalAccessTokenService:
         token_hash = generate_token_hash(token, secret=settings.SECRET)
 
         expires_at = (
-            utc_now() + create_schema.expires_in if create_schema.expires_in else None
+            utc_now() + create_schema.expires_in
+            if create_schema.expires_in is not None
+            else None
         )
 
         personal_access_token = PersonalAccessToken(
