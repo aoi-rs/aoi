@@ -9,4 +9,3 @@ class UserSchema(IDSchema, TimestampedSchema):
 
 class UserUpdate(Schema):
     name: str | None = None
-    avatar_url: str | None = None
