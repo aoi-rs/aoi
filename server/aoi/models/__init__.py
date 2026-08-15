@@ -5,6 +5,7 @@ from .login_token import LoginToken
 from .session import Session
 from .personal_access_token import PersonalAccessToken
 from .deletion import Deletion
+from . import state_revisions as state_revisions
 
 __all__ = [
     "Model",

@@ -1,10 +1,9 @@
-from alembic_utils.pg_function import PGFunction
-from alembic_utils.replaceable_entity import register_entities
-from sqlalchemy.orm import mapped_column, Mapped
-from sqlalchemy import UUID as SQLUUID, Enum
-
-from uuid import UUID
+from datetime import datetime
 from enum import StrEnum
+from uuid import UUID
+
+from sqlalchemy import TIMESTAMP, UUID as SQLUUID, Enum, Index, func
+from sqlalchemy.orm import mapped_column, Mapped
 
 from aoi.kit.db.models import RevisionModel
 
@@ -16,27 +15,13 @@ class DeletedModel(StrEnum):
 
 class Deletion(RevisionModel):
     __tablename__ = "deletions"
+    __table_args__ = (Index("ix_deletions_user_id_revision", "user_id", "revision"),)
 
     model_id: Mapped[UUID] = mapped_column(SQLUUID, primary_key=True)
     model_name: Mapped[DeletedModel] = mapped_column(
         Enum(DeletedModel, name="deleted_model"), primary_key=True
     )
-
-
-record_deletions_function = PGFunction(
-    schema="public",
-    signature="record_deletions()",
-    definition="""
-        RETURNS TRIGGER AS $$
-        BEGIN
-            INSERT INTO deletions (model_name, model_id)
-            SELECT TG_ARGV[0]::deleted_model, id
-            FROM deleted_rows;
-
-            RETURN NULL;
-        END
-        $$ LANGUAGE plpgsql;
-    """,
-)
-
-register_entities((record_deletions_function,))
+    user_id: Mapped[UUID] = mapped_column(SQLUUID, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=func.now()
+    )
