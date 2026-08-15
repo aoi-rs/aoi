@@ -10,26 +10,44 @@ from aoi.config import settings
 class PaginationParams(Schema):
     after: UUID7 | None = Field(
         default=None,
-        description="Return resources that come after this resource ID.",
+        description="Cursor to be used with 'first' for forward pagination.",
     )
     before: UUID7 | None = Field(
         default=None,
-        description="Return resources that come before this resource ID.",
+        description="Cursor to be used with 'last' for backward pagination.",
     )
-    limit: int = Field(
-        default=10,
-        gt=0,
+    first: int | None = Field(
+        default=None,
+        ge=1,
         le=settings.API_PAGINATION_MAX_LIMIT,
         description=(
-            f"Size of a page, defaults to 10. "
+            f"The number of items to forward paginate (used with 'after'). "
+            f"Maximum is {settings.API_PAGINATION_MAX_LIMIT}."
+        ),
+    )
+    last: int | None = Field(
+        default=None,
+        ge=1,
+        le=settings.API_PAGINATION_MAX_LIMIT,
+        description=(
+            f"The number of items to backward paginate (used with 'before'). "
             f"Maximum is {settings.API_PAGINATION_MAX_LIMIT}."
         ),
     )
 
     @model_validator(mode="after")
     def check_cursor_order(self) -> Self:
-        if self.before and self.after and self.before >= self.after:
-            raise ValueError("'before' must be less than 'after'")
+        if not self.first and not self.last:
+            raise ValueError("either 'first' or 'last' must be provided")
+
+        if self.first and self.last:
+            raise ValueError("'first' and 'last' cannot be both provided")
+
+        if self.first and self.before:
+            raise ValueError("'before' cannot be used with 'first'")
+
+        if self.last and self.after:
+            raise ValueError("'after' cannot be used with 'last'")
 
         return self
 

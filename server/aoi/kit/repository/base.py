@@ -1,12 +1,13 @@
 from collections.abc import Sequence
-from typing import Any, Protocol, Self
-from uuid import UUID
+from typing import Any, Protocol, Self, cast
 
 from sqlalchemy import Select, select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy.sql.base import ExecutableOption
+
+from aoi.kit.pagination import PaginationParams
 
 
 class ModelIDProtocol[ID_TYPE](Protocol):
@@ -59,23 +60,30 @@ class RepositoryBase[M: ModelIDProtocol[Any]]:
     async def paginate(
         self,
         statement: Select[tuple[M]],
-        *,
-        limit: int,
-        after: UUID | None = None,
-        before: UUID | None = None,
+        pagination: PaginationParams,
     ) -> tuple[list[M], int]:
         count_statement = select(func.count()).select_from(statement.subquery())
 
         count_result = await self.session.execute(count_statement)
         count = count_result.scalar_one()
 
-        paginated_statement = statement.limit(limit).order_by(self.model.id.desc())
+        limit = cast(int, pagination.first if pagination.first else pagination.last)
+        paginated_statement = statement.limit(limit)
 
-        if after:
-            paginated_statement = paginated_statement.where(self.model.id < after)
+        if pagination.first:
+            paginated_statement = paginated_statement.order_by(self.model.id.desc())
+        else:
+            paginated_statement = paginated_statement.order_by(self.model.id.asc())
 
-        if before:
-            paginated_statement = paginated_statement.where(self.model.id > before)
+        if pagination.after:
+            paginated_statement = paginated_statement.where(
+                self.model.id < pagination.after
+            )
+
+        if pagination.before:
+            paginated_statement = paginated_statement.where(
+                self.model.id > pagination.before
+            )
 
         results = await self.session.execute(paginated_statement)
         items = list(results.unique().scalars().all())

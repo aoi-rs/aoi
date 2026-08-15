@@ -1,8 +1,9 @@
 from uuid import UUID
-from typing import Any, TypedDict
+from typing import Any, TypedDict, cast
 
 from boto3.dynamodb.conditions import Key
 
+from aoi.kit.pagination import PaginationParams
 from aoi.links.schemas import LinkSchema
 from aoi.links.utils import extract_uuid_timestamp
 from aoi.integrations.aws.dynamodb.client import dynamodb
@@ -46,30 +47,22 @@ class LinkRepository:
         return self._decode(response["Item"])
 
     def paginate(
-        self,
-        auth_context: AuthContext,
-        *,
-        limit: int,
-        after: UUID | None = None,
-        before: UUID | None = None,
+        self, auth_context: AuthContext, pagination: PaginationParams
     ) -> list[LinkSchema]:
         key_condition = Key("u").eq(auth_context.user.id.bytes)
 
-        if after and before:
-            inclusive_from = before.int + 1
-            inclusive_to = after.int - 1
+        if pagination.after:
+            key_condition &= Key("i").lt(pagination.after.bytes)
 
-            key_condition &= Key("i").between(
-                inclusive_from.to_bytes(16), inclusive_to.to_bytes(16)
-            )
-        elif after:
-            key_condition &= Key("i").lt(after.bytes)
-        elif before:
-            key_condition &= Key("i").gt(before.bytes)
+        if pagination.before:
+            key_condition &= Key("i").gt(pagination.before.bytes)
+
+        limit = cast(int, pagination.first if pagination.first else pagination.last)
+        forward = bool(pagination.last)
 
         response = table.query(
             KeyConditionExpression=key_condition,
-            ScanIndexForward=False,
+            ScanIndexForward=forward,
             Limit=limit,
         )
 
