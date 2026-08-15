@@ -37,16 +37,16 @@ class PaginationParams(Schema):
 
     @model_validator(mode="after")
     def check_cursor_order(self) -> Self:
-        if not self.first and not self.last:
+        if self.first is None and self.last is None:
             raise ValueError("either 'first' or 'last' must be provided")
 
-        if self.first and self.last:
+        if self.first is not None and self.last is not None:
             raise ValueError("'first' and 'last' cannot be both provided")
 
-        if self.first and self.before:
+        if self.first is not None and self.before is not None:
             raise ValueError("'before' cannot be used with 'first'")
 
-        if self.last and self.after:
+        if self.last is not None and self.after is not None:
             raise ValueError("'after' cannot be used with 'last'")
 
         return self
