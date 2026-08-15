@@ -5,13 +5,13 @@ from pydantic import UUID7
 from aoi.links.schemas import LinkSchema, LinkCreate, LinkUpdate
 from aoi.links.service import links
 from aoi.links.auth import LinksRead, LinksWrite
-from aoi.kit.pagination import PaginationParamsQuery, ListResource
+from aoi.kit.pagination import PaginationParamsQuery
 from aoi.exceptions import ResourceMissing
 
 router = APIRouter(prefix="/links")
 
 
-@router.get("/", summary="List links", response_model=ListResource[LinkSchema])
+@router.get("/", summary="List links", response_model=Sequence[LinkSchema])
 def list(
     pagination: PaginationParamsQuery,
     auth_context: LinksRead,
