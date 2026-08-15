@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 LINKS_TABLE_NAME = "links"
 
+
 class LinkRepository:
     def create(self, schema: LinkSchema):
         dynamodb.put_item(

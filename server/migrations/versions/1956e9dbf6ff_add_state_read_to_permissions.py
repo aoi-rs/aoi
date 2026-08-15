@@ -5,14 +5,15 @@ Revises: e83364fd2be3
 Create Date: 2026-08-15 15:11:33.521336
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
 
 
 # revision identifiers, used by Alembic.
-revision: str = '1956e9dbf6ff'
-down_revision: Union[str, Sequence[str], None] = 'e83364fd2be3'
+revision: str = "1956e9dbf6ff"
+down_revision: Union[str, Sequence[str], None] = "e83364fd2be3"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

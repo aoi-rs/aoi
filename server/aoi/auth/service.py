@@ -39,7 +39,9 @@ class AuthService:
 
         return_url = get_safe_return_url(return_to)
 
-        response = RedirectResponse(return_url, 303) if redirect else Response()
+        response = (
+            RedirectResponse(return_url, 303) if redirect else Response(status_code=204)
+        )
 
         response = self._set_cookie(
             request,
