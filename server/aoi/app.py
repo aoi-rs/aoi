@@ -2,7 +2,7 @@ import contextlib
 
 from fastapi import FastAPI
 from typing import TypedDict
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator
 from starlette.types import Scope
 
 from aoi.postgres import AsyncSessionMiddleware, create_async_engine
@@ -59,7 +59,7 @@ class State(TypedDict):
 
 
 @contextlib.asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncIterator[State]:
+async def lifespan(app: FastAPI) -> AsyncGenerator[State]:
     async_engine = async_read_engine = create_async_engine("app")
 
     async_sessionmaker = async_read_sessionmaker = create_async_sessionmaker(
