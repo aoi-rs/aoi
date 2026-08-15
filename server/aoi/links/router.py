@@ -36,7 +36,7 @@ def create(link_create: LinkCreate, auth_context: LinksWrite) -> LinkSchema:
 
 
 @router.patch("/{id}", summary="Update a link", response_model=LinkSchema)
-async def update(
+def update(
     id: UUID7,
     link_update: LinkUpdate,
     auth_context: LinksWrite,

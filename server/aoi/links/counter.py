@@ -1,11 +1,9 @@
 from threading import Lock
-from decimal import Decimal
 from aoi.integrations.aws.dynamodb.client import dynamodb
 
+COUNTER_TABLE_NAME = "counters"
 COUNTER_ITEM_KEY = "global"
 COUNTER_ALLOCATION_SIZE = 100
-
-counter_table = dynamodb.Table("counters")
 
 
 class MonotonicCounter:
@@ -25,18 +23,18 @@ class MonotonicCounter:
             return result
 
     def _allocate(self):
-        response = counter_table.update_item(
-            Key={"k": COUNTER_ITEM_KEY},
+        response = dynamodb.update_item(
+            TableName=COUNTER_TABLE_NAME,
+            Key={"k": {"S": COUNTER_ITEM_KEY}},
             UpdateExpression="ADD #v :inc",
             ExpressionAttributeNames={"#v": "v"},
-            ExpressionAttributeValues={":inc": COUNTER_ALLOCATION_SIZE},
+            ExpressionAttributeValues={":inc": {"N": str(COUNTER_ALLOCATION_SIZE)}},
             ReturnValues="UPDATED_NEW",
         )
 
-        attributes = response["Attributes"]
-        assert isinstance(attributes["v"], Decimal)
+        assert "N" in response["Attributes"]["v"]
 
-        value = int(attributes["v"])
+        value = int(response["Attributes"]["v"]["N"])
 
         self.next_value = value - COUNTER_ALLOCATION_SIZE
         self.allocation_end = value - 1
