@@ -1,5 +1,6 @@
 from collections.abc import Sequence
 from typing import Any, Protocol, Self
+from uuid import UUID
 
 from sqlalchemy import Select, select, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -56,7 +57,12 @@ class RepositoryBase[M: ModelIDProtocol[Any]]:
         return result.scalars().unique().all()
 
     async def paginate(
-        self, statement: Select[tuple[M]], *, limit: int
+        self,
+        statement: Select[tuple[M]],
+        *,
+        limit: int,
+        after: UUID | None = None,
+        before: UUID | None = None,
     ) -> tuple[list[M], int]:
         count_statement = select(func.count()).select_from(statement.subquery())
 
@@ -65,7 +71,11 @@ class RepositoryBase[M: ModelIDProtocol[Any]]:
 
         paginated_statement = statement.limit(limit).order_by(self.model.id.desc())
 
-        # TODO: add cursor-based pagination filters
+        if after:
+            paginated_statement = paginated_statement.where(self.model.id < after)
+
+        if before:
+            paginated_statement = paginated_statement.where(self.model.id > before)
 
         results = await self.session.execute(paginated_statement)
         items = list(results.unique().scalars().all())

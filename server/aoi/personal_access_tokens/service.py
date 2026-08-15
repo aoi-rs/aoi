@@ -25,7 +25,12 @@ class PersonalAccessTokenService:
         repository = PersonalAccessTokenRepository.from_session(session)
         statement = repository.get_readable_statement(context)
 
-        return await repository.paginate(statement, limit=pagination.limit)
+        return await repository.paginate(
+            statement,
+            limit=pagination.limit,
+            after=pagination.after,
+            before=pagination.before,
+        )
 
     async def get(
         self, session: AsyncSession, context: AuthContext, id: UUID

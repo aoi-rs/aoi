@@ -45,9 +45,30 @@ class LinkRepository:
 
         return self._decode(response["Item"])
 
-    def paginate(self, auth_context: AuthContext, *, limit: int) -> list[LinkSchema]:
+    def paginate(
+        self,
+        auth_context: AuthContext,
+        *,
+        limit: int,
+        after: UUID | None = None,
+        before: UUID | None = None,
+    ) -> list[LinkSchema]:
+        key_condition = Key("u").eq(auth_context.user.id.bytes)
+
+        if after and before:
+            inclusive_from = before.int + 1
+            inclusive_to = after.int - 1
+
+            key_condition &= Key("i").between(
+                inclusive_from.to_bytes(16), inclusive_to.to_bytes(16)
+            )
+        elif after:
+            key_condition &= Key("i").lt(after.bytes)
+        elif before:
+            key_condition &= Key("i").gt(before.bytes)
+
         response = table.query(
-            KeyConditionExpression=Key("u").eq(auth_context.user.id.bytes),
+            KeyConditionExpression=key_condition,
             ScanIndexForward=False,
             Limit=limit,
         )

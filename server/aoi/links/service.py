@@ -75,7 +75,12 @@ class LinkService:
     def list(
         self, context: AuthContext, pagination: PaginationParams
     ) -> Sequence[LinkSchema]:
-        return link_repository.paginate(context, limit=pagination.limit)
+        return link_repository.paginate(
+            context,
+            limit=pagination.limit,
+            after=pagination.after,
+            before=pagination.before,
+        )
 
     def _is_conditional_check_failed_error(self, err: ClientError) -> bool:
         return (

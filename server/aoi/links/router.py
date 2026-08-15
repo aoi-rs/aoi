@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from fastapi import APIRouter
 from pydantic import UUID7
 
@@ -14,11 +15,9 @@ router = APIRouter(prefix="/links")
 def list(
     pagination: PaginationParamsQuery,
     auth_context: LinksRead,
-) -> ListResource[LinkSchema]:
+) -> Sequence[LinkSchema]:
     items = links.list(auth_context, pagination)
-
-    # TODO: return raw list instead of ListResource
-    return ListResource[LinkSchema].from_paginated_results(items, 0)
+    return items
 
 
 @router.get("/{id}", summary="Get a link", response_model=LinkSchema)

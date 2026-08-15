@@ -69,7 +69,12 @@ class SessionService:
         repository = SessionRepository.from_session(session)
         statement = repository.get_readable_statement(auth_context)
 
-        items, count = await repository.paginate(statement, limit=pagination.limit)
+        items, count = await repository.paginate(
+            statement,
+            limit=pagination.limit,
+            after=pagination.after,
+            before=pagination.before,
+        )
 
         return items, count
 
