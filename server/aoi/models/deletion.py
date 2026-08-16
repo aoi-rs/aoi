@@ -21,21 +21,29 @@ class Deletion(RevisionModel):
     model_name: Mapped[DeletedModel] = mapped_column(
         Enum(DeletedModel, name="deleted_model"), primary_key=True
     )
+    user_id: Mapped[UUID] = mapped_column(SQLUUID, nullable=False)
 
 
 record_deletions_function = PGFunction(
     schema="public",
     signature="record_deletions()",
     definition="""
-        RETURNS TRIGGER AS $$
-        BEGIN
-            INSERT INTO deletions (model_name, model_id)
-            SELECT TG_ARGV[0]::deleted_model, id
-            FROM deleted_rows;
+    RETURNS TRIGGER AS $$
+    DECLARE
+        allocated_revision BIGINT;
+    BEGIN
+        SELECT allocate_revision(user_id)
+        INTO allocated_revision
+        FROM deleted_rows
+        LIMIT 1;
 
-            RETURN NULL;
-        END
-        $$ LANGUAGE plpgsql;
+        INSERT INTO deletions (model_name, model_id, user_id, revision)
+        SELECT TG_ARGV[0]::deleted_model, id, user_id, allocated_revision
+        FROM deleted_rows;
+
+        RETURN NULL;
+    END
+    $$ LANGUAGE plpgsql VOLATILE;
     """,
 )
 

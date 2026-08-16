@@ -155,13 +155,15 @@ class StateService:
                 UNION ALL
 
                 SELECT
-                d.model_id AS id,
-                d.model_name::text AS model,
-                d.revision,
-                jsonb_build_object(
-                    'deleted', true
-                ) AS data
+                    d.model_id AS id,
+                    d.model_name::text AS model,
+                    d.revision,
+                    jsonb_build_object(
+                        'deleted', true
+                    ) AS data
                 FROM deletions d
+                WHERE d.user_id = :user_id
+                AND d.revision > :from_revision
             """),
             {
                 "user_id": auth_context.user.id,

@@ -31,9 +31,20 @@ class PersonalAccessToken(RecordModel, RevisionModel):
         return relationship(User, lazy="raise")
 
 
-personal_access_token_deletion_trigger = PGTrigger(
+advance_personal_access_token_revision_trigger = PGTrigger(
     schema="public",
-    signature="personal_access_token_deletions",
+    signature="advance_personal_access_token_revision",
+    on_entity="personal_access_tokens",
+    definition="""
+    BEFORE INSERT OR UPDATE ON personal_access_tokens
+    FOR EACH ROW
+    EXECUTE FUNCTION advance_owned_model_revision()
+    """,
+)
+
+record_personal_access_token_deletions_trigger = PGTrigger(
+    schema="public",
+    signature="record_personal_access_token_deletions",
     on_entity="personal_access_tokens",
     definition="""
     AFTER DELETE ON personal_access_tokens
@@ -43,4 +54,9 @@ personal_access_token_deletion_trigger = PGTrigger(
     """,
 )
 
-register_entities((personal_access_token_deletion_trigger,))
+register_entities(
+    (
+        advance_personal_access_token_revision_trigger,
+        record_personal_access_token_deletions_trigger,
+    )
+)

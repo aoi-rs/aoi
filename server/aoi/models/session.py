@@ -45,9 +45,20 @@ class Session(RecordModel, RevisionModel):
         return session_name_from_user_agent(self.user_agent)
 
 
-session_deletion_trigger = PGTrigger(
+advance_session_revision_trigger = PGTrigger(
     schema="public",
-    signature="session_deletion",
+    signature="advance_session_revision",
+    on_entity="sessions",
+    definition="""
+    BEFORE INSERT OR UPDATE ON sessions
+    FOR EACH ROW
+    EXECUTE FUNCTION advance_owned_model_revision()
+    """,
+)
+
+record_session_deletions_trigger = PGTrigger(
+    schema="public",
+    signature="record_session_deletions",
     on_entity="sessions",
     definition="""
     AFTER DELETE ON sessions
@@ -57,4 +68,9 @@ session_deletion_trigger = PGTrigger(
     """,
 )
 
-register_entities((session_deletion_trigger,))
+register_entities(
+    (
+        advance_session_revision_trigger,
+        record_session_deletions_trigger,
+    )
+)

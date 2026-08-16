@@ -9,7 +9,6 @@ from sqlalchemy import (
     TIMESTAMP,
     BIGINT,
     MetaData,
-    Sequence,
     UUID as SQLUUID,
     inspect,
 )
@@ -49,17 +48,12 @@ class TimestampedModel(Model):
         self.modified_at = utc_now()
 
 
-revision_number = Sequence("revision_number", start=1, increment=1)
-
-
 class RevisionModel(Model):
     __abstract__ = True
 
     revision: Mapped[int] = mapped_column(
         BIGINT,
         nullable=False,
-        onupdate=revision_number.next_value(),
-        server_default=revision_number.next_value(),
     )
 
 
