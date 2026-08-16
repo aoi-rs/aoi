@@ -12,7 +12,6 @@ from aoi.kit.db.postgres import AsyncSession
 from aoi.kit.db.locking import DBAPIError, is_lock_not_available_error
 from aoi.config import settings
 from aoi.kit.utils import utc_now
-from aoi.models import LoginToken
 from aoi.exceptions import AoiError
 from aoi.users.service import users
 from aoi.sessions.service import sessions
@@ -31,16 +30,15 @@ class LoginTokenInvalidOrExpired(AoiError):
 
 class LoginTokenService:
     async def request(self, session: AsyncSession, email: str):
+        repository = LoginTokenRepository.from_session(session)
+
         token = self._generate_token()
         token_hash = self._generate_token_hash(token)
         expires_at = utc_now() + timedelta(seconds=settings.LOGIN_TOKEN_TTL_SECONDS)
 
-        login_token = LoginToken(
+        login_token = await repository.create_or_refresh(
             email=email, token_hash=token_hash, expires_at=expires_at
         )
-
-        session.add(login_token)
-        await session.flush()
 
         # TODO: delegate it to a message queue instead of sending emails
         # during HTTP requests.
@@ -75,9 +73,7 @@ class LoginTokenService:
         if login_token is None:
             raise LoginTokenInvalidOrExpired()
 
-        login_token.was_used = True
-
-        session.add(login_token)
+        await session.delete(login_token)
         await session.flush()
 
         user = await users.get_or_create(session, email)
