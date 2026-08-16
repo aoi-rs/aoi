@@ -16,20 +16,7 @@ class UserService:
 
     async def get_or_create(self, session: AsyncSession, email: str) -> User:
         repository = UserRepository.from_session(session)
-        user = await repository.get_by_email(email)
-
-        if not user:
-            user = await self.create(session, email)
-
-        return user
-
-    async def create(self, session: AsyncSession, email: str) -> User:
-        user = User(email=email)
-
-        session.add(user)
-        await session.flush()
-
-        return user
+        return await repository.get_or_create(email=email)
 
     async def update(self, id: UUID, session: AsyncSession, update_schema: UserUpdate):
         statement = (
