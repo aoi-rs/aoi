@@ -18,7 +18,7 @@ class User(RecordModel):
         BIGINT, nullable=False, server_default=text("1")
     )
     last_revision: Mapped[int] = mapped_column(
-        BIGINT, nullable=False, server_default=text("initialize_user_revision()")
+        BIGINT, nullable=False, server_default=text("1")
     )
 
 
@@ -52,14 +52,30 @@ allocate_revision_function = PGFunction(
     """,
 )
 
-initialize_user_revision_function = PGFunction(
+select_or_insert_user_function = PGFunction(
     schema="public",
-    signature="initialize_user_revision()",
+    signature="select_or_insert_user(p_id UUID, p_email CITEXT, p_created_at TIMESTAMPTZ)",
     definition="""
-    RETURNS BIGINT AS $$
+    RETURNS users AS $$
+    DECLARE
+        result users%ROWTYPE;
     BEGIN
-      PERFORM SET_CONFIG('aoi.revision', '1', TRUE);
-      RETURN 1;
+        INSERT INTO users (id, email, created_at)
+        VALUES (p_id, p_email, p_created_at)
+        ON CONFLICT (email) DO NOTHING
+        RETURNING * INTO result;
+
+        IF FOUND THEN
+            PERFORM SET_CONFIG('aoi.revision', '1', TRUE);
+            RETURN result;
+        END IF;
+
+        SELECT *
+        INTO STRICT result
+        FROM users
+        WHERE email = p_email;
+
+        RETURN result;
     END
     $$ LANGUAGE plpgsql VOLATILE;
     """,
@@ -121,7 +137,7 @@ advance_user_revision_trigger = PGTrigger(
 register_entities(
     (
         allocate_revision_function,
-        initialize_user_revision_function,
+        select_or_insert_user_function,
         advance_user_revision_function,
         advance_owned_model_revision_function,
         advance_user_revision_trigger,

@@ -1,4 +1,4 @@
-import uuid
+from uuid import UUID, uuid7
 from datetime import UTC, datetime
 
 
@@ -6,8 +6,8 @@ def utc_now() -> datetime:
     return datetime.now(UTC)
 
 
-def generate_uuid() -> uuid.UUID:
-    return uuid.uuid7()
+def generate_uuid() -> UUID:
+    return uuid7()
 
 
 def human_readable_size(num: float, suffix: str = "B") -> str:
