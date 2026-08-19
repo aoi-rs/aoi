@@ -21,15 +21,15 @@ locals {
   redirector_task_definition_container_name = "aoi-redirector"
 }
 
-data "aws_ecs_container_definition" "service" {
-  task_definition = local.service_task_definition_id
-  container_name  = local.service_task_definition_container_name
-}
+# data "aws_ecs_container_definition" "service" {
+#   task_definition = local.service_task_definition_id
+#   container_name  = local.service_task_definition_container_name
+# }
 
-data "aws_ecs_container_definition" "redirector" {
-  task_definition = local.redirector_task_definition_id
-  container_name  = local.redirector_task_definition_container_name
-}
+# data "aws_ecs_container_definition" "redirector" {
+#   task_definition = local.redirector_task_definition_id
+#   container_name  = local.redirector_task_definition_container_name
+# }
 
 resource "aws_ecs_task_definition" "service" {
   family                   = "aoi"
@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "service" {
   container_definitions = jsonencode([
     {
       name      = "aoi"
-      image     = data.aws_ecs_container_definition.service.image
+      image     = "${aws_ecr_repository.service.repository_url}:latest"
       essential = true
 
       portMappings = [
@@ -134,7 +134,7 @@ resource "aws_ecs_task_definition" "redirector" {
   container_definitions = jsonencode([
     {
       name      = "aoi-redirector"
-      image     = data.aws_ecs_container_definition.redirector.image
+      image     = "${aws_ecr_repository.redirector.repository_url}:latest"
       essential = true
 
       portMappings = [
