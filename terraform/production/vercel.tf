@@ -49,7 +49,7 @@ resource "vercel_dns_record" "redirects" {
 resource "vercel_project" "website" {
   name           = "aoi"
   framework      = "nextjs"
-  root_directory = "apps/www"
+  root_directory = "clients/apps/www"
 
   git_repository = {
     type = "github"
