@@ -46,7 +46,7 @@ resource "vercel_dns_record" "redirects_lb" {
   domain = "aoi.rs"
   type   = "CNAME"
   name   = "lb"
-  value  = aws_alb.redirector.dns_name
+  value  = aws_alb.redirector_test.dns_name
 }
 
 # =============================================================================
