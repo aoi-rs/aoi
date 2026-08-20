@@ -24,7 +24,9 @@ resource "aws_alb" "redirector" {
 
   subnets = [
     aws_subnet.private_a.id,
-    aws_subnet.private_b.id
+    aws_subnet.private_b.id,
+    aws_subnet.public_a.id,
+    aws_subnet.public_b.id,
   ]
 }
 
