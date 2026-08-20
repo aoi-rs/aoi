@@ -208,4 +208,10 @@ resource "aws_ecs_service" "redirector" {
     container_name   = "aoi-redirector"
     container_port   = 12000
   }
+
+  load_balancer {
+    target_group_arn = aws_alb_target_group.redirector_test.arn
+    container_name   = "aoi-redirector"
+    container_port   = 12000
+  }
 }

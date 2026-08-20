@@ -126,9 +126,9 @@ resource "aws_security_group" "redirector" {
   name   = "redirector"
 
   ingress {
-    from_port       = 12000
-    to_port         = 12000
-    protocol        = "tcp"
+    from_port = 12000
+    to_port   = 12000
+    protocol  = "tcp"
     # TODO: remove service ALB after the load test
     security_groups = [aws_security_group.redirector_alb.id, aws_security_group.service_alb.id]
   }

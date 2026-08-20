@@ -29,9 +29,9 @@ resource "aws_alb" "redirector" {
 }
 
 resource "aws_alb" "redirector_test" {
-  name = "redirector-test"
+  name               = "redirector-test"
   load_balancer_type = "application"
-  internal = false
+  internal           = false
 
   security_groups = [
     aws_security_group.service_alb.id
@@ -68,10 +68,10 @@ resource "aws_alb_target_group" "redirector" {
 }
 
 resource "aws_alb_target_group" "redirector_test" {
-  vpc_id = aws_vpc.main.id
-  name = "redirector-test"
-  port = 12000
-  protocol = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  name        = "redirector-test"
+  port        = 12000
+  protocol    = "HTTP"
   target_type = "ip"
 
   health_check {
@@ -110,7 +110,7 @@ locals {
     }
 
     test = {
-      arn = aws_alb.redirector_test.arn
+      arn              = aws_alb.redirector_test.arn
       target_group_arn = aws_alb_target_group.redirector_test.arn
     }
   }
