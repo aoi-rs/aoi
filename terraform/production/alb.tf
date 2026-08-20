@@ -16,7 +16,7 @@ resource "aws_alb" "service" {
 resource "aws_alb" "redirector" {
   name               = "redirector"
   load_balancer_type = "application"
-  internal           = true
+  internal           = false
 
   security_groups = [
     aws_security_group.redirector_alb.id

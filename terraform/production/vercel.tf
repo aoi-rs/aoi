@@ -42,6 +42,13 @@ resource "vercel_dns_record" "redirects" {
   value  = aws_cloudfront_distribution.redirects.domain_name
 }
 
+resource "vercel_dns_record" "redirects_lb" {
+  domain = "aoi.rs"
+  type   = "CNAME"
+  name   = "lb"
+  value  = aws_alb.redirector.dns_name
+}
+
 # =============================================================================
 # Resources for the account.aoi.rs website
 # =============================================================================
