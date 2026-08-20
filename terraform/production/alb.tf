@@ -38,8 +38,8 @@ resource "aws_alb" "redirector_test" {
   ]
 
   subnets = [
-    aws_subnet.public_a,
-    aws_subnet.public_b,
+    aws_subnet.public_a.id,
+    aws_subnet.public_b.id,
   ]
 }
 
