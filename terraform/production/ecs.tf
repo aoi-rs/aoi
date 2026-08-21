@@ -21,15 +21,15 @@ locals {
   redirector_task_definition_container_name = "aoi-redirector"
 }
 
-# data "aws_ecs_container_definition" "service" {
-#   task_definition = local.service_task_definition_id
-#   container_name  = local.service_task_definition_container_name
-# }
+data "aws_ecs_container_definition" "service" {
+  task_definition = local.service_task_definition_id
+  container_name  = local.service_task_definition_container_name
+}
 
-# data "aws_ecs_container_definition" "redirector" {
-#   task_definition = local.redirector_task_definition_id
-#   container_name  = local.redirector_task_definition_container_name
-# }
+data "aws_ecs_container_definition" "redirector" {
+  task_definition = local.redirector_task_definition_id
+  container_name  = local.redirector_task_definition_container_name
+}
 
 resource "aws_ecs_task_definition" "service" {
   family                   = "aoi"
@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "service" {
   container_definitions = jsonencode([
     {
       name      = "aoi"
-      image     = "${aws_ecr_repository.service.repository_url}:latest"
+      image     = data.aws_ecs_container_definition.service.image
       essential = true
 
       portMappings = [
@@ -134,7 +134,7 @@ resource "aws_ecs_task_definition" "redirector" {
   container_definitions = jsonencode([
     {
       name      = "aoi-redirector"
-      image     = "${aws_ecr_repository.redirector.repository_url}:latest"
+      image     = data.aws_ecs_container_definition.redirector.image
       essential = true
 
       portMappings = [
@@ -205,12 +205,6 @@ resource "aws_ecs_service" "redirector" {
 
   load_balancer {
     target_group_arn = aws_alb_target_group.redirector.arn
-    container_name   = "aoi-redirector"
-    container_port   = 12000
-  }
-
-  load_balancer {
-    target_group_arn = aws_alb_target_group.redirector_test.arn
     container_name   = "aoi-redirector"
     container_port   = 12000
   }

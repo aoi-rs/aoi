@@ -24,22 +24,7 @@ resource "aws_alb" "redirector" {
 
   subnets = [
     aws_subnet.private_a.id,
-    aws_subnet.private_b.id,
-  ]
-}
-
-resource "aws_alb" "redirector_test" {
-  name               = "redirector-test"
-  load_balancer_type = "application"
-  internal           = false
-
-  security_groups = [
-    aws_security_group.service_alb.id
-  ]
-
-  subnets = [
-    aws_subnet.public_a.id,
-    aws_subnet.public_b.id,
+    aws_subnet.private_b.id
   ]
 }
 
@@ -67,18 +52,6 @@ resource "aws_alb_target_group" "redirector" {
   }
 }
 
-resource "aws_alb_target_group" "redirector_test" {
-  vpc_id      = aws_vpc.main.id
-  name        = "redirector-test"
-  port        = 12000
-  protocol    = "HTTP"
-  target_type = "ip"
-
-  health_check {
-    path = "/"
-  }
-}
-
 resource "aws_alb_listener" "http" {
   load_balancer_arn = aws_alb.service.arn
   port              = 80
@@ -95,8 +68,6 @@ resource "aws_alb_listener" "http" {
   }
 }
 
-
-
 locals {
   load_balancers = {
     main = {
@@ -107,11 +78,6 @@ locals {
     internal = {
       arn              = aws_alb.redirector.arn
       target_group_arn = aws_alb_target_group.redirector.arn
-    }
-
-    test = {
-      arn              = aws_alb.redirector_test.arn
-      target_group_arn = aws_alb_target_group.redirector_test.arn
     }
   }
 }
