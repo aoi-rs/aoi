@@ -37,4 +37,4 @@ db_migrate = { cmd = "alembic upgrade head", help = "run alembic upgrade" }
 lint = { cmd = "ruff format --check . && ruff check .", help = "run ruff linter" }
 lint_fix = { cmd = "ruff format . && ruff check --fix .", help = "run ruff linter with autofix" }
 type_check = { cmd = "pyright aoi", help = "run pyright type checker" }
-loadtest = { cmd = "locust -f load_tests/locustfile.py --host=http://127.0.0.1:8000", help = "run load tests" }
+loadtest = { cmd = "locust -f load_tests/locustfile.py", help = "run load tests" }

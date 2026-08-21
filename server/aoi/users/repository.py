@@ -21,5 +21,5 @@ class UserRepository(RepositoryBase[User], RepositoryIDMixin[User, UUID]):
             statement,
             {"id": self.model.generate_id(), "email": email, "created_at": utc_now()},
         )
-        
+
         return result.one()
