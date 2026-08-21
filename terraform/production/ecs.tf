@@ -187,7 +187,7 @@ resource "aws_ecs_service" "redirector" {
   name            = "aoi-redirector"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.redirector.arn
-  desired_count   = 1
+  desired_count   = 10
   launch_type     = "FARGATE"
 
   network_configuration {
