@@ -1,0 +1,55 @@
+name: Run Load Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  load-test:
+    name: Run Locust Load Test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: server
+    env:
+      LOAD_TEST_LINK_SLUG: 1001c
+      LOAD_TEST_CHECK_CLOUDFRONT_HIT: "true"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.1.0
+        with:
+          enable-cache: true
+
+      - name: Install Python
+        uses: actions/setup-python@v6
+
+      - name: Install dependencies
+        run: uv sync --dev --frozen
+
+      - name: Run load test
+        run: |
+          mkdir -p results/cloudfront
+          uv run locust -f load_tests/locustfile.py \
+            --headless \
+            --host https://aoi.rs \
+            --users 5 \
+            --spawn-rate 1 \
+            --run-time 5m \
+            --csv results/cloudfront/stats \
+            --html results/cloudfront/report.html
+
+      - name: Upload results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-results-${{ github.run_number }}
+          path: server/results/cloudfront/
+          if-no-files-found: warn
+          retention-days: 30
