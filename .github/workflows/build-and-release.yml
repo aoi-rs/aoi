@@ -6,7 +6,7 @@ on:
     paths:
       - server/**
       - crates/redirector/**
-      - apps/www/**
+      - clients/**
       - .github/workflows/build-and-release.yml
 
   workflow_dispatch:
@@ -36,7 +36,7 @@ jobs:
               - 'crates/redirector/**'
               - '.github/workflows/build-and-release.yml'
             studio:
-              - 'clients/apps/www/**'
+              - 'clients/**'
               - '.github/workflows/build-and-release.yml'
             migrations:
               - 'server/migrations/**'
