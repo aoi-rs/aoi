@@ -22,115 +22,111 @@ import { RevokeSessionDialog } from '@/components/revoke-session-dialog'
 import { Button } from '@/components/ui/button'
 import { useStore } from '@/providers/store'
 
-export const SessionList = observer(
-  () => {
-    const [willRevoke, setWillRevoke] = useState<Session | '@others' | null>(
-      null,
-    )
+export const SessionList = observer(() => {
+  const [willRevoke, setWillRevoke] = useState<Session | '@others' | null>(null)
 
-    const { sessions } = useStore()
-    const { current, others } = detachCurrentSession(sessions)
+  const { sessions } = useStore()
+  const { current, others } = detachCurrentSession(sessions)
 
-    return (
-      <div className="flex flex-col gap-3">
+  return (
+    <div className="flex flex-col gap-3">
+      <ListView>
+        <ListViewContent>
+          <ListViewItem>
+            <ListViewClickable />
+
+            <ListViewBadge>
+              <Globe />
+            </ListViewBadge>
+
+            <ListViewDetails>
+              <ListViewTitle>{current.name}</ListViewTitle>
+              <ListViewDescription>Your current session</ListViewDescription>
+            </ListViewDetails>
+
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setWillRevoke(current)}
+            >
+              Log out
+            </Button>
+          </ListViewItem>
+        </ListViewContent>
+      </ListView>
+
+      {sessions.length > 1 && (
         <ListView>
+          <ListViewHeader>
+            <span>
+              {sessions.length - 1} other session
+              {sessions.length > 2 && 's'}
+            </span>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setWillRevoke('@others')}
+            >
+              Revoke all
+            </Button>
+          </ListViewHeader>
+
           <ListViewContent>
-            <ListViewItem>
-              <ListViewClickable />
+            {others.map((session) => (
+              <ListViewItem key={session.id}>
+                <ListViewClickable />
 
-              <ListViewBadge>
-                <Globe />
-              </ListViewBadge>
+                <ListViewBadge>
+                  <Globe />
+                </ListViewBadge>
 
-              <ListViewDetails>
-                <ListViewTitle>{current.name}</ListViewTitle>
-                <ListViewDescription>Your current session</ListViewDescription>
-              </ListViewDetails>
+                <ListViewDetails>
+                  <ListViewTitle>{session.name}</ListViewTitle>
 
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setWillRevoke(current)}
-              >
-                Log out
-              </Button>
-            </ListViewItem>
+                  <ListViewDescription>
+                    Last seen{' '}
+                    {formatDistanceToNow(session.refreshed_at, {
+                      addSuffix: true,
+                    })}
+                  </ListViewDescription>
+                </ListViewDetails>
+
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setWillRevoke(session)}
+                >
+                  Revoke
+                </Button>
+              </ListViewItem>
+            ))}
           </ListViewContent>
         </ListView>
+      )}
 
-        {sessions.length > 1 && (
-          <ListView>
-            <ListViewHeader>
-              <span>
-                {sessions.length - 1} other session
-                {sessions.length > 2 && 's'}
-              </span>
+      <LogoutDialog
+        open={willRevoke instanceof Session && willRevoke.is_current_session}
+        onOpenChange={() => setWillRevoke(null)}
+      />
 
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setWillRevoke('@others')}
-              >
-                Revoke all
-              </Button>
-            </ListViewHeader>
+      <RevokeOtherSessionsDialog
+        open={willRevoke === '@others'}
+        onOpenChange={() => setWillRevoke(null)}
+      />
 
-            <ListViewContent>
-              {others.map((session) => (
-                <ListViewItem key={session.id}>
-                  <ListViewClickable />
-
-                  <ListViewBadge>
-                    <Globe />
-                  </ListViewBadge>
-
-                  <ListViewDetails>
-                    <ListViewTitle>{session.name}</ListViewTitle>
-
-                    <ListViewDescription>
-                      Last seen{' '}
-                      {formatDistanceToNow(session.refreshed_at, {
-                        addSuffix: true,
-                      })}
-                    </ListViewDescription>
-                  </ListViewDetails>
-
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setWillRevoke(session)}
-                  >
-                    Revoke
-                  </Button>
-                </ListViewItem>
-              ))}
-            </ListViewContent>
-          </ListView>
-        )}
-
-        <LogoutDialog
-          open={willRevoke instanceof Session && willRevoke.is_current_session}
-          onOpenChange={() => setWillRevoke(null)}
-        />
-
-        <RevokeOtherSessionsDialog
-          open={willRevoke === '@others'}
-          onOpenChange={() => setWillRevoke(null)}
-        />
-
-        <RevokeSessionDialog
-          session={willRevoke as Session}
-          open={willRevoke instanceof Session && !willRevoke.is_current_session}
-          onOpenChange={(o) => {
-            if (!o) {
-              setWillRevoke(null)
-            }
-          }}
-        />
-      </div>
-    )
-  },
-)
+      <RevokeSessionDialog
+        session={willRevoke as Session}
+        open={willRevoke instanceof Session && !willRevoke.is_current_session}
+        onOpenChange={(o) => {
+          if (!o) {
+            setWillRevoke(null)
+          }
+        }}
+      />
+    </div>
+  )
+})
 
 function detachCurrentSession(sessions: Session[]) {
   let current!: Session

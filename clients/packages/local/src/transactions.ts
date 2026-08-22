@@ -79,14 +79,14 @@ export class TransactionScheduler {
   private flush() {
     for (const id of this.scheduled) {
       navigator.locks.request(`transaction:${id}`, async () => {
-        const transaction = (await this.db._transactions.get(id))
+        const transaction = await this.db._transactions.get(id)
 
         if (!transaction) {
           return
         }
 
         await this.execute(transaction)
-        
+
         await this.db._transactions.delete(id)
         this.scheduled.delete(id)
       })

@@ -1,9 +1,7 @@
 import { cache } from 'react'
 import { type Client, type schemas, unwrap } from '@/generated/server'
 
-async function _listLinks(
-  client: Client,
-): Promise<schemas['LinkSchema'][]> {
+async function _listLinks(client: Client): Promise<schemas['LinkSchema'][]> {
   return await unwrap(
     client.GET('/v1/links/', { params: { query: { first: 100 } } }),
   )

@@ -35,9 +35,7 @@ export function PersonalAccessTokenContextProvider({
   const [generated, setGenerated] = useState<string | null>(null)
 
   return (
-    <PersonalAccessTokenContext
-      value={{ generated, setGenerated }}
-    >
+    <PersonalAccessTokenContext value={{ generated, setGenerated }}>
       {children}
     </PersonalAccessTokenContext>
   )
