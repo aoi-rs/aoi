@@ -47,19 +47,14 @@ resource "vercel_dns_record" "redirects" {
 # =============================================================================
 
 resource "vercel_project" "website" {
-  name             = "aoi"
-  framework        = "nextjs"
-  root_directory   = "clients"
-  build_command    = "bun turbo build --filter=@aoi-rs/www"
-  output_directory = "apps/www/.next"
+  name           = "aoi"
+  framework      = "nextjs"
+  root_directory = "clients/apps/www"
 
   git_repository = {
-    type = "github"
-    repo = "aoi-rs/aoi"
-  }
-
-  git_provider_options = {
-    create_deployments = false
+    type              = "github"
+    repo              = "aoi-rs/aoi"
+    production_branch = "main"
   }
 
   environment = [
