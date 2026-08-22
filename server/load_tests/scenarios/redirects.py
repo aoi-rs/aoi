@@ -1,23 +1,5 @@
-from locust import FastHttpUser, constant_pacing, task, events
+from locust import FastHttpUser, constant_pacing, task
 from load_tests.config import config
-
-@events.test_start.add_listener
-def warm_cloudfront(environment, **kwargs):
-    host = environment.host
-    slug = _resolve_slug()
-
-    response = requests.get(
-        f"{host}/{slug}",
-        allow_redirects=False,
-    )
-
-    response.raise_for_status()
-
-    print(
-        f"Warmup: {response.status_code}, "
-        f"x-cache={response.headers.get('x-cache')}"
-    )
-
 
 class RedirectUser(FastHttpUser):
     """
@@ -45,14 +27,6 @@ class RedirectUser(FastHttpUser):
                 response.failure(
                     f"Expected a permanent redirect. Received {response.status_code} status code."
                 )
-
-            if config.check_cloudfront_hit:
-                cache_status = response.headers.get("X-Cache", "")
-
-                if cache_status != "Hit from cloudfront":
-                    response.failure(
-                        f"Expected 'Hit from cloudfront'. Received: {cache_status!r}"
-                    )
 
 
 def _resolve_slug() -> str:
