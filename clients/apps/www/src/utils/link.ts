@@ -3,9 +3,9 @@ import { type Client, type schemas, unwrap } from '@/generated/server'
 
 async function _listLinks(
   client: Client,
-): Promise<schemas['ListResource_LinkSchema_']> {
+): Promise<schemas['LinkSchema'][]> {
   return await unwrap(
-    client.GET('/v1/links/', { params: { query: { limit: 20 } } }),
+    client.GET('/v1/links/', { params: { query: { first: 100 } } }),
   )
 }
 

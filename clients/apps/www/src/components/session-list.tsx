@@ -20,18 +20,10 @@ import { LogoutDialog } from '@/components/logout-dialog'
 import { RevokeOtherSessionsDialog } from '@/components/revoke-other-sessions-dialog'
 import { RevokeSessionDialog } from '@/components/revoke-session-dialog'
 import { Button } from '@/components/ui/button'
-import type { schemas } from '@/generated/server'
 import { useStore } from '@/providers/store'
 
-interface SessionListProps {
-  sessions: {
-    items: schemas['SessionSchema'][]
-    pagination: schemas['Pagination']
-  }
-}
-
 export const SessionList = observer(
-  ({ sessions: _sessions }: SessionListProps) => {
+  () => {
     const [willRevoke, setWillRevoke] = useState<Session | '@others' | null>(
       null,
     )

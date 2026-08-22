@@ -309,12 +309,6 @@ export interface components {
             /** Name */
             name?: string | null;
         };
-        /** ListResource[LinkSchema] */
-        ListResource_LinkSchema_: {
-            /** Items */
-            items: components["schemas"]["LinkSchema"][];
-            pagination: components["schemas"]["Pagination"];
-        };
         /** ListResource[PersonalAccessTokenSchema] */
         ListResource_PersonalAccessTokenSchema_: {
             /** Items */
@@ -426,8 +420,6 @@ export interface components {
              * Format: date-time
              */
             refreshed_at: string;
-            /** Revoked */
-            revoked: boolean;
             /** User Agent */
             user_agent: string;
             /**
@@ -465,8 +457,6 @@ export interface components {
         };
         /** UserUpdate */
         UserUpdate: {
-            /** Avatar Url */
-            avatar_url?: string | null;
             /** Name */
             name?: string | null;
         };
@@ -513,8 +503,14 @@ export interface operations {
     list_v1_links__get: {
         parameters: {
             query?: {
-                /** @description Size of a page, defaults to 10. Maximum is 100. */
-                limit?: number;
+                /** @description Cursor to be used with 'first' for forward pagination. */
+                after?: string | null;
+                /** @description Cursor to be used with 'last' for backward pagination. */
+                before?: string | null;
+                /** @description The number of items to forward paginate (used with 'after'). Maximum is 100. */
+                first?: number | null;
+                /** @description The number of items to backward paginate (used with 'before'). Maximum is 100. */
+                last?: number | null;
             };
             header?: never;
             path?: never;
@@ -528,7 +524,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ListResource_LinkSchema_"];
+                    "application/json": components["schemas"]["LinkSchema"][];
                 };
             };
             /** @description Validation Error */
@@ -713,8 +709,14 @@ export interface operations {
     list_v1_personal_access_tokens__get: {
         parameters: {
             query?: {
-                /** @description Size of a page, defaults to 10. Maximum is 100. */
-                limit?: number;
+                /** @description Cursor to be used with 'first' for forward pagination. */
+                after?: string | null;
+                /** @description Cursor to be used with 'last' for backward pagination. */
+                before?: string | null;
+                /** @description The number of items to forward paginate (used with 'after'). Maximum is 100. */
+                first?: number | null;
+                /** @description The number of items to backward paginate (used with 'before'). Maximum is 100. */
+                last?: number | null;
             };
             header?: never;
             path?: never;
@@ -873,8 +875,14 @@ export interface operations {
     list_v1_sessions__get: {
         parameters: {
             query?: {
-                /** @description Size of a page, defaults to 10. Maximum is 100. */
-                limit?: number;
+                /** @description Cursor to be used with 'first' for forward pagination. */
+                after?: string | null;
+                /** @description Cursor to be used with 'last' for backward pagination. */
+                before?: string | null;
+                /** @description The number of items to forward paginate (used with 'after'). Maximum is 100. */
+                first?: number | null;
+                /** @description The number of items to backward paginate (used with 'before'). Maximum is 100. */
+                last?: number | null;
             };
             header?: never;
             path?: never;

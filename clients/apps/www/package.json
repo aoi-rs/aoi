@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "generate": "uv run --directory ../../server/ -m scripts.generate_openapi | openapi-typescript --enum-values -o src/generated/server/schema.ts",
+    "generate": "uv run --directory ../../../server/ -m scripts.generate_openapi | openapi-typescript --enum-values -o src/generated/server/schema.ts",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",

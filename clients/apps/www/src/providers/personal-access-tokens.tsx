@@ -7,11 +7,8 @@ import {
   type SetStateAction,
   useState,
 } from 'react'
-import type { schemas } from '@/generated/server'
 
 interface PersonalAccessTokenContextProps {
-  tokens: schemas['PersonalAccessTokenSchema'][]
-  count: number
   generated: string | null
   setGenerated: Dispatch<SetStateAction<string | null>>
 }
@@ -29,21 +26,17 @@ export const PersonalAccessTokenContext =
   )
 
 interface PersonalAccessTokenContextProviderProps {
-  tokens: schemas['PersonalAccessTokenSchema'][]
-  count: number
   children: ReactNode
 }
 
 export function PersonalAccessTokenContextProvider({
-  tokens,
-  count,
   children,
 }: PersonalAccessTokenContextProviderProps) {
   const [generated, setGenerated] = useState<string | null>(null)
 
   return (
     <PersonalAccessTokenContext
-      value={{ tokens, count, generated, setGenerated }}
+      value={{ generated, setGenerated }}
     >
       {children}
     </PersonalAccessTokenContext>

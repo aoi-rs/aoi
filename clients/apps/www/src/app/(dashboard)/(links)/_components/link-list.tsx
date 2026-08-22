@@ -9,7 +9,7 @@ import { shortenCreationDate } from '@/utils/date'
 import { defaultRetry } from '@/utils/retry'
 
 interface LinkListProps {
-  links: schemas['ListResource_LinkSchema_']
+  links: schemas['LinkSchema'][]
 }
 
 export function LinkList({ links: _links }: LinkListProps) {
@@ -18,7 +18,7 @@ export function LinkList({ links: _links }: LinkListProps) {
     queryFn: () =>
       unwrap(
         service.GET('/v1/links/', {
-          params: { query: { limit: 100 } },
+          params: { query: { first: 100 } },
         }),
       ),
     retry: defaultRetry,
@@ -27,7 +27,7 @@ export function LinkList({ links: _links }: LinkListProps) {
 
   return (
     <ul className="flex flex-1 flex-col pt-2">
-      {links.items.map((link) => (
+      {links.map((link) => (
         <li key={link.id}>
           <ActiveLink
             className="group/link cursor-default"

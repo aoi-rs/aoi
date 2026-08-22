@@ -13,7 +13,7 @@ import { LinkList } from './link-list'
 import { LinksHeader } from './links-header'
 
 interface LinkPanelsProps {
-  links: schemas['ListResource_LinkSchema_']
+  links: schemas['LinkSchema'][]
   children: ReactNode
 }
 
