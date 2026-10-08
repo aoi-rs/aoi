@@ -5,8 +5,8 @@
   "scripts": {
     "lint": "biome check",
     "lint:fix": "biome check --write",
-    "build": "turbo run build",
-    "dev": "turbo run dev",
+    "build": "node init && turbo run build",
+    "dev": "node init && turbo run dev",
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
