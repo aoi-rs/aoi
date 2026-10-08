@@ -1,6 +1,7 @@
 from locust import FastHttpUser, constant_pacing, task
 from load_tests.config import config
 
+
 class RedirectUser(FastHttpUser):
     """
     Simulates HTTP calls to shortened URLs
