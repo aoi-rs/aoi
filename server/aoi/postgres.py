@@ -5,7 +5,6 @@ from fastapi import Request
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from aoi.config import settings
-from aoi.kit.db.postgres import create_async_engine as _create_async_engine
 from aoi.kit.db.postgres import (
     AsyncEngine,
     AsyncReadSession,
@@ -14,6 +13,7 @@ from aoi.kit.db.postgres import (
     AsyncSessionMaker,
     sql,
 )
+from aoi.kit.db.postgres import create_async_engine as _create_async_engine
 
 type ProcessName = Literal["app", "worker", "scheduler", "script"]
 
@@ -68,8 +68,7 @@ async def get_db_session(request: Request) -> AsyncGenerator[AsyncSession]:
         session = request.state.async_session
     except AttributeError as e:
         raise RuntimeError(
-            "Session is not present in the request state. "
-            "You might have forgotten to add AsyncSessionMiddleware"
+            "Session is not present in the request state. You might have forgotten to add AsyncSessionMiddleware"
         ) from e
 
     try:
